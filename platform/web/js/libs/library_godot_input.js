@@ -38,133 +38,84 @@ const GodotIME = {
 	$GodotIME: {
 		ime: null,
 		active: false,
-		focusTimerIntervalId: -1,
 
 		getModifiers: function (evt) {
 			return (evt.shiftKey + 0) + ((evt.altKey + 0) << 1) + ((evt.ctrlKey + 0) << 2) + ((evt.metaKey + 0) << 3);
 		},
 
 		ime_active: function (active) {
-			function clearFocusTimerInterval() {
-				clearInterval(GodotIME.focusTimerIntervalId);
-				GodotIME.focusTimerIntervalId = -1;
-			}
-
-			function focusTimer() {
-				if (GodotIME.ime == null) {
-					clearFocusTimerInterval();
-					return;
+			if (GodotIME.ime) {
+				if (active) {
+					GodotIME.ime.show()
+				} else {
+					GodotIME.ime.hide()
 				}
-				GodotIME.ime.focus();
-			}
-
-			if (GodotIME.focusTimerIntervalId > -1) {
-				clearFocusTimerInterval();
-			}
-
-			if (GodotIME.ime == null) {
-				return;
-			}
-
-			GodotIME.active = active;
-			if (active) {
-				GodotIME.ime.style.display = 'block';
-				GodotIME.focusTimerIntervalId = setInterval(focusTimer, 100);
-			} else {
-				GodotIME.ime.style.display = 'none';
-				GodotConfig.canvas.focus();
 			}
 		},
 
 		ime_position: function (x, y) {
-			if (GodotIME.ime == null) {
-				return;
-			}
-			const canvas = GodotConfig.canvas;
-			const rect = canvas.getBoundingClientRect();
-			const rw = canvas.width / rect.width;
-			const rh = canvas.height / rect.height;
-			const clx = (x / rw) + rect.x;
-			const cly = (y / rh) + rect.y;
-
-			GodotIME.ime.style.left = `${clx}px`;
-			GodotIME.ime.style.top = `${cly}px`;
 		},
 
 		init: function (ime_cb, key_cb, code, key) {
-			function key_event_cb(pressed, evt) {
-				const modifiers = GodotIME.getModifiers(evt);
-				GodotRuntime.stringToHeap(evt.code, code, 32);
-				GodotRuntime.stringToHeap(evt.key, key, 32);
-				key_cb(pressed, evt.repeat, modifiers);
-				evt.preventDefault();
-			}
-			function ime_event_cb(event) {
-				if (GodotIME.ime == null) {
-					return;
-				}
-				switch (event.type) {
-				case 'compositionstart':
-					ime_cb(0, null);
-					GodotIME.ime.innerHTML = '';
-					break;
-				case 'compositionupdate': {
-					const ptr = GodotRuntime.allocString(event.data);
-					ime_cb(1, ptr);
-					GodotRuntime.free(ptr);
-				} break;
-				case 'compositionend': {
-					const ptr = GodotRuntime.allocString(event.data);
-					ime_cb(2, ptr);
-					GodotRuntime.free(ptr);
-					GodotIME.ime.innerHTML = '';
-				} break;
-				default:
-					// Do nothing.
+			function ime_event_cb(type, event) {
+				if (GodotIME.ime) {
+					const ptr = GodotRuntime.allocString(event.value);
+					ime_cb(type, ptr);
+					GodotRuntime.free(ptr)
 				}
 			}
-
-			const ime = document.createElement('div');
-			ime.className = 'ime';
-			ime.style.background = 'none';
-			ime.style.opacity = 0.0;
-			ime.style.position = 'fixed';
-			ime.style.textAlign = 'left';
-			ime.style.fontSize = '1px';
-			ime.style.left = '0px';
-			ime.style.top = '0px';
-			ime.style.width = '100%';
-			ime.style.height = '40px';
-			ime.style.pointerEvents = 'none';
-			ime.style.display = 'none';
-			ime.contentEditable = 'true';
-
-			GodotEventListeners.add(ime, 'compositionstart', ime_event_cb, false);
-			GodotEventListeners.add(ime, 'compositionupdate', ime_event_cb, false);
-			GodotEventListeners.add(ime, 'compositionend', ime_event_cb, false);
-			GodotEventListeners.add(ime, 'keydown', key_event_cb.bind(null, 1), false);
-			GodotEventListeners.add(ime, 'keyup', key_event_cb.bind(null, 0), false);
-
-			ime.onblur = function () {
-				this.style.display = 'none';
-				GodotConfig.canvas.focus();
-				GodotIME.active = false;
+			let inputCb = evt => {
+				if (!evt.value) return
+				ime_event_cb(1, evt)
+			}
+			let inputConfirm = evt => {
+				if (evt.value) ime_event_cb(2, evt)
+				ime.hide();
+			}
+			let inputComplete = evt => {
+				if (evt.value && GodotIME.active) ime_event_cb(2, evt)
+				ime.hide();
+			}
+			let ime = {
+				activeTime: 0,
+				show() {
+					let delta = Date.now() - ime.activeTime
+					if (delta < 100) {
+						return
+					}
+					if (GodotIME.active) return;
+					GodotIME.active = true;
+					wx.showKeyboard({
+						defaultValue: GodotIME.initialText,
+						maxLength: 99,
+						multiple: false,
+						confirmHold: true,
+						confirmType: "done"
+					});
+					ime_event_cb(0, { value: "" });
+					wx.onKeyboardInput(inputCb);
+					wx.onKeyboardConfirm(inputConfirm);
+					__globalAdapter.onKeyboardComplete(inputComplete);
+				},
+				hide() {
+					if (!GodotIME.active)
+						return;
+					__globalAdapter.hideKeyboard();
+					ime.activeTime = Date.now()
+					GodotIME.active = false;
+					__globalAdapter.offKeyboardInput(inputCb);
+					__globalAdapter.offKeyboardConfirm(inputConfirm);
+					__globalAdapter.offKeyboardComplete(inputComplete)
+				}
 			};
-
-			GodotConfig.canvas.parentElement.appendChild(ime);
-			GodotIME.ime = ime;
+			GodotIME.ime = ime
 		},
 
 		clear: function () {
-			if (GodotIME.ime == null) {
-				return;
+			if (GodotIME.ime) {
+				GodotIME.ime.remove();
+				GodotIME.ime = null;
 			}
-			if (GodotIME.focusTimerIntervalId > -1) {
-				clearInterval(GodotIME.focusTimerIntervalId);
-				GodotIME.focusTimerIntervalId = -1;
-			}
-			GodotIME.ime.remove();
-			GodotIME.ime = null;
 		},
 	},
 };
@@ -180,13 +131,6 @@ const GodotInputGamepads = {
 
 		get_pads: function () {
 			try {
-				// Will throw in iframe when permission is denied.
-				// Will throw/warn in the future for insecure contexts.
-				// See https://github.com/w3c/gamepad/pull/120
-				const pads = navigator.getGamepads();
-				if (pads) {
-					return pads;
-				}
 				return [];
 			} catch (e) {
 				return [];
@@ -530,9 +474,9 @@ const GodotInput = {
 			const rel_pos_x = evt.movementX * rw;
 			const rel_pos_y = evt.movementY * rh;
 			const modifiers = GodotInput.getModifiers(evt);
-			func(pos[0], pos[1], rel_pos_x, rel_pos_y, modifiers, evt.pressure);
+			func(pos[0], pos[1], rel_pos_x, rel_pos_y, modifiers);
 		}
-		GodotEventListeners.add(window, 'pointermove', move_cb, false);
+		GodotEventListeners.add(window, 'mousemove', move_cb, false);
 	},
 
 	godot_js_input_mouse_wheel_cb__proxy: 'sync',
@@ -540,7 +484,7 @@ const GodotInput = {
 	godot_js_input_mouse_wheel_cb: function (callback) {
 		const func = GodotRuntime.get_func(callback);
 		function wheel_cb(evt) {
-			if (func(evt.deltaMode, evt.deltaX ?? 0, evt.deltaY ?? 0)) {
+			if (func(evt['deltaX'] || 0, evt['deltaY'] || 0)) {
 				evt.preventDefault();
 			}
 		}
@@ -584,6 +528,8 @@ const GodotInput = {
 				GodotConfig.canvas.focus();
 			}
 			const rect = canvas.getBoundingClientRect();
+			rect.x = 0;
+			rect.y = 0;
 			const touches = evt.changedTouches;
 			for (let i = 0; i < touches.length; i++) {
 				const touch = touches[i];

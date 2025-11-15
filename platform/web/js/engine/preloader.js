@@ -1,4 +1,6 @@
 const Preloader = /** @constructor */ function () { // eslint-disable-line no-unused-vars
+	let fsUtils = window.fsUtils||globalThis.fsUtils;
+
 	function getTrackedResponse(response, load_status) {
 		function onloadprogress(reader, controller) {
 			return reader.read().then(function (result) {
@@ -32,16 +34,7 @@ const Preloader = /** @constructor */ function () { // eslint-disable-line no-un
 			loaded: 0,
 			done: false,
 		};
-		return fetch(file).then(function (response) {
-			if (!response.ok) {
-				return Promise.reject(new Error(`Failed loading file '${file}'`));
-			}
-			const tr = getTrackedResponse(response, tracker[file]);
-			if (raw) {
-				return Promise.resolve(tr);
-			}
-			return tr.arrayBuffer();
-		});
+		return fsUtils.localFetch(file)
 	}
 
 	function retry(func, attempts = 1) {

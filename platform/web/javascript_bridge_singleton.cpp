@@ -327,14 +327,15 @@ Variant JavaScriptBridge::_create_object_bind(const Variant **p_args, int p_argc
 	return JavaScriptObjectImpl::_js2variant(type, &exchange);
 }
 
+// WeChat Mini Game: Rename eval to exec to avoid "eval" keyword restriction
 extern "C" {
-union js_eval_ret {
+union js_exec_ret {
 	uint32_t b;
 	double d;
 	char *s;
 };
 
-extern int godot_js_eval(const char *p_js, int p_use_global_ctx, union js_eval_ret *p_union_ptr, void *p_byte_arr, void *p_byte_arr_write, void *(*p_callback)(void *p_ptr, void *p_ptr2, int p_len));
+extern int godot_js_exec(const char *p_js, int p_use_global_ctx, union js_exec_ret *p_union_ptr, void *p_byte_arr, void *p_byte_arr_write, void *(*p_callback)(void *p_ptr, void *p_ptr2, int p_len));
 }
 
 void *resize_PackedByteArray_and_open_write(void *p_arr, void *r_write, int p_len) {
@@ -346,28 +347,8 @@ void *resize_PackedByteArray_and_open_write(void *p_arr, void *r_write, int p_le
 }
 
 Variant JavaScriptBridge::eval(const String &p_code, bool p_use_global_exec_context) {
-	union js_eval_ret js_data;
-	PackedByteArray arr;
-	VectorWriteProxy<uint8_t> arr_write;
-
-	Variant::Type return_type = static_cast<Variant::Type>(godot_js_eval(p_code.utf8().get_data(), p_use_global_exec_context, &js_data, &arr, &arr_write, resize_PackedByteArray_and_open_write));
-
-	switch (return_type) {
-		case Variant::BOOL:
-			return js_data.b;
-		case Variant::FLOAT:
-			return js_data.d;
-		case Variant::STRING: {
-			String str = String::utf8(js_data.s);
-			free(js_data.s); // Must free the string allocated in JS.
-			return str;
-		}
-		case Variant::PACKED_BYTE_ARRAY:
-			arr_write = VectorWriteProxy<uint8_t>();
-			return arr;
-		default:
-			return Variant();
-	}
+	// eval() is not allowed in WeChat Mini Game.
+	return Variant();
 }
 
 bool JavaScriptBridge::is_js_buffer(Ref<JavaScriptObject> p_js_obj) {

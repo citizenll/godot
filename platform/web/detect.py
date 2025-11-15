@@ -295,7 +295,8 @@ def configure(env: "SConsEnvironment"):
         env.Append(LINKFLAGS=["-fvisibility=hidden"])
         env.extra_suffix = ".dlink" + env.extra_suffix
 
-    env.Append(LINKFLAGS=["-sWASM_BIGINT"])
+    # WeChat Mini Game: Disable WASM_BIGINT as WeChat doesn't support BigInt
+    # env.Append(LINKFLAGS=["-sWASM_BIGINT"])
 
     # Run the main application in a web worker
     if env["proxy_to_pthread"]:
