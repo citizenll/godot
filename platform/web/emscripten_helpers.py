@@ -38,12 +38,14 @@ def create_template_zip(env, js, wasm, side):
         wasm,
         "#platform/web/js/libs/audio.worklet.js",
         "#platform/web/js/libs/audio.position.worklet.js",
+        "#platform/web/js/libs/audio.worker.js",
     ]
     out_files = [
         zip_dir.File(binary_name + ".js"),
         zip_dir.File(binary_name + ".wasm"),
         zip_dir.File(binary_name + ".audio.worklet.js"),
         zip_dir.File(binary_name + ".audio.position.worklet.js"),
+        zip_dir.File(binary_name + ".audio.worker.js"),
     ]
     # Dynamic linking (extensions) specific.
     if env["dlink_enabled"]:

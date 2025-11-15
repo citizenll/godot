@@ -169,7 +169,9 @@ const InternalConfig = function (initConfig) { // eslint-disable-line no-unused-
 		 * @ignore
 		 * @type {?function(number)}
 		 */
-		onExit: null,
+		onExit: function(){
+			wx.exitMiniProgram()
+		},
 		/**
 		 * A callback function for displaying download progress.
 		 *
@@ -298,9 +300,10 @@ const InternalConfig = function (initConfig) { // eslint-disable-line no-unused-
 				if (typeof (WebAssembly.instantiateStreaming) !== 'undefined') {
 					WebAssembly.instantiateStreaming(Promise.resolve(r), imports).then(done);
 				} else {
-					r.arrayBuffer().then(function (buffer) {
-						WebAssembly.instantiate(buffer, imports).then(done);
-					});
+					// r.arrayBuffer().then(function (buffer) {
+					// 	WebAssembly.instantiate(buffer, imports).then(done);
+					// });
+					WebAssembly.instantiate(loadPath + ".wasm.br", imports).then(done);
 				}
 				r = null;
 				return {};

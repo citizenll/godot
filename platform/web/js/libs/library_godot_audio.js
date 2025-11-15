@@ -212,48 +212,49 @@ class SampleNodeBus {
 		/** @type {ChannelMergerNode} */
 		this._channelMerger = GodotAudio.ctx.createChannelMerger(NUMBER_OF_WEB_CHANNELS);
 
-		this._channelSplitter
-			.connect(this._l, GodotAudio.WebChannel.CHANNEL_L)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_L
-			);
-		this._channelSplitter
-			.connect(this._r, GodotAudio.WebChannel.CHANNEL_R)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_R
-			);
-		this._channelSplitter
-			.connect(this._sl, GodotAudio.WebChannel.CHANNEL_SL)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_SL
-			);
-		this._channelSplitter
-			.connect(this._sr, GodotAudio.WebChannel.CHANNEL_SR)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_SR
-			);
-		this._channelSplitter
-			.connect(this._c, GodotAudio.WebChannel.CHANNEL_C)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_C
-			);
-		this._channelSplitter
-			.connect(this._lfe, GodotAudio.WebChannel.CHANNEL_L)
-			.connect(
-				this._channelMerger,
-				GodotAudio.WebChannel.CHANNEL_L,
-				GodotAudio.WebChannel.CHANNEL_LFE
-			);
+		// WeChat Mini Game doesn't support chained connect() calls
+		// Must break them into separate statements
+		this._channelSplitter.connect(this._l, GodotAudio.WebChannel.CHANNEL_L);
+		this._l.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_L
+		);
+
+		this._channelSplitter.connect(this._r, GodotAudio.WebChannel.CHANNEL_R);
+		this._r.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_R
+		);
+
+		this._channelSplitter.connect(this._sl, GodotAudio.WebChannel.CHANNEL_SL);
+		this._sl.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_SL
+		);
+
+		this._channelSplitter.connect(this._sr, GodotAudio.WebChannel.CHANNEL_SR);
+		this._sr.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_SR
+		);
+
+		this._channelSplitter.connect(this._c, GodotAudio.WebChannel.CHANNEL_C);
+		this._c.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_C
+		);
+
+		this._channelSplitter.connect(this._lfe, GodotAudio.WebChannel.CHANNEL_L);
+		this._lfe.connect(
+			this._channelMerger,
+			GodotAudio.WebChannel.CHANNEL_L,
+			GodotAudio.WebChannel.CHANNEL_LFE
+		);
 
 		this._channelMerger.connect(this._bus.getInputNode());
 	}
@@ -431,6 +432,8 @@ class SampleNode {
 		/** @type {boolean} */
 		this.isStarted = false;
 		/** @type {boolean} */
+		this.isCleared = false;
+		/** @type {boolean} */
 		this.isCanceled = false;
 		/** @type {number} */
 		this.pauseTime = 0;
@@ -460,11 +463,7 @@ class SampleNode {
 		const sampleNodeBus = this.getSampleNodeBus(bus);
 		sampleNodeBus.setVolume(options.volume);
 
-		this.connectPositionWorklet(options.start).catch((err) => {
-			const newErr = new Error('Failed to create PositionWorklet.');
-			newErr.cause = err;
-			GodotRuntime.error(newErr);
-		});
+		this.connectAudioContext(options.start);
 	}
 
 	/**
@@ -616,49 +615,10 @@ class SampleNode {
 	 * Sets up and connects the source to the GodotPositionReportingProcessor
 	 * If the worklet module is not loaded in, it will be added
 	 */
-	async connectPositionWorklet(start) {
-		await GodotAudio.audioPositionWorkletPromise;
-		if (this.isCanceled) {
-			return;
-		}
-		this._source.connect(this.getPositionWorklet());
+	async connectAudioContext(start) {
 		if (start) {
-			this.start();
+			this._source.start()
 		}
-	}
-
-	/**
-	 * Get a AudioWorkletProcessor
-	 * @returns {AudioWorkletNode}
-	 */
-	getPositionWorklet() {
-		if (this._positionWorklet != null) {
-			return this._positionWorklet;
-		}
-		if (GodotAudio.audioPositionWorkletNodes.length > 0) {
-			this._positionWorklet = GodotAudio.audioPositionWorkletNodes.pop();
-		} else {
-			this._positionWorklet = new AudioWorkletNode(
-				GodotAudio.ctx,
-				'godot-position-reporting-processor'
-			);
-		}
-		this._playbackPosition = this.offset;
-		this._positionWorklet.port.onmessage = (event) => {
-			switch (event.data['type']) {
-			case 'position':
-				this._playbackPosition = (parseInt(event.data.data, 10) / this.getSample().sampleRate) + this.offset;
-				break;
-			default:
-				// Do nothing.
-			}
-		};
-
-		const resetParameter = this._positionWorklet.parameters.get('reset');
-		resetParameter.setValueAtTime(1, GodotAudio.ctx.currentTime);
-		resetParameter.setValueAtTime(0, GodotAudio.ctx.currentTime + 1);
-
-		return this._positionWorklet;
 	}
 
 	/**
@@ -669,9 +629,10 @@ class SampleNode {
 		this.isCanceled = true;
 		this.isPaused = false;
 		this.pauseTime = 0;
+		this.isCleared = true;
 
 		if (this._source != null) {
-			this._source.removeEventListener('ended', this._onended);
+			this._source.onended = null;
 			this._onended = null;
 			if (this.isStarted) {
 				this._source.stop();
@@ -736,6 +697,7 @@ class SampleNode {
 			this._positionWorklet.port.postMessage({ type: 'clear' });
 			this._source.connect(this._positionWorklet);
 		}
+		this.connectAudioContext();
 		this._source.start(this.startTime, this.offset + pauseTime);
 		this.isStarted = true;
 	}
@@ -769,30 +731,34 @@ class SampleNode {
 	 */
 	_addEndedListener() {
 		if (this._onended != null) {
-			this._source.removeEventListener('ended', this._onended);
+			this._source.onended = null;
+		}
+		const self = this;
+
+		if (this.isPaused || this.isCleared) {
+			return;
 		}
 
 		/** @type {SampleNode} */
 		// eslint-disable-next-line consistent-this
-		const self = this;
 		this._onended = (_) => {
 			if (self.isPaused) {
 				return;
 			}
 
 			switch (self.getSample().loopMode) {
-			case 'disabled':
-				self.stop();
-				break;
-			case 'forward':
-			case 'backward':
-				self.restart();
-				break;
-			default:
+				case 'disabled':
+					self.stop();
+					break;
+				case 'forward':
+				case 'backward':
+					self.restart();
+					break;
+				default:
 				// do nothing
 			}
 		};
-		this._source.addEventListener('ended', this._onended);
+		this._source.onended = this._onended;
 	}
 }
 
@@ -925,9 +891,8 @@ class Bus {
 		/** @type {GainNode} */
 		this._muteNode = GodotAudio.ctx.createGain();
 
-		this._gainNode
-			.connect(this._soloNode)
-			.connect(this._muteNode);
+		this._gainNode.connect(this._soloNode);
+		this._soloNode.connect(this._muteNode);
 	}
 
 	/**
@@ -1249,21 +1214,21 @@ const _GodotAudio = {
 			}
 			// Do not specify, leave 'interactive' for good performance.
 			// opts['latencyHint'] = latency / 1000;
-			const ctx = new (window.AudioContext || window.webkitAudioContext)(opts);
+			const ctx = GODOTSDK.audio.WEBAudio.audioContext;
 			GodotAudio.ctx = ctx;
 			ctx.onstatechange = function () {
 				let state = 0;
 				switch (ctx.state) {
-				case 'suspended':
-					state = 0;
-					break;
-				case 'running':
-					state = 1;
-					break;
-				case 'closed':
-					state = 2;
-					break;
-				default:
+					case 'suspended':
+						state = 0;
+						break;
+					case 'running':
+						state = 1;
+						break;
+					case 'closed':
+						state = 2;
+						break;
+					default:
 					// Do nothing.
 				}
 				onstatechange(state);
@@ -1282,8 +1247,8 @@ const _GodotAudio = {
 			}, 1000);
 			GodotOS.atexit(GodotAudio.close_async);
 
-			const path = GodotConfig.locate_file('godot.audio.position.worklet.js');
-			GodotAudio.audioPositionWorkletPromise = ctx.audioWorklet.addModule(path);
+			// const path = GodotConfig.locate_file('godot.audio.position.worklet.js');
+			// GodotAudio.audioPositionWorkletPromise = ctx.audioWorklet.addModule(path);
 
 			return ctx.destination.channelCount;
 		},
@@ -1539,22 +1504,24 @@ const _GodotAudio = {
 	godot_audio_is_available__sig: 'i',
 	godot_audio_is_available__proxy: 'sync',
 	godot_audio_is_available: function () {
-		if (!(window.AudioContext || window.webkitAudioContext)) {
-			return 0;
-		}
+		// if (!(window.AudioContext || window.webkitAudioContext)) {
+		// 	return 0;
+		// }
 		return 1;
 	},
 
 	godot_audio_has_worklet__proxy: 'sync',
 	godot_audio_has_worklet__sig: 'i',
 	godot_audio_has_worklet: function () {
-		return GodotAudio.ctx && GodotAudio.ctx.audioWorklet ? 1 : 0;
+		// WeChat Mini Game does not support AudioWorklet.
+		return 0;
 	},
 
 	godot_audio_has_script_processor__proxy: 'sync',
 	godot_audio_has_script_processor__sig: 'i',
 	godot_audio_has_script_processor: function () {
-		return GodotAudio.ctx && GodotAudio.ctx.createScriptProcessor ? 1 : 0;
+		// return GodotAudio.ctx && GodotAudio.ctx.createScriptProcessor ? 1 : 0;
+		return 1
 	},
 
 	godot_audio_init__proxy: 'sync',
@@ -1954,20 +1921,20 @@ const GodotAudioWorklet = {
 		ring_buffer: null,
 
 		create: function (channels) {
-			const path = GodotConfig.locate_file('godot.audio.worklet.js');
-			GodotAudioWorklet.promise = GodotAudio.ctx.audioWorklet
-				.addModule(path)
-				.then(function () {
-					GodotAudioWorklet.worklet = new AudioWorkletNode(
-						GodotAudio.ctx,
-						'godot-processor',
-						{
-							outputChannelCount: [channels],
-						}
-					);
-					return Promise.resolve();
-				});
-			GodotAudio.driver = GodotAudioWorklet;
+			// const path = GodotConfig.locate_file('godot.audio.worklet.js');
+			// GodotAudioWorklet.promise = GodotAudio.ctx.audioWorklet
+			// 	.addModule(path)
+			// 	.then(function () {
+			// 		GodotAudioWorklet.worklet = new AudioWorkletNode(
+			// 			GodotAudio.ctx,
+			// 			'godot-processor',
+			// 			{
+			// 				outputChannelCount: [channels],
+			// 			}
+			// 		);
+			// 		return Promise.resolve();
+			// 	});
+			// GodotAudio.driver = GodotAudioWorklet;
 		},
 
 		start: function (in_buf, out_buf, state) {
@@ -2108,12 +2075,12 @@ const GodotAudioWorklet = {
 	godot_audio_worklet_create__proxy: 'sync',
 	godot_audio_worklet_create__sig: 'ii',
 	godot_audio_worklet_create: function (channels) {
-		try {
-			GodotAudioWorklet.create(channels);
-		} catch (e) {
-			GodotRuntime.error('Error starting AudioDriverWorklet', e);
-			return 1;
-		}
+		// try {
+		// 	GodotAudioWorklet.create(channels);
+		// } catch (e) {
+		// 	GodotRuntime.error('Error starting AudioDriverWorklet', e);
+		// 	return 1;
+		// }
 		return 0;
 	},
 
@@ -2186,6 +2153,9 @@ const GodotAudioScript = {
 	$GodotAudioScript__deps: ['$GodotAudio'],
 	$GodotAudioScript: {
 		script: null,
+		useWorker: false,  // Toggle for Worker-assisted mode
+		worker: null,
+		workerReady: false,
 
 		create: function (buffer_length, channel_count) {
 			GodotAudioScript.script = GodotAudio.ctx.createScriptProcessor(
@@ -2198,36 +2168,183 @@ const GodotAudioScript = {
 		},
 
 		start: function (p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess) {
-			GodotAudioScript.script.onaudioprocess = function (event) {
-				// Read input
-				const inb = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
-				const input = event.inputBuffer;
-				if (GodotAudio.input) {
-					const inlen = input.getChannelData(0).length;
-					for (let ch = 0; ch < 2; ch++) {
-						const data = input.getChannelData(ch);
-						for (let s = 0; s < inlen; s++) {
-							inb[s * 2 + ch] = data[s];
+			/**
+			 * Audio processing for WeChat Mini Game using ScriptProcessorNode.
+			 *
+			 * Direct mode (useWorker=false):
+			 * - All processing in onaudioprocess (main thread)
+			 * - Lowest latency, simplest implementation
+			 * - May stutter under CPU pressure
+			 *
+			 * Worker mode (useWorker=true):
+			 * - Worker maintains triple-buffer pool
+			 * - onaudioprocess gets pre-filled buffer instantly
+			 * - WASM processing happens asynchronously
+			 * - Prevents stuttering when CPU is under pressure
+			 */
+
+			if (!GodotAudioScript.useWorker) {
+				GodotAudioScript.script.onaudioprocess = function (event) {
+					// Read input
+					const inb = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
+					const input = event.inputBuffer;
+					if (GodotAudio.input) {
+						const inlen = input.getChannelData(0).length;
+						for (let ch = 0; ch < 2; ch++) {
+							const data = input.getChannelData(ch);
+							for (let s = 0; s < inlen; s++) {
+								inb[s * 2 + ch] = data[s];
+							}
 						}
 					}
+
+					// Let Godot process the input/output.
+					onprocess();
+
+					// Write the output.
+					const outb = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
+					const output = event.outputBuffer;
+					const channels = output.numberOfChannels;
+					for (let ch = 0; ch < channels; ch++) {
+						const data = output.getChannelData(ch);
+						// Loop through samples and assign computed values.
+						for (let sample = 0; sample < data.length; sample++) {
+							data[sample] = outb[sample * channels + ch];
+						}
+					}
+				};
+			} else {
+				// Worker-assisted mode
+				GodotAudioScript.startWorkerMode(p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess);
+			}
+
+			GodotAudioScript.script.connect(GodotAudio.ctx.destination);
+		},
+
+		startWorkerMode: function (p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess) {
+			const worker = wx.createWorker('workers/godot.audio.worker.js');
+			GodotAudioScript.worker = worker;
+
+			const frameCount = GodotAudioScript.script.bufferSize;
+			const channels = 2;
+
+			// Scratch buffers to avoid GC
+			const scratchOutput = new Array(channels);
+			const scratchInput = new Array(channels);
+			for (let i = 0; i < channels; i++) {
+				scratchOutput[i] = new Float32Array(frameCount);
+				scratchInput[i] = new Float32Array(frameCount);
+			}
+
+			// Buffer queue for ready buffers
+			GodotAudioScript.bufferQueue = [];
+
+			// Setup Worker message handler FIRST (before sending init)
+			worker.onMessage(function (event) {
+				const cmd = event.cmd;
+				const data = event.data;
+
+				switch (cmd) {
+					case 'ready':
+						GodotAudioScript.workerReady = true;
+						// Now Worker is ready, trigger pre-fill
+						worker.postMessage({ cmd: 'start_prefill', data: {} });
+						break;
+
+					case 'execute_process':
+						// Worker requests WASM processing
+						const inBuffer = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
+						const outBuffer = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
+
+						// Write input if provided
+						if (data.input) {
+							for (let sample = 0; sample < frameCount; sample++) {
+								for (let ch = 0; ch < Math.min(channels, data.input.length); ch++) {
+									inBuffer[sample * 2 + ch] = data.input[ch][sample] || 0;
+								}
+							}
+						}
+
+						// Execute WASM callback
+						onprocess();
+
+						// Read output into scratch buffer
+						for (let ch = 0; ch < channels; ch++) {
+							for (let sample = 0; sample < frameCount; sample++) {
+								scratchOutput[ch][sample] = outBuffer[sample * channels + ch];
+							}
+						}
+
+						// Send result back to Worker
+						worker.postMessage({
+							cmd: 'process_done',
+							data: { output: scratchOutput }
+						});
+						break;
+
+					case 'buffer':
+						// Worker sends a ready buffer - add to queue
+						GodotAudioScript.bufferQueue.push(data);
+						break;
+
+					default:
+						break;
+				}
+			});
+
+			// Initialize Worker
+			worker.postMessage({
+				cmd: 'init',
+				data: {
+					channels: channels,
+					frameCount: frameCount
+				}
+			});
+
+			// Setup audio callback
+			GodotAudioScript.script.onaudioprocess = function (event) {
+				const input = event.inputBuffer;
+				const output = event.outputBuffer;
+
+				// Try to get a buffer from queue
+				let buffer = null;
+				if (GodotAudioScript.bufferQueue.length > 0) {
+					buffer = GodotAudioScript.bufferQueue.shift();
+				} else {
+					// Queue empty, request from Worker (for next time)
+					worker.postMessage({ cmd: 'request_buffer', data: {} });
 				}
 
-				// Let Godot process the input/output.
-				onprocess();
-
-				// Write the output.
-				const outb = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
-				const output = event.outputBuffer;
-				const channels = output.numberOfChannels;
-				for (let ch = 0; ch < channels; ch++) {
-					const data = output.getChannelData(ch);
-					// Loop through samples and assign computed values.
-					for (let sample = 0; sample < data.length; sample++) {
-						data[sample] = outb[sample * channels + ch];
+				// Use buffer if available
+				if (buffer) {
+					for (let ch = 0; ch < output.numberOfChannels; ch++) {
+						output.getChannelData(ch).set(buffer[ch]);
+					}
+				} else {
+					// No buffer ready - output silence
+					for (let ch = 0; ch < output.numberOfChannels; ch++) {
+						output.getChannelData(ch).fill(0);
 					}
 				}
+
+				// Send input back to Worker for processing
+				if (GodotAudio.input && input.numberOfChannels > 0) {
+					// Use scratch input buffer
+					const inputChannels = Math.min(channels, input.numberOfChannels);
+					for (let ch = 0; ch < inputChannels; ch++) {
+						scratchInput[ch].set(input.getChannelData(ch));
+					}
+					worker.postMessage({
+						cmd: 'return_input',
+						data: { input: scratchInput }
+					});
+				}
+
+				// Pre-request next buffer if queue is getting low
+				if (GodotAudioScript.bufferQueue.length < 2) {
+					worker.postMessage({ cmd: 'request_buffer', data: {} });
+				}
 			};
-			GodotAudioScript.script.connect(GodotAudio.ctx.destination);
 		},
 
 		get_node: function () {
@@ -2236,9 +2353,18 @@ const GodotAudioScript = {
 
 		close: function () {
 			return new Promise(function (resolve, reject) {
-				GodotAudioScript.script.disconnect();
-				GodotAudioScript.script.onaudioprocess = null;
-				GodotAudioScript.script = null;
+				if (GodotAudioScript.script) {
+					GodotAudioScript.script.disconnect();
+					GodotAudioScript.script.onaudioprocess = null;
+					GodotAudioScript.script = null;
+				}
+				if (GodotAudioScript.worker) {
+					GodotAudioScript.worker.postMessage({ cmd: 'stop', data: {} });
+					GodotAudioScript.worker.terminate();
+					GodotAudioScript.worker = null;
+				}
+				GodotAudioScript.workerReady = false;
+				GodotAudioScript.bufferQueue = [];
 				resolve();
 			});
 		},
