@@ -1,29 +1,79 @@
 const GodotFetch = {
     $GodotFetch__deps: ['$IDHandler', '$GodotRuntime'],
     $GodotFetch: {
-        onread: function (id, result) {
-            const obj = IDHandler.get(id);
-            if (!obj) {
-                return;
+        // Convert various data types to Uint8Array
+        convertToUint8Array: function (data) {
+            if (!data) {
+                return new Uint8Array(0);
             }
-            if (result.value) {
-                obj.chunks.push(result.value);
+
+            // Already ArrayBuffer or TypedArray
+            if (data instanceof ArrayBuffer) {
+                return new Uint8Array(data);
             }
-            obj.reading = false;
-            obj.done = result.done;
+            if (ArrayBuffer.isView(data)) {
+                return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+            }
+
+            // String - encode to UTF-8
+            if (typeof data === 'string') {
+                const encoder = new TextEncoder();
+                return encoder.encode(data);
+            }
+
+            // Object - convert to JSON string then encode
+            if (typeof data === 'object') {
+                const jsonStr = JSON.stringify(data);
+                const encoder = new TextEncoder();
+                return encoder.encode(jsonStr);
+            }
+
+            // Fallback - convert to string
+            const str = String(data);
+            const encoder = new TextEncoder();
+            return encoder.encode(str);
         },
 
-        onresponse: function (id, response) {
+        onheaders: function (id, response) {
             const obj = IDHandler.get(id);
             if (!obj) {
                 return;
             }
-            obj.status = response.statusCode;
-            obj.response = response;
-            obj.chunked = false; // wx.request doesn't support chunked transfer
-            obj.bodySize = response.data.byteLength;
-            obj.chunks = [new Uint8Array(response.data)];
+            // Set status code (default to 0 if not present)
+            obj.status = response.statusCode || 0;
+            
+            // If we already have a response object (e.g. from partial headers), merge or update
+            if (obj.response) {
+                if (response.header) {
+                    obj.response.header = response.header;
+                }
+                // Update other fields if needed
+            } else {
+                obj.response = response;
+            }
+        },
+
+        onchunk: function (id, data) {
+            const obj = IDHandler.get(id);
+            if (!obj) {
+                return;
+            }
+            // data is ArrayBuffer
+            if (data && data.byteLength > 0) {
+                const uint8Data = new Uint8Array(data);
+                obj.chunks.push(uint8Data);
+                if (obj.bodySize === -1) obj.bodySize = 0;
+                obj.bodySize += uint8Data.byteLength;
+            }
+        },
+
+        ondone: function (id) {
+            const obj = IDHandler.get(id);
+            if (!obj) {
+                return;
+            }
             obj.done = true;
+            obj.reading = false;
         },
 
         onerror: function (id, err) {
@@ -37,7 +87,7 @@ const GodotFetch = {
 
         create: function (method, url, headers, body) {
             const obj = {
-                request: null,
+                requestTask: null,
                 response: null,
                 error: null,
                 done: false,
@@ -48,20 +98,59 @@ const GodotFetch = {
             };
             const id = IDHandler.add(obj);
 
-            wx.request({
-                url: url,
-                method: method,
-                data: body,
-                header: headers,
-                responseType: 'arraybuffer',
-                success: (res) => GodotFetch.onresponse(id, res),
-                fail: (err) => GodotFetch.onerror(id, err)
-            });
+            try {
+                const requestTask = wx.request({
+                    url: url,
+                    method: method,
+                    data: body,
+                    header: headers,
+                    responseType: 'arraybuffer',
+                    enableChunked: true,
+                    success: (res) => {
+                        const obj = IDHandler.get(id);
+                        if (obj) {
+                            // Fallback: if onHeadersReceived didn't fire or didn't set response
+                            if (!obj.response) {
+                                GodotFetch.onheaders(id, res);
+                            }
+                            
+                            // Fallback: if no chunks were received via onChunkReceived, check res.data
+                            // This handles cases where enableChunked might be ignored or data is small
+                            if (obj.chunks.length === 0 && res.data) {
+                                GodotFetch.onchunk(id, res.data);
+                            }
+                        }
+                        GodotFetch.ondone(id);
+                    },
+                    fail: (err) => {
+                        GodotFetch.onerror(id, err);
+                    }
+                });
+
+                obj.requestTask = requestTask;
+
+                requestTask.onHeadersReceived((res) => {
+                    GodotFetch.onheaders(id, res);
+                });
+
+                requestTask.onChunkReceived((res) => {
+                    if (res.data) {
+                        GodotFetch.onchunk(id, res.data);
+                    }
+                });
+
+            } catch (e) {
+                GodotFetch.onerror(id, { errMsg: 'Exception: ' + e.message, errno: -1 });
+            }
 
             return id;
         },
 
         free: function (id) {
+            const obj = IDHandler.get(id);
+            if (obj && obj.requestTask) {
+                obj.requestTask.abort();
+            }
             IDHandler.remove(id);
         },
 
@@ -91,16 +180,19 @@ const GodotFetch = {
         if (!obj) {
             return -1;
         }
+
+        let state = -1;
         if (obj.error) {
-            return -1;
+            state = -1;
+        } else if (!obj.response) {
+            state = 0; // Request in progress
+        } else if (obj.done && obj.chunks.length === 0) {
+            state = 2; // Done
+        } else {
+            state = 1; // Reading
         }
-        if (!obj.response) {
-            return 0;
-        }
-        if (obj.done) {
-            return 2;
-        }
-        return 1;
+
+        return state;
     },
 
     godot_js_fetch_http_status_get__sig: 'ii',
@@ -118,12 +210,25 @@ const GodotFetch = {
         if (!obj || !obj.response) {
             return 1;
         }
-        const cb = GodotRuntime.get_func(p_parse_cb);
-        const arr = Object.entries(obj.response.header).map(([h, v]) => `${h}:${v}`);
-        const c_ptr = GodotRuntime.allocStringArray(arr);
-        cb(arr.length, c_ptr, p_ref);
-        GodotRuntime.freeStringArray(c_ptr, arr.length);
-        return 0;
+
+        // Check if header exists and is an object
+        if (!obj.response.header || typeof obj.response.header !== 'object') {
+            return 1;
+        }
+
+        try {
+            const cb = GodotRuntime.get_func(p_parse_cb);
+            const arr = Object.entries(obj.response.header).map(([h, v]) => `${h}:${v}`);
+
+            const c_ptr = GodotRuntime.allocStringArray(arr);
+
+            const result = cb(arr.length, c_ptr, p_ref);
+
+            GodotRuntime.freeStringArray(c_ptr, arr.length);
+            return 0;
+        } catch (e) {
+            return 1;
+        }
     },
 
     godot_js_fetch_read_chunk__sig: 'iiii',
@@ -160,7 +265,7 @@ const GodotFetch = {
 
     godot_js_fetch_is_chunked__sig: 'ii',
     godot_js_fetch_is_chunked: function (p_id) {
-        return 0; // wx.request doesn't support chunked transfer
+        return 1;
     },
 
     godot_js_fetch_free__sig: 'vi',
