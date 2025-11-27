@@ -110,7 +110,7 @@ class Sample {
 		/** @type {number} */
 		this.sampleRate = options.sampleRate ?? 44100;
 		/** @type {LoopMode} */
-		this.loopMode = options.loopMode ?? 'disabled';
+		this.loopMode = options.loopMode ?? "disabled";
 		/** @type {number} */
 		this.loopBegin = options.loopBegin ?? 0;
 		/** @type {number} */
@@ -151,7 +151,7 @@ class Sample {
 	 */
 	_duplicateAudioBuffer() {
 		if (this._audioBuffer == null) {
-			throw new Error('couldn\'t duplicate a null audioBuffer');
+			throw new Error("couldn't duplicate a null audioBuffer");
 		}
 		/** @type {Array<Float32Array>} */
 		const channels = new Array(this._audioBuffer.numberOfChannels);
@@ -215,46 +215,22 @@ class SampleNodeBus {
 		// WeChat Mini Game doesn't support chained connect() calls
 		// Must break them into separate statements
 		this._channelSplitter.connect(this._l, GodotAudio.WebChannel.CHANNEL_L);
-		this._l.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_L
-		);
+		this._l.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_L);
 
 		this._channelSplitter.connect(this._r, GodotAudio.WebChannel.CHANNEL_R);
-		this._r.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_R
-		);
+		this._r.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_R);
 
 		this._channelSplitter.connect(this._sl, GodotAudio.WebChannel.CHANNEL_SL);
-		this._sl.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_SL
-		);
+		this._sl.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_SL);
 
 		this._channelSplitter.connect(this._sr, GodotAudio.WebChannel.CHANNEL_SR);
-		this._sr.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_SR
-		);
+		this._sr.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_SR);
 
 		this._channelSplitter.connect(this._c, GodotAudio.WebChannel.CHANNEL_C);
-		this._c.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_C
-		);
+		this._c.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_C);
 
 		this._channelSplitter.connect(this._lfe, GodotAudio.WebChannel.CHANNEL_L);
-		this._lfe.connect(
-			this._channelMerger,
-			GodotAudio.WebChannel.CHANNEL_L,
-			GodotAudio.WebChannel.CHANNEL_LFE
-		);
+		this._lfe.connect(this._channelMerger, GodotAudio.WebChannel.CHANNEL_L, GodotAudio.WebChannel.CHANNEL_LFE);
 
 		this._channelMerger.connect(this._bus.getInputNode());
 	}
@@ -282,9 +258,7 @@ class SampleNodeBus {
 	 */
 	setVolume(volume) {
 		if (volume.length !== GodotAudio.MAX_VOLUME_CHANNELS) {
-			throw new Error(
-				`Volume length isn't "${GodotAudio.MAX_VOLUME_CHANNELS}", is ${volume.length} instead`
-			);
+			throw new Error(`Volume length isn't "${GodotAudio.MAX_VOLUME_CHANNELS}", is ${volume.length} instead`);
 		}
 		this._l.gain.value = volume[GodotAudio.GodotChannel.CHANNEL_L] ?? 0;
 		this._r.gain.value = volume[GodotAudio.GodotChannel.CHANNEL_R] ?? 0;
@@ -440,7 +414,7 @@ class SampleNode {
 		/** @type {number} */
 		this._playbackRate = 44100;
 		/** @type {LoopMode} */
-		this.loopMode = options.loopMode ?? this.getSample().loopMode ?? 'disabled';
+		this.loopMode = options.loopMode ?? this.getSample().loopMode ?? "disabled";
 		/** @type {number} */
 		this._pitchScale = options.pitchScale ?? 1;
 		/** @type {number} */
@@ -591,7 +565,7 @@ class SampleNode {
 			sampleNodeBus.setVolume(
 				volumes.slice(
 					busIdx * GodotAudio.MAX_VOLUME_CHANNELS,
-					(busIdx * GodotAudio.MAX_VOLUME_CHANNELS) + GodotAudio.MAX_VOLUME_CHANNELS
+					busIdx * GodotAudio.MAX_VOLUME_CHANNELS + GodotAudio.MAX_VOLUME_CHANNELS
 				)
 			);
 		}
@@ -617,7 +591,7 @@ class SampleNode {
 	 */
 	async connectAudioContext(start) {
 		if (start) {
-			this._source.start()
+			this._source.start();
 		}
 	}
 
@@ -690,11 +664,9 @@ class SampleNode {
 		}
 
 		this._addEndedListener();
-		const pauseTime = this.isPaused
-			? this.pauseTime
-			: 0;
+		const pauseTime = this.isPaused ? this.pauseTime : 0;
 		if (this._positionWorklet != null) {
-			this._positionWorklet.port.postMessage({ type: 'clear' });
+			this._positionWorklet.port.postMessage({ type: "clear" });
 			this._source.connect(this._positionWorklet);
 		}
 		this.connectAudioContext();
@@ -747,11 +719,11 @@ class SampleNode {
 			}
 
 			switch (self.getSample().loopMode) {
-				case 'disabled':
+				case "disabled":
 					self.stop();
 					break;
-				case 'forward':
-				case 'backward':
+				case "forward":
+				case "backward":
 					self.restart();
 					break;
 				default:
@@ -1028,7 +1000,7 @@ class Bus {
 	 */
 	connect(bus) {
 		if (bus == null) {
-			throw new Error('cannot connect to null bus');
+			throw new Error("cannot connect to null bus");
 		}
 		this.getOutputNode().disconnect();
 		this.getOutputNode().connect(bus.getInputNode());
@@ -1060,9 +1032,7 @@ class Bus {
 		this.isSolo = true;
 		GodotAudio.busSolo = this;
 		this._soloNode.gain.value = 1;
-		const otherBuses = GodotAudio.buses.filter(
-			(otherBus) => otherBus !== this
-		);
+		const otherBuses = GodotAudio.buses.filter((otherBus) => otherBus !== this);
 		for (let i = 0; i < otherBuses.length; i++) {
 			const otherBus = otherBuses[i];
 			otherBus._soloNode.gain.value = 0;
@@ -1077,9 +1047,7 @@ class Bus {
 		this.isSolo = false;
 		GodotAudio.busSolo = null;
 		this._soloNode.gain.value = 1;
-		const otherBuses = GodotAudio.buses.filter(
-			(otherBus) => otherBus !== this
-		);
+		const otherBuses = GodotAudio.buses.filter((otherBus) => otherBus !== this);
 		for (let i = 0; i < otherBuses.length; i++) {
 			const otherBus = otherBuses[i];
 			otherBus._soloNode.gain.value = 1;
@@ -1088,7 +1056,7 @@ class Bus {
 }
 
 const _GodotAudio = {
-	$GodotAudio__deps: ['$GodotRuntime', '$GodotOS'],
+	$GodotAudio__deps: ["$GodotRuntime", "$GodotOS"],
 	$GodotAudio: {
 		/**
 		 * Max number of volume channels.
@@ -1210,7 +1178,7 @@ const _GodotAudio = {
 			// If mix_rate is 0, let the browser choose.
 			if (mix_rate) {
 				GodotAudio.sampleRate = mix_rate;
-				opts['sampleRate'] = mix_rate;
+				opts["sampleRate"] = mix_rate;
 			}
 			// Do not specify, leave 'interactive' for good performance.
 			// opts['latencyHint'] = latency / 1000;
@@ -1219,13 +1187,13 @@ const _GodotAudio = {
 			ctx.onstatechange = function () {
 				let state = 0;
 				switch (ctx.state) {
-					case 'suspended':
+					case "suspended":
 						state = 0;
 						break;
-					case 'running':
+					case "running":
 						state = 1;
 						break;
-					case 'closed':
+					case "closed":
 						state = 2;
 						break;
 					default:
@@ -1250,6 +1218,9 @@ const _GodotAudio = {
 			// const path = GodotConfig.locate_file('godot.audio.position.worklet.js');
 			// GodotAudio.audioPositionWorkletPromise = ctx.audioWorklet.addModule(path);
 
+			// Initialize WeChat audio adapter
+			GodotAudio.WX.init();
+
 			return ctx.destination.channelCount;
 		},
 
@@ -1262,28 +1233,34 @@ const _GodotAudio = {
 					GodotAudio.input = GodotAudio.ctx.createMediaStreamSource(stream);
 					callback(GodotAudio.input);
 				} catch (e) {
-					GodotRuntime.error('Failed creating input.', e);
+					GodotRuntime.error("Failed creating input.", e);
 				}
 			}
 			if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-				navigator.mediaDevices.getUserMedia({
-					'audio': true,
-				}).then(gotMediaInput, function (e) {
-					GodotRuntime.error('Error getting user media.', e);
-				});
+				navigator.mediaDevices
+					.getUserMedia({
+						audio: true,
+					})
+					.then(gotMediaInput, function (e) {
+						GodotRuntime.error("Error getting user media.", e);
+					});
 			} else {
 				if (!navigator.getUserMedia) {
 					navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 				}
 				if (!navigator.getUserMedia) {
-					GodotRuntime.error('getUserMedia not available.');
+					GodotRuntime.error("getUserMedia not available.");
 					return 1;
 				}
-				navigator.getUserMedia({
-					'audio': true,
-				}, gotMediaInput, function (e) {
-					GodotRuntime.print(e);
-				});
+				navigator.getUserMedia(
+					{
+						audio: true,
+					},
+					gotMediaInput,
+					function (e) {
+						GodotRuntime.print(e);
+					}
+				);
 			}
 			return 0;
 		},
@@ -1311,16 +1288,578 @@ const _GodotAudio = {
 			if (GodotAudio.driver) {
 				closed = GodotAudio.driver.close();
 			}
-			closed.then(function () {
-				return ctx.close();
-			}).then(function () {
-				ctx.onstatechange = null;
-				resolve();
-			}).catch(function (e) {
-				ctx.onstatechange = null;
-				GodotRuntime.error('Error closing AudioContext', e);
-				resolve();
-			});
+			closed
+				.then(function () {
+					return ctx.close();
+				})
+				.then(function () {
+					ctx.onstatechange = null;
+					resolve();
+				})
+				.catch(function (e) {
+					ctx.onstatechange = null;
+					GodotRuntime.error("Error closing AudioContext", e);
+					resolve();
+				});
+		},
+
+		/**
+		 * WeChat Mini Game Audio Adapter
+		 * Uses InnerAudioContext API for native audio playback
+		 */
+		WX: {
+			DEBUG: false,
+
+			// Storage for registered streams
+			streamPaths: null, // Map<streamId, {path, loopMode, framesTotal}>
+			activePlaybacks: null, // Map<playbackId, {ctx: InnerAudioContext, busIndex: number, baseVolume: number}>
+			contextPool: null, // Array of reusable InnerAudioContext instances
+			busVolumes: null, // Map<busIndex, volumeDb>
+			busMutes: null, // Map<busIndex, boolean>
+
+			init: function () {
+				if (typeof wx === "undefined") {
+					GodotAudio.WX.log("WeChat API not available, WX audio adapter disabled");
+					return;
+				}
+
+				GodotAudio.WX.streamPaths = new Map();
+				GodotAudio.WX.activePlaybacks = new Map();
+				GodotAudio.WX.contextPool = [];
+				GodotAudio.WX.busVolumes = new Map();
+				GodotAudio.WX.busMutes = new Map();
+
+				// Clean up old audio files from previous sessions
+				GodotAudio.WX.cleanupOldAudioFiles();
+
+				GodotAudio.WX.log("WeChat audio adapter initialized");
+
+				// Add global debug tools
+				if (typeof window !== "undefined") {
+					window.GodotAudioDebug = {
+						setDebug: (enabled) => {
+							GodotAudio.WX.DEBUG = enabled;
+							GodotAudio.WX.log(`Debug mode ${enabled ? "enabled" : "disabled"}`);
+						},
+						getStats: () => {
+							return {
+								streams: GodotAudio.WX.streamPaths.size,
+								activePlaybacks: GodotAudio.WX.activePlaybacks.size,
+								pooledContexts: GodotAudio.WX.contextPool.length,
+							};
+						},
+						listStreams: () => {
+							const streams = [];
+							GodotAudio.WX.streamPaths.forEach((info, id) => {
+								streams.push({ id, ...info });
+							});
+							return streams;
+						},
+						listPlaybacks: () => {
+							const playbacks = [];
+							GodotAudio.WX.activePlaybacks.forEach((ctx, id) => {
+								playbacks.push({
+									id,
+									src: ctx.src,
+									paused: ctx.paused,
+									currentTime: ctx.currentTime,
+									duration: ctx.duration,
+								});
+							});
+							return playbacks;
+						},
+					};
+				}
+			},
+
+			log: function (msg) {
+				if (GodotAudio.WX.DEBUG) {
+					console.log(`[GodotAudioWX] ${msg}`);
+				}
+			},
+
+			error: function (msg, error) {
+				console.error(`[GodotAudioWX] ${msg}`, error || "");
+			},
+
+			cleanupOldAudioFiles: function () {
+				try {
+					const fs = wx.getFileSystemManager();
+					const userDataPath = wx.env.USER_DATA_PATH;
+
+					GodotAudio.WX.log("Starting cleanup of old audio files...");
+
+					// List all files in user data directory
+					const files = fs.readdirSync(userDataPath);
+
+					let deletedCount = 0;
+					let deletedSize = 0;
+
+					// Delete all files matching godot_audio_*.wav pattern
+					files.forEach((file) => {
+						if (file.startsWith("godot_audio_") && file.endsWith(".wav")) {
+							const filePath = `${userDataPath}/${file}`;
+							try {
+								const stats = fs.statSync(filePath);
+								fs.unlinkSync(filePath);
+								deletedCount++;
+								deletedSize += stats.size;
+								GodotAudio.WX.log(
+									`Deleted old audio file: ${file} (${(stats.size / 1024).toFixed(2)}KB)`
+								);
+							} catch (err) {
+								GodotAudio.WX.error(`Failed to delete ${file}`, err);
+							}
+						}
+					});
+
+					if (deletedCount > 0) {
+						GodotAudio.WX.log(
+							`Cleanup complete: deleted ${deletedCount} files, freed ${(
+								deletedSize /
+								1024 /
+								1024
+							).toFixed(2)}MB`
+						);
+					} else {
+						GodotAudio.WX.log("No old audio files to clean up");
+					}
+				} catch (error) {
+					GodotAudio.WX.error("Failed to cleanup old audio files", error);
+				}
+			},
+
+			// Convert dB to linear scale
+			dbToLinear: function (db) {
+				return Math.exp(db * 0.11512925464970228420089957273422);
+			},
+			calculateFinalVolume: function (baseVolume, busIndex) {
+				// Check if bus is muted
+				const isMuted = GodotAudio.WX.busMutes.get(busIndex) || false;
+				if (isMuted) {
+					return 0;
+				}
+
+				const busVolumeDb = GodotAudio.WX.busVolumes.get(busIndex) || 0;
+				const busVolumeLinear = GodotAudio.WX.dbToLinear(busVolumeDb);
+				return Math.max(0, Math.min(1, baseVolume * busVolumeLinear));
+			},
+
+			// Get or create an InnerAudioContext from the pool
+			getContext: function (desiredSrc) {
+				// Try to find a context with matching src to avoid reloading
+				if (desiredSrc) {
+					const index = GodotAudio.WX.contextPool.findIndex((ctx) => ctx.src === desiredSrc);
+					if (index !== -1) {
+						const ctx = GodotAudio.WX.contextPool[index];
+						GodotAudio.WX.contextPool.splice(index, 1);
+						GodotAudio.WX.log(`Reusing pooled context with matching src`);
+						return ctx;
+					}
+				}
+
+				if (GodotAudio.WX.contextPool.length > 0) {
+					const ctx = GodotAudio.WX.contextPool.pop();
+					GodotAudio.WX.log(`Reusing context from pool (${GodotAudio.WX.contextPool.length} remaining)`);
+					return ctx;
+				}
+
+				const ctx = wx.createInnerAudioContext();
+				GodotAudio.WX.log("Created new InnerAudioContext");
+				return ctx;
+			},
+
+			// Return a context to the pool for reuse
+			releaseContext: function (ctx) {
+				// Clean up event listeners
+				ctx.offCanplay();
+				ctx.offPlay();
+				ctx.offPause();
+				ctx.offStop();
+				ctx.offEnded();
+				ctx.offTimeUpdate();
+				ctx.offError();
+				ctx.offWaiting();
+				ctx.offSeeking();
+				ctx.offSeeked();
+
+				// Reset state
+				// ctx.src = ""; // Keep src for smart pooling
+				ctx.autoplay = false;
+				ctx.loop = false;
+				ctx.volume = 1;
+
+				// Add to pool
+				GodotAudio.WX.contextPool.push(ctx);
+				GodotAudio.WX.log(`Context returned to pool (${GodotAudio.WX.contextPool.length} available)`);
+			},
+
+			// Encode PCM data to WAV format
+			encodeWAV: function (leftChannel, rightChannel, sampleRate) {
+				const length = leftChannel.length + rightChannel.length;
+				const buffer = new ArrayBuffer(44 + length * 2);
+				const view = new DataView(buffer);
+
+				// Write WAV header
+				const writeString = (offset, string) => {
+					for (let i = 0; i < string.length; i++) {
+						view.setUint8(offset + i, string.charCodeAt(i));
+					}
+				};
+
+				writeString(0, "RIFF");
+				view.setUint32(4, 36 + length * 2, true);
+				writeString(8, "WAVE");
+				writeString(12, "fmt ");
+				view.setUint32(16, 16, true); // PCM chunk size
+				view.setUint16(20, 1, true); // PCM format
+				view.setUint16(22, 2, true); // Stereo
+				view.setUint32(24, sampleRate, true);
+				view.setUint32(28, sampleRate * 4, true); // byte rate
+				view.setUint16(32, 4, true); // block align
+				view.setUint16(34, 16, true); // bits per sample
+				writeString(36, "data");
+				view.setUint32(40, length * 2, true);
+
+				// Interleave left and right channels
+				let offset = 44;
+				for (let i = 0; i < leftChannel.length; i++) {
+					const left = Math.max(-1, Math.min(1, leftChannel[i]));
+					view.setInt16(offset, left * 0x7fff, true);
+					offset += 2;
+
+					const right = Math.max(-1, Math.min(1, rightChannel[i]));
+					view.setInt16(offset, right * 0x7fff, true);
+					offset += 2;
+				}
+
+				return buffer;
+			},
+
+			// Register a stream (store PCM data as WAV file)
+			registerStream: function (streamObjectId, framesPtr, framesTotal, loopMode, loopBegin, loopEnd) {
+				// Check if already registered - avoid duplicate processing
+				if (GodotAudio.WX.streamPaths.has(streamObjectId)) {
+					GodotAudio.WX.log(`Stream ${streamObjectId} already registered, skipping`);
+					return;
+				}
+
+				const sampleRate = 44100;
+				const audioDuration = framesTotal / sampleRate;
+				const estimatedSize = framesTotal * 4; // 2 channels * 2 bytes per sample
+
+				GodotAudio.WX.log(
+					`Registering stream ${streamObjectId}: ${framesTotal} frames (${audioDuration.toFixed(2)}s), ~${(
+						estimatedSize /
+						1024 /
+						1024
+					).toFixed(2)}MB, loop=${loopMode}`
+				);
+
+				const BYTES_PER_FLOAT32 = 4;
+
+				// Extract left and right channel data
+				const subLeft = GodotRuntime.heapSub(HEAPF32, framesPtr, framesTotal);
+				const subRight = GodotRuntime.heapSub(
+					HEAPF32,
+					framesPtr + framesTotal * BYTES_PER_FLOAT32,
+					framesTotal
+				);
+
+				// Encode to WAV format
+				const startTime = performance.now();
+				const wavBuffer = GodotAudio.WX.encodeWAV(
+					new Float32Array(subLeft),
+					new Float32Array(subRight),
+					sampleRate
+				);
+				const encodeTime = performance.now() - startTime;
+
+				GodotAudio.WX.log(
+					`Encoded WAV for ${streamObjectId}: ${(wavBuffer.byteLength / 1024 / 1024).toFixed(
+						2
+					)}MB in ${encodeTime.toFixed(1)}ms`
+				);
+
+				// Write to WeChat file system
+				const fs = wx.getFileSystemManager();
+				const filePath = `${wx.env.USER_DATA_PATH}/godot_audio_${streamObjectId}.wav`;
+
+				try {
+					const writeStartTime = performance.now();
+					fs.writeFileSync(filePath, wavBuffer, "binary");
+					const writeTime = performance.now() - writeStartTime;
+
+					GodotAudio.WX.log(`Wrote audio file: ${filePath} in ${writeTime.toFixed(1)}ms`);
+
+					// Store stream info
+					GodotAudio.WX.streamPaths.set(streamObjectId, {
+						path: filePath,
+						loopMode: loopMode,
+						framesTotal: framesTotal,
+						loopBegin: loopBegin,
+						loopEnd: loopEnd,
+					});
+
+					GodotAudio.WX.log(
+						`Successfully registered stream ${streamObjectId} (total time: ${(
+							encodeTime + writeTime
+						).toFixed(1)}ms)`
+					);
+				} catch (error) {
+					GodotAudio.WX.error(`Failed to write audio file for ${streamObjectId}`, error);
+				}
+			},
+
+			// Unregister a stream
+			unregisterStream: function (streamObjectId) {
+				GodotAudio.WX.log(`Unregistering stream ${streamObjectId}`);
+
+				const streamInfo = GodotAudio.WX.streamPaths.get(streamObjectId);
+				if (!streamInfo) {
+					GodotAudio.WX.log(`Stream ${streamObjectId} not found`);
+					return;
+				}
+
+				// Delete file from file system
+				const fs = wx.getFileSystemManager();
+				try {
+					fs.unlinkSync(streamInfo.path);
+					GodotAudio.WX.log(`Deleted audio file: ${streamInfo.path}`);
+				} catch (error) {
+					GodotAudio.WX.error(`Failed to delete file ${streamInfo.path}`, error);
+				}
+
+				// Remove from registry
+				GodotAudio.WX.streamPaths.delete(streamObjectId);
+			},
+
+			// Start sample playback
+			startSample: function (playbackObjectId, streamObjectId, busIndex, offset, pitchScale, volumePtr) {
+				GodotAudio.WX.log(`Starting playback ${playbackObjectId} from stream ${streamObjectId}`);
+
+				// Get stream info
+				const streamInfo = GodotAudio.WX.streamPaths.get(streamObjectId);
+				if (!streamInfo) {
+					GodotAudio.WX.error(`Stream ${streamObjectId} not registered`);
+					return;
+				}
+
+				// Check if we can reuse existing playback context
+				const existingPlayback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				let ctx;
+				let isReusing = false;
+				if (existingPlayback && existingPlayback.ctx.src === streamInfo.path) {
+					// Reuse existing context if it's the same audio file
+					ctx = existingPlayback.ctx;
+					isReusing = true;
+					GodotAudio.WX.log(`Reusing context for same audio file`);
+
+					// Stop current playback
+					ctx.stop();
+				} else {
+					// Stop and release old playback if exists
+					if (existingPlayback) {
+						GodotAudio.WX.activePlaybacks.delete(playbackObjectId);
+						existingPlayback.ctx.stop();
+						GodotAudio.WX.releaseContext(existingPlayback.ctx);
+					}
+
+					// Get new context
+					ctx = GodotAudio.WX.getContext(streamInfo.path);
+
+					// Set source (only when different)
+					if (ctx.src !== streamInfo.path) {
+						ctx.src = streamInfo.path;
+					}
+					ctx.loop = streamInfo.loopMode === "forward";
+				}
+
+				// Clean up event listeners (for both new and reused contexts)
+				ctx.offCanplay();
+				ctx.offPlay();
+				ctx.offPause();
+				ctx.offStop();
+				ctx.offEnded();
+				ctx.offTimeUpdate();
+				ctx.offError();
+				ctx.offWaiting();
+				ctx.offSeeking();
+				ctx.offSeeked();
+
+				// Read base volume
+				const volume = GodotRuntime.heapSub(HEAPF32, volumePtr, 8);
+				const baseVolume = Math.max(volume[0], volume[1]);
+
+				// Calculate final volume
+				const finalVolume = GodotAudio.WX.calculateFinalVolume(baseVolume, busIndex);
+
+				// Clamp playbackRate
+				const clampedPitchScale = Math.max(0.5, Math.min(2.0, pitchScale));
+
+				// Update context properties (always update these)
+				ctx.volume = finalVolume;
+				ctx.playbackRate = clampedPitchScale;
+				ctx.autoplay = false;
+
+				// Track playback state
+				let hasStarted = false;
+				let hasSeeked = false;
+
+				// Setup event handlers
+				ctx.onCanplay(() => {
+					if (!hasStarted && offset > 0 && !hasSeeked) {
+						hasSeeked = true;
+						ctx.seek(offset);
+					}
+				});
+
+				ctx.onPlay(() => {
+					hasStarted = true;
+				});
+
+				ctx.onEnded(() => {
+					// Notify engine that playback finished
+					if (GodotAudio.sampleFinishedCallback) {
+						const playbackIdPtr = GodotRuntime.allocString(playbackObjectId);
+						GodotAudio.sampleFinishedCallback(playbackIdPtr);
+						GodotRuntime.free(playbackIdPtr);
+					}
+
+					// Clean up
+					GodotAudio.WX.activePlaybacks.delete(playbackObjectId);
+					GodotAudio.WX.releaseContext(ctx);
+				});
+
+				ctx.onError((error) => {
+					GodotAudio.WX.error(`Playback error for ${playbackObjectId}`, error);
+				});
+
+				// Start playback
+				ctx.play();
+
+				// Store active playback with bus info
+				GodotAudio.WX.activePlaybacks.set(playbackObjectId, {
+					ctx: ctx,
+					busIndex: busIndex,
+					baseVolume: baseVolume,
+				});
+			},
+
+			// Stop sample playback
+			stopSample: function (playbackObjectId) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback) {
+					return;
+				}
+
+				GodotAudio.WX.log(`Stopping playback ${playbackObjectId}`);
+
+				// Remove from active playbacks first to prevent onEnded from double-releasing
+				GodotAudio.WX.activePlaybacks.delete(playbackObjectId);
+
+				// Stop playback and release context
+				playback.ctx.stop();
+				GodotAudio.WX.releaseContext(playback.ctx);
+			},
+
+			// Set pause state
+			setPause: function (playbackObjectId, paused) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback) {
+					return;
+				}
+
+				GodotAudio.WX.log(`${paused ? "Pausing" : "Resuming"} playback ${playbackObjectId}`);
+
+				if (paused) {
+					playback.ctx.pause();
+				} else {
+					playback.ctx.play();
+				}
+			},
+
+			// Check if playback is active
+			isActive: function (playbackObjectId) {
+				return GodotAudio.WX.activePlaybacks.has(playbackObjectId);
+			},
+
+			// Get playback position
+			getPosition: function (playbackObjectId) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback) {
+					return 0;
+				}
+				return playback.ctx.currentTime;
+			},
+
+			// Update pitch scale
+			updatePitchScale: function (playbackObjectId, pitchScale) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback) {
+					return;
+				}
+
+				// Clamp to WeChat's supported range
+				const clampedPitchScale = Math.max(0.5, Math.min(2.0, pitchScale));
+				GodotAudio.WX.log(
+					`Updating pitch scale for ${playbackObjectId}: ${pitchScale} -> ${clampedPitchScale}`
+				);
+				playback.ctx.playbackRate = clampedPitchScale;
+			},
+
+			// Update volume
+			updateVolume: function (playbackObjectId, volumePtr) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback) {
+					return;
+				}
+
+				// Read base volume (use the max of left/right channels)
+				const volume = GodotRuntime.heapSub(HEAPF32, volumePtr, 8);
+				const baseVolume = Math.max(volume[0], volume[1]);
+
+				// Update stored base volume
+				playback.baseVolume = baseVolume;
+
+				// Calculate final volume with bus volume
+				const finalVolume = GodotAudio.WX.calculateFinalVolume(baseVolume, playback.busIndex);
+
+				GodotAudio.WX.log(`Updating volume for ${playbackObjectId}: base=${baseVolume}, final=${finalVolume}`);
+				playback.ctx.volume = finalVolume;
+			},
+
+			// Set bus volume
+			setBusVolume: function (busIndex, volumeDb) {
+				GodotAudio.WX.log(`Setting bus ${busIndex} volume to ${volumeDb} dB`);
+				GodotAudio.WX.busVolumes.set(busIndex, volumeDb);
+
+				// Update all active playbacks on this bus
+				GodotAudio.WX.activePlaybacks.forEach((playback, playbackId) => {
+					if (playback.busIndex === busIndex) {
+						const finalVolume = GodotAudio.WX.calculateFinalVolume(playback.baseVolume, busIndex);
+						GodotAudio.WX.log(
+							`  Updating playback ${playbackId}: base=${playback.baseVolume}, final=${finalVolume}`
+						);
+						playback.ctx.volume = finalVolume;
+					}
+				});
+			},
+			setBusMute: function (busIndex, enable) {
+				GodotAudio.WX.log(`${enable ? "Muting" : "Unmuting"} bus ${busIndex}`);
+				GodotAudio.WX.busMutes.set(busIndex, enable);
+
+				// Update all active playbacks on this bus
+				GodotAudio.WX.activePlaybacks.forEach((playback, playbackId) => {
+					if (playback.busIndex === busIndex) {
+						const finalVolume = GodotAudio.WX.calculateFinalVolume(playback.baseVolume, busIndex);
+						GodotAudio.WX.log(
+							`  Updating playback ${playbackId}: muted=${enable}, final volume=${finalVolume}`
+						);
+						playback.ctx.volume = finalVolume;
+					}
+				});
+			},
 		},
 
 		/**
@@ -1331,12 +1870,7 @@ const _GodotAudio = {
 		 * @param {SampleNodeOptions | undefined} startOptions Optional params.
 		 * @returns {void}
 		 */
-		start_sample: function (
-			playbackObjectId,
-			streamObjectId,
-			busIndex,
-			startOptions
-		) {
+		start_sample: function (playbackObjectId, streamObjectId, busIndex, startOptions) {
 			GodotAudio.SampleNode.stopSampleNode(playbackObjectId);
 			GodotAudio.SampleNode.create(
 				{
@@ -1501,8 +2035,8 @@ const _GodotAudio = {
 		},
 	},
 
-	godot_audio_is_available__sig: 'i',
-	godot_audio_is_available__proxy: 'sync',
+	godot_audio_is_available__sig: "i",
+	godot_audio_is_available__proxy: "sync",
 	godot_audio_is_available: function () {
 		// if (!(window.AudioContext || window.webkitAudioContext)) {
 		// 	return 0;
@@ -1510,72 +2044,62 @@ const _GodotAudio = {
 		return 1;
 	},
 
-	godot_audio_has_worklet__proxy: 'sync',
-	godot_audio_has_worklet__sig: 'i',
+	godot_audio_has_worklet__proxy: "sync",
+	godot_audio_has_worklet__sig: "i",
 	godot_audio_has_worklet: function () {
 		// WeChat Mini Game does not support AudioWorklet.
 		return 0;
 	},
 
-	godot_audio_has_script_processor__proxy: 'sync',
-	godot_audio_has_script_processor__sig: 'i',
+	godot_audio_has_script_processor__proxy: "sync",
+	godot_audio_has_script_processor__sig: "i",
 	godot_audio_has_script_processor: function () {
 		// return GodotAudio.ctx && GodotAudio.ctx.createScriptProcessor ? 1 : 0;
-		return 1
+		return 1;
 	},
 
-	godot_audio_init__proxy: 'sync',
-	godot_audio_init__sig: 'iiiii',
-	godot_audio_init: function (
-		p_mix_rate,
-		p_latency,
-		p_state_change,
-		p_latency_update
-	) {
+	godot_audio_init__proxy: "sync",
+	godot_audio_init__sig: "iiiii",
+	godot_audio_init: function (p_mix_rate, p_latency, p_state_change, p_latency_update) {
 		const statechange = GodotRuntime.get_func(p_state_change);
 		const latencyupdate = GodotRuntime.get_func(p_latency_update);
-		const mix_rate = GodotRuntime.getHeapValue(p_mix_rate, 'i32');
-		const channels = GodotAudio.init(
-			mix_rate,
-			p_latency,
-			statechange,
-			latencyupdate
-		);
-		GodotRuntime.setHeapValue(p_mix_rate, GodotAudio.ctx.sampleRate, 'i32');
+		const mix_rate = GodotRuntime.getHeapValue(p_mix_rate, "i32");
+		const channels = GodotAudio.init(mix_rate, p_latency, statechange, latencyupdate);
+		GodotRuntime.setHeapValue(p_mix_rate, GodotAudio.ctx.sampleRate, "i32");
 		return channels;
 	},
 
-	godot_audio_resume__proxy: 'sync',
-	godot_audio_resume__sig: 'v',
+	godot_audio_resume__proxy: "sync",
+	godot_audio_resume__sig: "v",
 	godot_audio_resume: function () {
-		if (GodotAudio.ctx && GodotAudio.ctx.state !== 'running') {
+		if (GodotAudio.ctx && GodotAudio.ctx.state !== "running") {
 			GodotAudio.ctx.resume();
 		}
 	},
 
-	godot_audio_input_start__proxy: 'sync',
-	godot_audio_input_start__sig: 'i',
+	godot_audio_input_start__proxy: "sync",
+	godot_audio_input_start__sig: "i",
 	godot_audio_input_start: function () {
 		return GodotAudio.create_input(function (input) {
 			input.connect(GodotAudio.driver.get_node());
 		});
 	},
 
-	godot_audio_input_stop__proxy: 'sync',
-	godot_audio_input_stop__sig: 'v',
+	godot_audio_input_stop__proxy: "sync",
+	godot_audio_input_stop__sig: "v",
 	godot_audio_input_stop: function () {
 		if (GodotAudio.input) {
-			const tracks = GodotAudio.input['mediaStream']['getTracks']();
+			const tracks = GodotAudio.input["mediaStream"]["getTracks"]();
 			for (let i = 0; i < tracks.length; i++) {
-				tracks[i]['stop']();
+				tracks[i]["stop"]();
 			}
 			GodotAudio.input.disconnect();
 			GodotAudio.input = null;
 		}
 	},
 
-	godot_audio_sample_stream_is_registered__proxy: 'sync',
-	godot_audio_sample_stream_is_registered__sig: 'ii',
+	godot_audio_sample_stream_is_registered__proxy: "sync",
+	godot_audio_sample_stream_is_registered__sig: "ii",
 	/**
 	 * Returns if the sample stream is registered
 	 * @param {number} streamObjectIdStrPtr Pointer of the streamObjectId
@@ -1586,8 +2110,8 @@ const _GodotAudio = {
 		return Number(GodotAudio.Sample.getSampleOrNull(streamObjectId) != null);
 	},
 
-	godot_audio_sample_register_stream__proxy: 'sync',
-	godot_audio_sample_register_stream__sig: 'viiiiiii',
+	godot_audio_sample_register_stream__proxy: "sync",
+	godot_audio_sample_register_stream__sig: "viiiiiii",
 	/**
 	 * Registers a stream.
 	 * @param {number} streamObjectIdStrPtr StreamObjectId pointer
@@ -1606,26 +2130,26 @@ const _GodotAudio = {
 		loopBegin,
 		loopEnd
 	) {
-		const BYTES_PER_FLOAT32 = 4;
 		const streamObjectId = GodotRuntime.parseString(streamObjectIdStrPtr);
 		const loopMode = GodotRuntime.parseString(loopModeStrPtr);
+
+		// For WeChat Mini Game, use native audio adapter
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.registerStream(streamObjectId, framesPtr, framesTotal, loopMode, loopBegin, loopEnd);
+			return;
+		}
+
+		// Fallback to Web Audio API for standard browsers
+		const BYTES_PER_FLOAT32 = 4;
 		const numberOfChannels = 2;
 		const sampleRate = GodotAudio.ctx.sampleRate;
 
 		/** @type {Float32Array} */
 		const subLeft = GodotRuntime.heapSub(HEAPF32, framesPtr, framesTotal);
 		/** @type {Float32Array} */
-		const subRight = GodotRuntime.heapSub(
-			HEAPF32,
-			framesPtr + framesTotal * BYTES_PER_FLOAT32,
-			framesTotal
-		);
+		const subRight = GodotRuntime.heapSub(HEAPF32, framesPtr + framesTotal * BYTES_PER_FLOAT32, framesTotal);
 
-		const audioBuffer = GodotAudio.ctx.createBuffer(
-			numberOfChannels,
-			framesTotal,
-			sampleRate
-		);
+		const audioBuffer = GodotAudio.ctx.createBuffer(numberOfChannels, framesTotal, sampleRate);
 		audioBuffer.copyToChannel(new Float32Array(subLeft), 0, 0);
 		audioBuffer.copyToChannel(new Float32Array(subRight), 1, 0);
 
@@ -1644,8 +2168,8 @@ const _GodotAudio = {
 		);
 	},
 
-	godot_audio_sample_unregister_stream__proxy: 'sync',
-	godot_audio_sample_unregister_stream__sig: 'vi',
+	godot_audio_sample_unregister_stream__proxy: "sync",
+	godot_audio_sample_unregister_stream__sig: "vi",
 	/**
 	 * Unregisters a stream.
 	 * @param {number} streamObjectIdStrPtr StreamObjectId pointer
@@ -1653,14 +2177,22 @@ const _GodotAudio = {
 	 */
 	godot_audio_sample_unregister_stream: function (streamObjectIdStrPtr) {
 		const streamObjectId = GodotRuntime.parseString(streamObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.unregisterStream(streamObjectId);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		const sample = GodotAudio.Sample.getSampleOrNull(streamObjectId);
 		if (sample != null) {
 			sample.clear();
 		}
 	},
 
-	godot_audio_sample_start__proxy: 'sync',
-	godot_audio_sample_start__sig: 'viiiifi',
+	godot_audio_sample_start__proxy: "sync",
+	godot_audio_sample_start__sig: "viiiifi",
 	/**
 	 * Starts a sample.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1683,6 +2215,14 @@ const _GodotAudio = {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
 		/** @type {string} */
 		const streamObjectId = GodotRuntime.parseString(streamObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.startSample(playbackObjectId, streamObjectId, busIndex, offset, pitchScale, volumePtr);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		/** @type {Float32Array} */
 		const volume = GodotRuntime.heapSub(HEAPF32, volumePtr, 8);
 		/** @type {SampleNodeOptions} */
@@ -1693,16 +2233,11 @@ const _GodotAudio = {
 			pitchScale,
 			start: true,
 		};
-		GodotAudio.start_sample(
-			playbackObjectId,
-			streamObjectId,
-			busIndex,
-			startOptions
-		);
+		GodotAudio.start_sample(playbackObjectId, streamObjectId, busIndex, startOptions);
 	},
 
-	godot_audio_sample_stop__proxy: 'sync',
-	godot_audio_sample_stop__sig: 'vi',
+	godot_audio_sample_stop__proxy: "sync",
+	godot_audio_sample_stop__sig: "vi",
 	/**
 	 * Stops a sample from playing.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1710,11 +2245,19 @@ const _GodotAudio = {
 	 */
 	godot_audio_sample_stop: function (playbackObjectIdStrPtr) {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.stopSample(playbackObjectId);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		GodotAudio.stop_sample(playbackObjectId);
 	},
 
-	godot_audio_sample_set_pause__proxy: 'sync',
-	godot_audio_sample_set_pause__sig: 'vii',
+	godot_audio_sample_set_pause__proxy: "sync",
+	godot_audio_sample_set_pause__sig: "vii",
 	/**
 	 * Sets the pause state of a sample.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1722,11 +2265,19 @@ const _GodotAudio = {
 	 */
 	godot_audio_sample_set_pause: function (playbackObjectIdStrPtr, pause) {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.setPause(playbackObjectId, Boolean(pause));
+			return;
+		}
+
+		// Fallback to Web Audio API
 		GodotAudio.sample_set_pause(playbackObjectId, Boolean(pause));
 	},
 
-	godot_audio_sample_is_active__proxy: 'sync',
-	godot_audio_sample_is_active__sig: 'ii',
+	godot_audio_sample_is_active__proxy: "sync",
+	godot_audio_sample_is_active__sig: "ii",
 	/**
 	 * Returns if the sample is active.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1734,11 +2285,18 @@ const _GodotAudio = {
 	 */
 	godot_audio_sample_is_active: function (playbackObjectIdStrPtr) {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			return Number(GodotAudio.WX.isActive(playbackObjectId));
+		}
+
+		// Fallback to Web Audio API
 		return Number(GodotAudio.sampleNodes.has(playbackObjectId));
 	},
 
-	godot_audio_get_sample_playback_position__proxy: 'sync',
-	godot_audio_get_sample_playback_position__sig: 'di',
+	godot_audio_get_sample_playback_position__proxy: "sync",
+	godot_audio_get_sample_playback_position__sig: "di",
 	/**
 	 * Returns the position of the playback position.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1746,6 +2304,13 @@ const _GodotAudio = {
 	 */
 	godot_audio_get_sample_playback_position: function (playbackObjectIdStrPtr) {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			return GodotAudio.WX.getPosition(playbackObjectId);
+		}
+
+		// Fallback to Web Audio API
 		const sampleNode = GodotAudio.SampleNode.getSampleNodeOrNull(playbackObjectId);
 		if (sampleNode == null) {
 			return 0;
@@ -1753,24 +2318,29 @@ const _GodotAudio = {
 		return sampleNode.getPlaybackPosition();
 	},
 
-	godot_audio_sample_update_pitch_scale__proxy: 'sync',
-	godot_audio_sample_update_pitch_scale__sig: 'vii',
+	godot_audio_sample_update_pitch_scale__proxy: "sync",
+	godot_audio_sample_update_pitch_scale__sig: "vii",
 	/**
 	 * Updates the pitch scale of a sample.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
 	 * @param {number} pitchScale Pitch scale value
 	 * @returns {void}
 	 */
-	godot_audio_sample_update_pitch_scale: function (
-		playbackObjectIdStrPtr,
-		pitchScale
-	) {
+	godot_audio_sample_update_pitch_scale: function (playbackObjectIdStrPtr, pitchScale) {
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
+
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.updatePitchScale(playbackObjectId, pitchScale);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		GodotAudio.update_sample_pitch_scale(playbackObjectId, pitchScale);
 	},
 
-	godot_audio_sample_set_volumes_linear__proxy: 'sync',
-	godot_audio_sample_set_volumes_linear__sig: 'vii',
+	godot_audio_sample_set_volumes_linear__proxy: "sync",
+	godot_audio_sample_set_volumes_linear__sig: "vii",
 	/**
 	 * Sets the volumes linear of each mentioned bus for the sample.
 	 * @param {number} playbackObjectIdStrPtr Playback object id pointer
@@ -1790,20 +2360,24 @@ const _GodotAudio = {
 		/** @type {string} */
 		const playbackObjectId = GodotRuntime.parseString(playbackObjectIdStrPtr);
 
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			// WeChat only supports a single global volume, so we use the first volume value
+			GodotAudio.WX.updateVolume(playbackObjectId, volumesPtr);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		/** @type {Uint32Array} */
 		const buses = GodotRuntime.heapSub(HEAP32, busesPtr, busesSize);
 		/** @type {Float32Array} */
 		const volumes = GodotRuntime.heapSub(HEAPF32, volumesPtr, volumesSize);
 
-		GodotAudio.sample_set_volumes_linear(
-			playbackObjectId,
-			Array.from(buses),
-			volumes
-		);
+		GodotAudio.sample_set_volumes_linear(playbackObjectId, Array.from(buses), volumes);
 	},
 
-	godot_audio_sample_bus_set_count__proxy: 'sync',
-	godot_audio_sample_bus_set_count__sig: 'vi',
+	godot_audio_sample_bus_set_count__proxy: "sync",
+	godot_audio_sample_bus_set_count__sig: "vi",
 	/**
 	 * Sets the bus count.
 	 * @param {number} count Bus count
@@ -1813,8 +2387,8 @@ const _GodotAudio = {
 		GodotAudio.set_sample_bus_count(count);
 	},
 
-	godot_audio_sample_bus_remove__proxy: 'sync',
-	godot_audio_sample_bus_remove__sig: 'vi',
+	godot_audio_sample_bus_remove__proxy: "sync",
+	godot_audio_sample_bus_remove__sig: "vi",
 	/**
 	 * Removes a bus.
 	 * @param {number} index Index of the bus to remove
@@ -1824,8 +2398,8 @@ const _GodotAudio = {
 		GodotAudio.remove_sample_bus(index);
 	},
 
-	godot_audio_sample_bus_add__proxy: 'sync',
-	godot_audio_sample_bus_add__sig: 'vi',
+	godot_audio_sample_bus_add__proxy: "sync",
+	godot_audio_sample_bus_add__sig: "vi",
 	/**
 	 * Adds a bus at the defined position.
 	 * @param {number} atPos Position to add the bus
@@ -1835,8 +2409,8 @@ const _GodotAudio = {
 		GodotAudio.add_sample_bus(atPos);
 	},
 
-	godot_audio_sample_bus_move__proxy: 'sync',
-	godot_audio_sample_bus_move__sig: 'vii',
+	godot_audio_sample_bus_move__proxy: "sync",
+	godot_audio_sample_bus_move__sig: "vii",
 	/**
 	 * Moves the bus from a position to another.
 	 * @param {number} fromPos Position of the bus to move
@@ -1847,8 +2421,8 @@ const _GodotAudio = {
 		GodotAudio.move_sample_bus(fromPos, toPos);
 	},
 
-	godot_audio_sample_bus_set_send__proxy: 'sync',
-	godot_audio_sample_bus_set_send__sig: 'vii',
+	godot_audio_sample_bus_set_send__proxy: "sync",
+	godot_audio_sample_bus_set_send__sig: "vii",
 	/**
 	 * Sets the "send" of a bus.
 	 * @param {number} bus Position of the bus to set the send
@@ -1859,8 +2433,8 @@ const _GodotAudio = {
 		GodotAudio.set_sample_bus_send(bus, sendIndex);
 	},
 
-	godot_audio_sample_bus_set_volume_db__proxy: 'sync',
-	godot_audio_sample_bus_set_volume_db__sig: 'vii',
+	godot_audio_sample_bus_set_volume_db__proxy: "sync",
+	godot_audio_sample_bus_set_volume_db__sig: "vii",
 	/**
 	 * Sets the volume db of a bus.
 	 * @param {number} bus Position of the bus to set the volume db
@@ -1868,11 +2442,18 @@ const _GodotAudio = {
 	 * @returns {void}
 	 */
 	godot_audio_sample_bus_set_volume_db: function (bus, volumeDb) {
+		// For WeChat Mini Game
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.setBusVolume(bus, volumeDb);
+			return;
+		}
+
+		// Fallback to Web Audio API
 		GodotAudio.set_sample_bus_volume_db(bus, volumeDb);
 	},
 
-	godot_audio_sample_bus_set_solo__proxy: 'sync',
-	godot_audio_sample_bus_set_solo__sig: 'vii',
+	godot_audio_sample_bus_set_solo__proxy: "sync",
+	godot_audio_sample_bus_set_solo__sig: "vii",
 	/**
 	 * Sets the state of solo for a bus
 	 * @param {number} bus Position of the bus to set the solo state
@@ -1883,8 +2464,8 @@ const _GodotAudio = {
 		GodotAudio.set_sample_bus_solo(bus, Boolean(enable));
 	},
 
-	godot_audio_sample_bus_set_mute__proxy: 'sync',
-	godot_audio_sample_bus_set_mute__sig: 'vii',
+	godot_audio_sample_bus_set_mute__proxy: "sync",
+	godot_audio_sample_bus_set_mute__sig: "vii",
 	/**
 	 * Sets the state of mute for a bus
 	 * @param {number} bus Position of the bus to set the mute state
@@ -1892,11 +2473,17 @@ const _GodotAudio = {
 	 * @returns {void}
 	 */
 	godot_audio_sample_bus_set_mute: function (bus, enable) {
+		if (typeof wx !== "undefined") {
+			GodotAudio.WX.setBusMute(bus, Boolean(enable));
+			return;
+		}
+
+		// Fallback to Web Audio API
 		GodotAudio.set_sample_bus_mute(bus, Boolean(enable));
 	},
 
-	godot_audio_sample_set_finished_callback__proxy: 'sync',
-	godot_audio_sample_set_finished_callback__sig: 'vi',
+	godot_audio_sample_set_finished_callback__proxy: "sync",
+	godot_audio_sample_set_finished_callback__sig: "vi",
 	/**
 	 * Sets the finished callback
 	 * @param {Number} callbackPtr Finished callback pointer
@@ -1907,14 +2494,14 @@ const _GodotAudio = {
 	},
 };
 
-autoAddDeps(_GodotAudio, '$GodotAudio');
+autoAddDeps(_GodotAudio, "$GodotAudio");
 mergeInto(LibraryManager.library, _GodotAudio);
 
 /**
  * The AudioWorklet API driver, used when threads are available.
  */
 const GodotAudioWorklet = {
-	$GodotAudioWorklet__deps: ['$GodotAudio', '$GodotConfig'],
+	$GodotAudioWorklet__deps: ["$GodotAudio", "$GodotConfig"],
 	$GodotAudioWorklet: {
 		promise: null,
 		worklet: null,
@@ -1942,8 +2529,8 @@ const GodotAudioWorklet = {
 				const node = GodotAudioWorklet.worklet;
 				node.connect(GodotAudio.ctx.destination);
 				node.port.postMessage({
-					'cmd': 'start',
-					'data': [state, in_buf, out_buf],
+					cmd: "start",
+					data: [state, in_buf, out_buf],
 				});
 				node.port.onmessage = function (event) {
 					GodotRuntime.error(event.data);
@@ -1951,14 +2538,7 @@ const GodotAudioWorklet = {
 			});
 		},
 
-		start_no_threads: function (
-			p_out_buf,
-			p_out_size,
-			out_callback,
-			p_in_buf,
-			p_in_size,
-			in_callback
-		) {
+		start_no_threads: function (p_out_buf, p_out_size, out_callback, p_in_buf, p_in_size, in_callback) {
 			function RingBuffer() {
 				let wpos = 0;
 				let rpos = 0;
@@ -1980,12 +2560,12 @@ const GodotAudioWorklet = {
 						wpos = 0;
 					}
 					if (pending_samples > 0) {
-						wbuf.set(
-							buffer.subarray(wpos, wpos + pending_samples),
-							tot_sent - pending_samples
-						);
+						wbuf.set(buffer.subarray(wpos, wpos + pending_samples), tot_sent - pending_samples);
 					}
-					port.postMessage({ 'cmd': 'chunk', 'data': wbuf.subarray(0, tot_sent) });
+					port.postMessage({
+						cmd: "chunk",
+						data: wbuf.subarray(0, tot_sent),
+					});
 					wpos += pending_samples;
 					pending_samples = 0;
 				}
@@ -2017,23 +2597,20 @@ const GodotAudioWorklet = {
 				const buffer = GodotRuntime.heapSlice(HEAPF32, p_out_buf, p_out_size);
 				node.connect(GodotAudio.ctx.destination);
 				node.port.postMessage({
-					'cmd': 'start_nothreads',
-					'data': [buffer, p_in_size],
+					cmd: "start_nothreads",
+					data: [buffer, p_in_size],
 				});
 				node.port.onmessage = function (event) {
 					if (!GodotAudioWorklet.worklet) {
 						return;
 					}
-					if (event.data['cmd'] === 'read') {
-						const read = event.data['data'];
-						GodotAudioWorklet.ring_buffer.consumed(
-							read,
-							GodotAudioWorklet.worklet.port
-						);
-					} else if (event.data['cmd'] === 'input') {
-						const buf = event.data['data'];
+					if (event.data["cmd"] === "read") {
+						const read = event.data["data"];
+						GodotAudioWorklet.ring_buffer.consumed(read, GodotAudioWorklet.worklet.port);
+					} else if (event.data["cmd"] === "input") {
+						const buf = event.data["data"];
 						if (buf.length > p_in_size) {
-							GodotRuntime.error('Input chunk is too big');
+							GodotRuntime.error("Input chunk is too big");
 							return;
 						}
 						GodotAudioWorklet.ring_buffer.receive(buf);
@@ -2056,8 +2633,8 @@ const GodotAudioWorklet = {
 				const p = GodotAudioWorklet.promise;
 				p.then(function () {
 					GodotAudioWorklet.worklet.port.postMessage({
-						'cmd': 'stop',
-						'data': null,
+						cmd: "stop",
+						data: null,
 					});
 					GodotAudioWorklet.worklet.disconnect();
 					GodotAudioWorklet.worklet.port.onmessage = null;
@@ -2072,8 +2649,8 @@ const GodotAudioWorklet = {
 		},
 	},
 
-	godot_audio_worklet_create__proxy: 'sync',
-	godot_audio_worklet_create__sig: 'ii',
+	godot_audio_worklet_create__proxy: "sync",
+	godot_audio_worklet_create__sig: "ii",
 	godot_audio_worklet_create: function (channels) {
 		// try {
 		// 	GodotAudioWorklet.create(channels);
@@ -2084,23 +2661,17 @@ const GodotAudioWorklet = {
 		return 0;
 	},
 
-	godot_audio_worklet_start__proxy: 'sync',
-	godot_audio_worklet_start__sig: 'viiiii',
-	godot_audio_worklet_start: function (
-		p_in_buf,
-		p_in_size,
-		p_out_buf,
-		p_out_size,
-		p_state
-	) {
+	godot_audio_worklet_start__proxy: "sync",
+	godot_audio_worklet_start__sig: "viiiii",
+	godot_audio_worklet_start: function (p_in_buf, p_in_size, p_out_buf, p_out_size, p_state) {
 		const out_buffer = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
 		const in_buffer = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
 		const state = GodotRuntime.heapSub(HEAP32, p_state, 4);
 		GodotAudioWorklet.start(in_buffer, out_buffer, state);
 	},
 
-	godot_audio_worklet_start_no_threads__proxy: 'sync',
-	godot_audio_worklet_start_no_threads__sig: 'viiiiii',
+	godot_audio_worklet_start_no_threads__proxy: "sync",
+	godot_audio_worklet_start_no_threads__sig: "viiiiii",
 	godot_audio_worklet_start_no_threads: function (
 		p_out_buf,
 		p_out_size,
@@ -2111,240 +2682,75 @@ const GodotAudioWorklet = {
 	) {
 		const out_callback = GodotRuntime.get_func(p_out_callback);
 		const in_callback = GodotRuntime.get_func(p_in_callback);
-		GodotAudioWorklet.start_no_threads(
-			p_out_buf,
-			p_out_size,
-			out_callback,
-			p_in_buf,
-			p_in_size,
-			in_callback
-		);
+		GodotAudioWorklet.start_no_threads(p_out_buf, p_out_size, out_callback, p_in_buf, p_in_size, in_callback);
 	},
 
-	godot_audio_worklet_state_wait__sig: 'iiii',
-	godot_audio_worklet_state_wait: function (
-		p_state,
-		p_idx,
-		p_expected,
-		p_timeout
-	) {
+	godot_audio_worklet_state_wait__sig: "iiii",
+	godot_audio_worklet_state_wait: function (p_state, p_idx, p_expected, p_timeout) {
 		Atomics.wait(HEAP32, (p_state >> 2) + p_idx, p_expected, p_timeout);
 		return Atomics.load(HEAP32, (p_state >> 2) + p_idx);
 	},
 
-	godot_audio_worklet_state_add__sig: 'iiii',
+	godot_audio_worklet_state_add__sig: "iiii",
 	godot_audio_worklet_state_add: function (p_state, p_idx, p_value) {
 		return Atomics.add(HEAP32, (p_state >> 2) + p_idx, p_value);
 	},
 
-	godot_audio_worklet_state_get__sig: 'iii',
+	godot_audio_worklet_state_get__sig: "iii",
 	godot_audio_worklet_state_get: function (p_state, p_idx) {
 		return Atomics.load(HEAP32, (p_state >> 2) + p_idx);
 	},
 };
 
-autoAddDeps(GodotAudioWorklet, '$GodotAudioWorklet');
+autoAddDeps(GodotAudioWorklet, "$GodotAudioWorklet");
 mergeInto(LibraryManager.library, GodotAudioWorklet);
 
 /*
  * The ScriptProcessorNode API, used as a fallback if AudioWorklet is not available.
  */
 const GodotAudioScript = {
-	$GodotAudioScript__deps: ['$GodotAudio'],
+	$GodotAudioScript__deps: ["$GodotAudio"],
 	$GodotAudioScript: {
 		script: null,
-		useWorker: false,  // Toggle for Worker-assisted mode
-		worker: null,
-		workerReady: false,
 
 		create: function (buffer_length, channel_count) {
-			GodotAudioScript.script = GodotAudio.ctx.createScriptProcessor(
-				buffer_length,
-				2,
-				channel_count
-			);
+			GodotAudioScript.script = GodotAudio.ctx.createScriptProcessor(buffer_length, 2, channel_count);
 			GodotAudio.driver = GodotAudioScript;
 			return GodotAudioScript.script.bufferSize;
 		},
 
 		start: function (p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess) {
-			/**
-			 * Audio processing for WeChat Mini Game using ScriptProcessorNode.
-			 *
-			 * Direct mode (useWorker=false):
-			 * - All processing in onaudioprocess (main thread)
-			 * - Lowest latency, simplest implementation
-			 * - May stutter under CPU pressure
-			 *
-			 * Worker mode (useWorker=true):
-			 * - Worker maintains triple-buffer pool
-			 * - onaudioprocess gets pre-filled buffer instantly
-			 * - WASM processing happens asynchronously
-			 * - Prevents stuttering when CPU is under pressure
-			 */
-
-			if (!GodotAudioScript.useWorker) {
-				GodotAudioScript.script.onaudioprocess = function (event) {
-					// Read input
-					const inb = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
-					const input = event.inputBuffer;
-					if (GodotAudio.input) {
-						const inlen = input.getChannelData(0).length;
-						for (let ch = 0; ch < 2; ch++) {
-							const data = input.getChannelData(ch);
-							for (let s = 0; s < inlen; s++) {
-								inb[s * 2 + ch] = data[s];
-							}
-						}
-					}
-
-					// Let Godot process the input/output.
-					onprocess();
-
-					// Write the output.
-					const outb = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
-					const output = event.outputBuffer;
-					const channels = output.numberOfChannels;
-					for (let ch = 0; ch < channels; ch++) {
-						const data = output.getChannelData(ch);
-						// Loop through samples and assign computed values.
-						for (let sample = 0; sample < data.length; sample++) {
-							data[sample] = outb[sample * channels + ch];
-						}
-					}
-				};
-			} else {
-				// Worker-assisted mode
-				GodotAudioScript.startWorkerMode(p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess);
-			}
-
-			GodotAudioScript.script.connect(GodotAudio.ctx.destination);
-		},
-
-		startWorkerMode: function (p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess) {
-			const worker = wx.createWorker('workers/godot.audio.worker.js');
-			GodotAudioScript.worker = worker;
-
-			const frameCount = GodotAudioScript.script.bufferSize;
-			const channels = 2;
-
-			// Scratch buffers to avoid GC
-			const scratchOutput = new Array(channels);
-			const scratchInput = new Array(channels);
-			for (let i = 0; i < channels; i++) {
-				scratchOutput[i] = new Float32Array(frameCount);
-				scratchInput[i] = new Float32Array(frameCount);
-			}
-
-			// Buffer queue for ready buffers
-			GodotAudioScript.bufferQueue = [];
-
-			// Setup Worker message handler FIRST (before sending init)
-			worker.onMessage(function (event) {
-				const cmd = event.cmd;
-				const data = event.data;
-
-				switch (cmd) {
-					case 'ready':
-						GodotAudioScript.workerReady = true;
-						// Now Worker is ready, trigger pre-fill
-						worker.postMessage({ cmd: 'start_prefill', data: {} });
-						break;
-
-					case 'execute_process':
-						// Worker requests WASM processing
-						const inBuffer = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
-						const outBuffer = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
-
-						// Write input if provided
-						if (data.input) {
-							for (let sample = 0; sample < frameCount; sample++) {
-								for (let ch = 0; ch < Math.min(channels, data.input.length); ch++) {
-									inBuffer[sample * 2 + ch] = data.input[ch][sample] || 0;
-								}
-							}
-						}
-
-						// Execute WASM callback
-						onprocess();
-
-						// Read output into scratch buffer
-						for (let ch = 0; ch < channels; ch++) {
-							for (let sample = 0; sample < frameCount; sample++) {
-								scratchOutput[ch][sample] = outBuffer[sample * channels + ch];
-							}
-						}
-
-						// Send result back to Worker
-						worker.postMessage({
-							cmd: 'process_done',
-							data: { output: scratchOutput }
-						});
-						break;
-
-					case 'buffer':
-						// Worker sends a ready buffer - add to queue
-						GodotAudioScript.bufferQueue.push(data);
-						break;
-
-					default:
-						break;
-				}
-			});
-
-			// Initialize Worker
-			worker.postMessage({
-				cmd: 'init',
-				data: {
-					channels: channels,
-					frameCount: frameCount
-				}
-			});
-
-			// Setup audio callback
 			GodotAudioScript.script.onaudioprocess = function (event) {
+				// Read input
+				const inb = GodotRuntime.heapSub(HEAPF32, p_in_buf, p_in_size);
 				const input = event.inputBuffer;
+				if (GodotAudio.input) {
+					const inlen = input.getChannelData(0).length;
+					for (let ch = 0; ch < 2; ch++) {
+						const data = input.getChannelData(ch);
+						for (let s = 0; s < inlen; s++) {
+							inb[s * 2 + ch] = data[s];
+						}
+					}
+				}
+
+				// Let Godot process the input/output.
+				onprocess();
+
+				// Write the output.
+				const outb = GodotRuntime.heapSub(HEAPF32, p_out_buf, p_out_size);
 				const output = event.outputBuffer;
-
-				// Try to get a buffer from queue
-				let buffer = null;
-				if (GodotAudioScript.bufferQueue.length > 0) {
-					buffer = GodotAudioScript.bufferQueue.shift();
-				} else {
-					// Queue empty, request from Worker (for next time)
-					worker.postMessage({ cmd: 'request_buffer', data: {} });
-				}
-
-				// Use buffer if available
-				if (buffer) {
-					for (let ch = 0; ch < output.numberOfChannels; ch++) {
-						output.getChannelData(ch).set(buffer[ch]);
+				const channels = output.numberOfChannels;
+				for (let ch = 0; ch < channels; ch++) {
+					const data = output.getChannelData(ch);
+					// Loop through samples and assign computed values.
+					for (let sample = 0; sample < data.length; sample++) {
+						data[sample] = outb[sample * channels + ch];
 					}
-				} else {
-					// No buffer ready - output silence
-					for (let ch = 0; ch < output.numberOfChannels; ch++) {
-						output.getChannelData(ch).fill(0);
-					}
-				}
-
-				// Send input back to Worker for processing
-				if (GodotAudio.input && input.numberOfChannels > 0) {
-					// Use scratch input buffer
-					const inputChannels = Math.min(channels, input.numberOfChannels);
-					for (let ch = 0; ch < inputChannels; ch++) {
-						scratchInput[ch].set(input.getChannelData(ch));
-					}
-					worker.postMessage({
-						cmd: 'return_input',
-						data: { input: scratchInput }
-					});
-				}
-
-				// Pre-request next buffer if queue is getting low
-				if (GodotAudioScript.bufferQueue.length < 2) {
-					worker.postMessage({ cmd: 'request_buffer', data: {} });
 				}
 			};
+
+			GodotAudioScript.script.connect(GodotAudio.ctx.destination);
 		},
 
 		get_node: function () {
@@ -2358,51 +2764,32 @@ const GodotAudioScript = {
 					GodotAudioScript.script.onaudioprocess = null;
 					GodotAudioScript.script = null;
 				}
-				if (GodotAudioScript.worker) {
-					GodotAudioScript.worker.postMessage({ cmd: 'stop', data: {} });
-					GodotAudioScript.worker.terminate();
-					GodotAudioScript.worker = null;
-				}
-				GodotAudioScript.workerReady = false;
-				GodotAudioScript.bufferQueue = [];
 				resolve();
 			});
 		},
 	},
 
-	godot_audio_script_create__proxy: 'sync',
-	godot_audio_script_create__sig: 'iii',
+	godot_audio_script_create__proxy: "sync",
+	godot_audio_script_create__sig: "iii",
 	godot_audio_script_create: function (buffer_length, channel_count) {
-		const buf_len = GodotRuntime.getHeapValue(buffer_length, 'i32');
+		const buf_len = GodotRuntime.getHeapValue(buffer_length, "i32");
 		try {
 			const out_len = GodotAudioScript.create(buf_len, channel_count);
-			GodotRuntime.setHeapValue(buffer_length, out_len, 'i32');
+			GodotRuntime.setHeapValue(buffer_length, out_len, "i32");
 		} catch (e) {
-			GodotRuntime.error('Error starting AudioDriverScriptProcessor', e);
+			GodotRuntime.error("Error starting AudioDriverScriptProcessor", e);
 			return 1;
 		}
 		return 0;
 	},
 
-	godot_audio_script_start__proxy: 'sync',
-	godot_audio_script_start__sig: 'viiiii',
-	godot_audio_script_start: function (
-		p_in_buf,
-		p_in_size,
-		p_out_buf,
-		p_out_size,
-		p_cb
-	) {
+	godot_audio_script_start__proxy: "sync",
+	godot_audio_script_start__sig: "viiiii",
+	godot_audio_script_start: function (p_in_buf, p_in_size, p_out_buf, p_out_size, p_cb) {
 		const onprocess = GodotRuntime.get_func(p_cb);
-		GodotAudioScript.start(
-			p_in_buf,
-			p_in_size,
-			p_out_buf,
-			p_out_size,
-			onprocess
-		);
+		GodotAudioScript.start(p_in_buf, p_in_size, p_out_buf, p_out_size, onprocess);
 	},
 };
 
-autoAddDeps(GodotAudioScript, '$GodotAudioScript');
+autoAddDeps(GodotAudioScript, "$GodotAudioScript");
 mergeInto(LibraryManager.library, GodotAudioScript);
