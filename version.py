@@ -1,9 +1,9 @@
 short_name = "godot"
-name = "Godot Engine"
+name = "Godot Engine for Wechat"
 major = 4
 minor = 7
 patch = 2
 status = "rc"
 module_config = ""
-website = "https://godotengine.org"
+website = "https://get.godots.app"
 docs = "4.7"
