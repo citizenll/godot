@@ -64,16 +64,78 @@ const GodotIME = {
 					GodotRuntime.free(ptr)
 				}
 			}
+			let lastValue = ""
+			let lastValueLength = 0
+			let sessionInitialValue = ""
+			let sessionInitialLength = 0
+			let currentLength = 0
+			let imeEnded = false
+			let sendKey = (codeStr, keyStr, modifiers = 0) => {
+				GodotRuntime.stringToHeap(codeStr, code, 32)
+				GodotRuntime.stringToHeap(keyStr, key, 32)
+				key_cb(1, 0, modifiers)
+				key_cb(0, 0, modifiers)
+			}
+			let clearExistingText = (length) => {
+				if (length <= 0) {
+					return
+				}
+				// Try select-all then backspace to replace, and also fallback to backspace N times.
+				sendKey("KeyA", "a", 4)
+				sendKey("Backspace", "Backspace", 0)
+				for (let i = 0; i < length; i++) {
+					sendKey("Backspace", "Backspace", 0)
+				}
+			}
+			let insertText = (text) => {
+				for (const ch of text) {
+					sendKey("Unidentified", ch, 0)
+				}
+			}
 			let inputCb = evt => {
-				if (!evt.value) return
-				ime_event_cb(1, evt)
+				if (!evt || typeof evt.value !== "string") {
+					return
+				}
+				const value = evt.value
+				if (value === lastValue) {
+					return
+				}
+				if (!imeEnded) {
+					// End IME so key events are not ignored.
+					ime_event_cb(2, { value: "" })
+					imeEnded = true
+				}
+				clearExistingText(currentLength)
+				insertText(value)
+				lastValue = value
+				lastValueLength = value.length
+				currentLength = lastValueLength
+				GodotIME.initialText = lastValue
 			}
 			let inputConfirm = evt => {
-				if (evt.value) ime_event_cb(2, evt)
+				const value = (evt && typeof evt.value === "string") ? evt.value : lastValue
+				ime_event_cb(2, { value: "" })
+				clearExistingText(currentLength)
+				insertText(value)
+				GodotIME.initialText = value
+				lastValue = value
+				lastValueLength = value.length
+				currentLength = lastValueLength
 				ime.hide();
 			}
 			let inputComplete = evt => {
-				if (evt.value && GodotIME.active) ime_event_cb(2, evt)
+				if (!GodotIME.active) {
+					ime.hide();
+					return
+				}
+				const value = (evt && typeof evt.value === "string") ? evt.value : lastValue
+				ime_event_cb(2, { value: "" })
+				clearExistingText(currentLength)
+				insertText(value)
+				GodotIME.initialText = value
+				lastValue = value
+				lastValueLength = value.length
+				currentLength = lastValueLength
 				ime.hide();
 			}
 			let ime = {
@@ -85,8 +147,16 @@ const GodotIME = {
 					}
 					if (GodotIME.active) return;
 					GodotIME.active = true;
+					if (typeof GodotIME.initialText === "string") {
+						lastValue = GodotIME.initialText
+					}
+					lastValueLength = lastValue.length
+					sessionInitialValue = lastValue
+					sessionInitialLength = lastValueLength
+					currentLength = sessionInitialLength
+					imeEnded = false
 					wx.showKeyboard({
-						defaultValue: GodotIME.initialText,
+						defaultValue: lastValue,
 						maxLength: 99,
 						multiple: false,
 						confirmHold: true,

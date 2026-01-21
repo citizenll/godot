@@ -235,7 +235,16 @@ const GodotDisplayScreen = {
 		desired_size: [0, 0],
 		hidpi: true,
 		getPixelRatio: function () {
-			return GodotDisplayScreen.hidpi ? window.devicePixelRatio || 1 : 1;
+			if (!GodotDisplayScreen.hidpi) {
+				return 1;
+			}
+			if (typeof wx !== "undefined" && wx.getWindowInfo) {
+				const info = wx.getWindowInfo();
+				if (info && info.pixelRatio) {
+					return info.pixelRatio;
+				}
+			}
+			return window.devicePixelRatio || 1;
 		},
 		isFullscreen: function () {
 			const elem = document.fullscreenElement || document.mozFullscreenElement
@@ -317,8 +326,19 @@ const GodotDisplayScreen = {
 			const scale = GodotDisplayScreen.getPixelRatio();
 			if (isFullscreen || wantsFullWindow) {
 				// We need to match screen size.
-				width = window.innerWidth * scale;
-				height = window.innerHeight * scale;
+				if (typeof wx !== "undefined" && wx.getWindowInfo) {
+					const info = wx.getWindowInfo();
+					if (info && info.windowWidth && info.windowHeight) {
+						width = info.windowWidth * scale;
+						height = info.windowHeight * scale;
+					} else {
+						width = window.innerWidth * scale;
+						height = window.innerHeight * scale;
+					}
+				} else {
+					width = window.innerWidth * scale;
+					height = window.innerHeight * scale;
+				}
 			}
 			const csw = `${width / scale}px`;
 			const csh = `${height / scale}px`;

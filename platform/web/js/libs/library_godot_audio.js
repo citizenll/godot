@@ -1309,6 +1309,7 @@ const _GodotAudio = {
 		 */
 		WX: {
 			DEBUG: false,
+			MAX_POOL_SIZE: 16,
 
 			// Storage for registered streams
 			streamPaths: null, // Map<streamId, {path, loopMode, framesTotal}>
@@ -1471,6 +1472,23 @@ const _GodotAudio = {
 
 			// Return a context to the pool for reuse
 			releaseContext: function (ctx) {
+				if (!ctx) {
+					return;
+				}
+				GodotAudio.WX.resetContext(ctx);
+
+				if (GodotAudio.WX.contextPool.length >= GodotAudio.WX.MAX_POOL_SIZE) {
+					GodotAudio.WX.destroyContext(ctx);
+					GodotAudio.WX.log(`Context pool full, destroyed context`);
+					return;
+				}
+
+				// Add to pool
+				GodotAudio.WX.contextPool.push(ctx);
+				GodotAudio.WX.log(`Context returned to pool (${GodotAudio.WX.contextPool.length} available)`);
+			},
+
+			resetContext: function (ctx) {
 				// Clean up event listeners
 				ctx.offCanplay();
 				ctx.offPlay();
@@ -1488,10 +1506,44 @@ const _GodotAudio = {
 				ctx.autoplay = false;
 				ctx.loop = false;
 				ctx.volume = 1;
+				ctx.playbackRate = 1;
+				ctx.startTime = 0;
+			},
 
-				// Add to pool
-				GodotAudio.WX.contextPool.push(ctx);
-				GodotAudio.WX.log(`Context returned to pool (${GodotAudio.WX.contextPool.length} available)`);
+			destroyContext: function (ctx) {
+				if (!ctx) {
+					return;
+				}
+				try {
+					GodotAudio.WX.resetContext(ctx);
+				} catch (e) {
+					// ignore
+				}
+				try {
+					ctx.stop();
+				} catch (e) {
+					// ignore
+				}
+				if (typeof ctx.destroy === "function") {
+					try {
+						ctx.destroy();
+					} catch (e) {
+						// ignore
+					}
+				}
+			},
+
+			cleanupPlayback: function (playbackObjectId, ctx, destroy) {
+				const playback = GodotAudio.WX.activePlaybacks.get(playbackObjectId);
+				if (!playback || playback.ctx !== ctx) {
+					return;
+				}
+				GodotAudio.WX.activePlaybacks.delete(playbackObjectId);
+				if (destroy) {
+					GodotAudio.WX.destroyContext(ctx);
+				} else {
+					GodotAudio.WX.releaseContext(ctx);
+				}
 			},
 
 			// Encode PCM data to WAV format
@@ -1701,6 +1753,8 @@ const _GodotAudio = {
 				ctx.volume = finalVolume;
 				ctx.playbackRate = clampedPitchScale;
 				ctx.autoplay = false;
+				ctx.loop = streamInfo.loopMode === "forward";
+				ctx.startTime = offset > 0 ? offset : 0;
 
 				// Track playback state
 				let hasStarted = false;
@@ -1727,16 +1781,17 @@ const _GodotAudio = {
 					}
 
 					// Clean up
-					GodotAudio.WX.activePlaybacks.delete(playbackObjectId);
-					GodotAudio.WX.releaseContext(ctx);
+					GodotAudio.WX.cleanupPlayback(playbackObjectId, ctx, false);
+				});
+
+				ctx.onStop(() => {
+					GodotAudio.WX.cleanupPlayback(playbackObjectId, ctx, false);
 				});
 
 				ctx.onError((error) => {
 					GodotAudio.WX.error(`Playback error for ${playbackObjectId}`, error);
+					GodotAudio.WX.cleanupPlayback(playbackObjectId, ctx, true);
 				});
-
-				// Start playback
-				ctx.play();
 
 				// Store active playback with bus info
 				GodotAudio.WX.activePlaybacks.set(playbackObjectId, {
@@ -1744,6 +1799,14 @@ const _GodotAudio = {
 					busIndex: busIndex,
 					baseVolume: baseVolume,
 				});
+
+				// Start playback
+				try {
+					ctx.play();
+				} catch (error) {
+					GodotAudio.WX.error(`Playback start failed for ${playbackObjectId}`, error);
+					GodotAudio.WX.cleanupPlayback(playbackObjectId, ctx, true);
+				}
 			},
 
 			// Stop sample playback
