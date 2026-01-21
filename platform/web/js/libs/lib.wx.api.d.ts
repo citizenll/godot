@@ -8386,6 +8386,22 @@ msg: 'hello from main'
      * 结束当前 Worker 线程。仅限在主线程 worker 对象上调用。 */
     terminate(): void
 }
+interface WindowInfo {
+    /** 屏幕宽度，单位 px */
+    screenWidth: number
+    /** 屏幕高度，单位 px */
+    screenHeight: number
+    /** 可使用窗口宽度，单位 px */
+    windowWidth: number
+    /** 可使用窗口高度，单位 px */
+    windowHeight: number
+    /** 设备像素比 */
+    pixelRatio: number
+    /** 状态栏高度 */
+    statusBarHeight?: number
+    /** 安全区域 */
+    safeArea?: SafeArea
+}
 interface Wx {
     /**
 小程序云开发
@@ -8565,6 +8581,10 @@ console.log(res.platform)
 }
 ``` */
     getSystemInfoSync(): SystemInfo
+    /** [Object wx.getWindowInfo()](https://developers.weixin.qq.com/minigame/dev/api/base/system/system-info/wx.getWindowInfo.html)
+     *
+     * 获取窗口信息 */
+    getWindowInfo(): WindowInfo
     /** [[BannerAd](https://developers.weixin.qq.com/minigame/dev/api/ad/BannerAd.html) wx.createBannerAd(Object object)](https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createBannerAd.html)
      *
      * 创建 banner 广告组件。请通过 [wx.getSystemInfoSync()](https://developers.weixin.qq.com/minigame/dev/api/base/system/system-info/wx.getSystemInfoSync.html) 返回对象的 SDKVersion 判断基础库版本号 >= 2.0.4 后再使用该 API。每次调用该方法创建 banner 广告都会返回一个全新的实例。
