@@ -29,7 +29,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
-"PO-Revision-Date: 2026-01-30 16:09+0000\n"
+"PO-Revision-Date: 2026-02-02 01:02+0000\n"
 "Last-Translator: Julián Lacomba <julian_alberto93@yahoo.com.ar>\n"
 "Language-Team: Esperanto <https://hosted.weblate.org/projects/godot-engine/"
 "godot/eo/>\n"
@@ -2286,6 +2286,19 @@ msgstr "Duobligo de dosierujo:"
 msgid "Create Folder"
 msgstr "Krei dosierujon"
 
+msgid "Could not create folder: %s"
+msgstr "Ne eblis krei la dosierujon: %s"
+
+msgid "Copy %d selected item to \"%s\"?"
+msgid_plural "Copy %d selected items to \"%s\"?"
+msgstr[0] "Ĉu kopii %d elektitan dosieron ĉi tien: «%s»?"
+msgstr[1] "Ĉu kopii %d elektitajn dosierojn ĉi tien: «%s»?"
+
+msgid "Move %d selected item to \"%s\"?"
+msgid_plural "Move %d selected items to \"%s\"?"
+msgstr[0] "Ĉu movi %d elektitan dosieron al «%s»?"
+msgstr[1] "Ĉu movi %d elektitajn dosierojn al «%s»?"
+
 msgid "Open Scene"
 msgstr "Malfermi la scenon"
 
@@ -2636,6 +2649,12 @@ msgstr[1] "Kreo de aŭdaĵ-ludiloj (AudioStreamPlayer)"
 msgid "Duplicate Node(s)"
 msgstr "Duobligo de nodo(j)"
 
+msgid "Node must belong to the edited scene to become root."
+msgstr "Nodo povas esti la radiko nur de sia respektiva sceno."
+
+msgid "Instantiated scenes can't become root"
+msgstr "Generitaj scenoj ne povas esti la radiko, sed heredigitaj scenoj"
+
 msgid "Delete %d nodes and any children?"
 msgstr "Ĉu forigi %d nodojn kaj iliajn idojn?"
 
@@ -2654,8 +2673,14 @@ msgstr "Ĉu forigi la nodon «%s»?"
 msgid "Save New Scene As..."
 msgstr "Konservi novan scenon kiel..."
 
+msgid "Make Local"
+msgstr "Fari ĝin loka (Nuligi kiel scenon)"
+
 msgid "Enable Scene Unique Name(s)"
 msgstr "Ŝalti ĉi-scenajn ununurajn nomojn"
+
+msgid "Unique names already used by another node in the scene:"
+msgstr "La jenaj ununuraj nomoj jam estis agorditaj en aliaj nodoj:"
 
 msgid "Disable Scene Unique Name(s)"
 msgstr "Malŝalti ĉi-scenajn ununurajn nomojn"
@@ -2719,6 +2744,9 @@ msgstr "Nuligi la heredon"
 
 msgid "Open in Editor"
 msgstr "Malfermi en la redaktilon"
+
+msgid "Editable Children"
+msgstr "Redakteblaj idoj"
 
 msgid "Paste Node(s) as Root"
 msgstr "Alglui la nodo(j)n kiel radikon"
@@ -4867,11 +4895,17 @@ msgstr "Uzi regulesprimojn"
 msgid "Substitute"
 msgstr "Anstatŭigi"
 
+msgid "Create New Scene"
+msgstr "Krei novan scenon"
+
 msgid "Toggle Visible"
 msgstr "Baskuli videblon"
 
 msgid "Unlock Node"
 msgstr "Malŝlosi nodon"
+
+msgid "Revoke unique name for node \"%s\"?"
+msgstr "Ĉu malŝalti la ununuran nomon de «%s»?"
 
 msgid "Disable Scene Unique Name"
 msgstr "Malŝalti ĉi-scenan ununuran nomon"
@@ -4881,6 +4915,16 @@ msgstr "(Konektas el)"
 
 msgid "Node configuration warning:"
 msgstr "Averto pri uzo de la nodo:"
+
+msgid ""
+"This node can be accessed from anywhere within the scene it belongs to by "
+"using the '%s' prefix in the node path."
+msgstr ""
+"Ĉi tiu nodo estas atingebla ie ajn en ĉi tiu sceno se oni prefiksas ĝian "
+"nomon per «%s»."
+
+msgid "Click to disable this."
+msgstr "Alklaku por malŝalti tion."
 
 msgid "Node has one connection."
 msgid_plural "Node has {num} connections."
@@ -4930,6 +4974,9 @@ msgstr "Scenoarbo (nodoj):"
 
 msgid "Node Configuration Warning!"
 msgstr "Averto pri uzo de la nodo!"
+
+msgid "Revoke"
+msgstr "Malŝalti"
 
 msgid "Don't Ask Again"
 msgstr "Neniam redemandi"

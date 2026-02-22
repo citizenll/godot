@@ -232,13 +232,15 @@
 # cofeek-codes <11kormyshev11@gmail.com>, 2025.
 # daodan <karovich16@gmail.com>, 2026.
 # Artyom <artem.natharov@gmail.com>, 2026.
+# MariyaShikunova <mariia@basealt.ru>, 2026.
+# Rémi Verschelde <remi@godotengine.org>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-27 17:08+0000\n"
-"Last-Translator: JekSun97 <jeksun2022@gmail.com>\n"
+"PO-Revision-Date: 2026-02-13 13:16+0000\n"
+"Last-Translator: Rémi Verschelde <remi@godotengine.org>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/godot-engine/"
 "godot/ru/>\n"
 "Language: ru\n"
@@ -260,6 +262,9 @@ msgstr "Недоступен"
 
 msgid "Unconfigured"
 msgstr "Не настроено"
+
+msgid "Unauthorized"
+msgstr "Неавторизовано"
 
 msgid "Parameter out of range"
 msgstr "Параметр вне диапазона"
@@ -360,6 +365,9 @@ msgstr "Ошибка компиляции"
 msgid "Method not found"
 msgstr "Метод не найден"
 
+msgid "Link failed"
+msgstr "Ошибка связи"
+
 msgid "Script failed"
 msgstr "Ошибка выполнения скрипта"
 
@@ -386,6 +394,9 @@ msgstr "Справка"
 
 msgid "Bug"
 msgstr "Баг"
+
+msgid "Printer on fire"
+msgstr "Принтер в огне"
 
 msgid "unset"
 msgstr "Не задано"
@@ -8266,6 +8277,12 @@ msgstr "Добавить перевод"
 msgid "Lock/Unlock Component Ratio"
 msgstr "Блокировка/разблокировка соотношения компонентов"
 
+msgid "This %s is used in %d place."
+msgid_plural "This %s is used in %d places."
+msgstr[0] "Этот %s используется в %d месте."
+msgstr[1] "Этот %s используется в %d местах."
+msgstr[2] "Этот %s используется в %d местах."
+
 msgid "This %s is external to scene."
 msgstr "Этот %s находится вне сцены."
 
@@ -9355,6 +9372,15 @@ msgstr "Запустить редактируемую в данный момен
 msgid "Play a custom scene."
 msgstr "Запустить произвольную сцену."
 
+msgid "Reload the played scene that was being edited."
+msgstr "Перезагрузить воспроизводимую редактируемую сцену."
+
+msgid "Reload the played custom scene."
+msgstr "Перезагрузить воспроизводимую сцену."
+
+msgid "Reload the played main scene."
+msgstr "Перезагрузить воспроизводимую основную сцену."
+
 msgid ""
 "Movie Maker mode is enabled, but no movie file path has been specified.\n"
 "A default movie file path can be specified in the project settings under the "
@@ -9568,6 +9594,9 @@ msgstr "Встраивание игры недоступно, если игра 
 msgid "Game embedding not available in single window mode."
 msgstr "Встраивание игры недоступно в режиме одного окна."
 
+msgid "Game embedding not available when the game starts in headless mode."
+msgstr "Встраивание игры недоступно, если игра запущена в режиме headless."
+
 msgid "Unmute game audio."
 msgstr "Включить звук в игре."
 
@@ -9595,6 +9624,9 @@ msgstr "Скорость Игры"
 
 msgid "Reset the game speed."
 msgstr "Сбросить скорость игры."
+
+msgid "Reset Speed"
+msgstr "Сбросить скорость"
 
 msgid "Input"
 msgstr "Ввод"
@@ -9796,11 +9828,29 @@ msgstr "Создать прям. видимости"
 msgid "Load Emission Mask"
 msgstr "Загрузить маску излучения"
 
+msgid "Mask Texture"
+msgstr "Текстура маски"
+
 msgid "Solid Pixels"
 msgstr "Залитые пиксели"
 
 msgid "Border Pixels"
 msgstr "Граничные пиксели"
+
+msgid "Mask Mode"
+msgstr "Режим маски"
+
+msgid "Generate"
+msgstr "Сгенерировать"
+
+msgid "Texture"
+msgstr "Текстура"
+
+msgid "Direction Mode"
+msgstr "Режим направления"
+
+msgid "Direction Texture"
+msgstr "Текстура направления"
 
 msgid "Centered"
 msgstr "По центру"
@@ -9987,6 +10037,9 @@ msgstr "Покрасить веса костей"
 
 msgid "Polygon"
 msgstr "Полигон"
+
+msgid "Toggle Polygon Dock"
+msgstr "Переключить нижнюю панель полигонов"
 
 msgid "Points"
 msgstr "Точки"
@@ -11867,7 +11920,7 @@ msgid "Z: %s"
 msgstr "Z: %s"
 
 msgid "Size: %s (%.1fMP)"
-msgstr "Размер: %s (%.1фМП)"
+msgstr "Размер: %s (%.1fМП)"
 
 msgid "Objects: %d"
 msgstr "Объекты: %d"
@@ -12600,8 +12653,23 @@ msgstr "Настройки…"
 msgid "Snap Settings"
 msgstr "Параметры привязки"
 
+msgid "Translate Snap"
+msgstr "Привязка перемещения"
+
 msgid "Translate Snap:"
 msgstr "Привязка перемещения:"
+
+msgid "Rotate Snap"
+msgstr "Привязка вращения"
+
+msgid "Rotate Snap:"
+msgstr "Привязка вращения:"
+
+msgid "Scale Snap"
+msgstr "Привязка масштабирования"
+
+msgid "Scale Snap:"
+msgstr "Привязка масштабирования:"
 
 msgid "Viewport Settings"
 msgstr "Параметры окна просмотра"
@@ -14589,6 +14657,9 @@ msgstr "Вставить ресурс"
 
 msgid "ResourcePreloader"
 msgstr "ResourcePreloader (Предварительный загрузчик ресурсов)"
+
+msgid "Toggle ResourcePreloader Dock"
+msgstr "Переключить нижнюю панель «Предзагрузка ресурсов»"
 
 msgid "Load Resource"
 msgstr "Загрузить ресурс"
@@ -18009,6 +18080,12 @@ msgstr "Удалить переназначение ресурсов"
 msgid "Remove Resource Remap Option"
 msgstr "Удалить параметр переназначения ресурсов"
 
+msgid "Add %d file for template generation"
+msgid_plural "Add %d files for template generation"
+msgstr[0] "Добавить %d файл для создания шаблона"
+msgstr[1] "Добавить %d файла для создания шаблона"
+msgstr[2] "Добавить %d файлов для создания шаблона"
+
 msgid "Remove file from template generation"
 msgstr "Удалить файл из процесса генерации шаблона"
 
@@ -18454,6 +18531,9 @@ msgstr "GridMap: удалить выделенное"
 
 msgid "GridMap Fill Selection"
 msgstr "GridMap: заполнить выделенное"
+
+msgid "GridMap Move Selection"
+msgstr "Перемещение выделения GridMap"
 
 msgid "GridMap Paste Selection"
 msgstr "GridMap: вставить выделенное"
@@ -19012,6 +19092,12 @@ msgstr "Классы"
 msgid "Filter Classes"
 msgstr "Фильтр Классов"
 
+msgid "A Count"
+msgstr "A Количество"
+
+msgid "B Count"
+msgstr "B Количество"
+
 msgid "Delta"
 msgstr "Дельта"
 
@@ -19024,11 +19110,26 @@ msgstr "B: %s"
 msgid "Objects"
 msgstr "Объекты"
 
+msgid "A Objects"
+msgstr "A Объекты"
+
+msgid "B Objects"
+msgstr "B Объекты"
+
 msgid "Nodes"
 msgstr "Узлы"
 
+msgid "A Nodes"
+msgstr "A Узлы"
+
 msgid "Combine Diff"
 msgstr "Объединить разницу"
+
+msgid "B Nodes"
+msgstr "B Узлы"
+
+msgid "Orphan Nodes"
+msgstr "Осиротевшие узлы"
 
 msgid "Snapshot A"
 msgstr "Привязка A"
@@ -19123,6 +19224,9 @@ msgstr "Ссылки на ObjectDB: %d"
 msgid "Total References: %d"
 msgstr "Всего ссылок: %d"
 
+msgid "ObjectDB Cycles: %d"
+msgstr "Циклы ObjectDB: %d"
+
 msgid "[center]ObjectDB References[center]"
 msgstr "[center]Ссылки на ObjectDB[center]"
 
@@ -19162,6 +19266,9 @@ msgstr "Снимки ObjectDB фиксируют только память, пр
 msgid "Overview"
 msgstr "Обзор"
 
+msgid "RefCounteds"
+msgstr "RefCounted'ы"
+
 msgid "Timestamp:"
 msgstr "Отметка времени:"
 
@@ -19182,6 +19289,27 @@ msgstr "Всего объектов:"
 
 msgid "Total Nodes:"
 msgstr "Всего узлов:"
+
+msgid ""
+"Multiple root nodes [i](possible call to 'remove_child' without 'queue_free')"
+"[/i]"
+msgstr ""
+"Несколько корневых узлов [i](возможный вызов 'remove_child' без 'queue_free')"
+"[/i]"
+
+msgid ""
+"RefCounted objects only referenced in cycles [i](cycles often indicate a "
+"memory leaks)[/i]"
+msgstr ""
+"Объекты RefCounted, на которые ссылаются только в циклах [i](циклы часто "
+"указывают на утечку памяти)[/i]"
+
+msgid ""
+"Scripted objects not referenced by any other objects [i](unreferenced objects "
+"may indicate a memory leak)[/i]"
+msgstr ""
+"Скриптовые объекты, на которые не ссылаются другие объекты [i](неиспользуемые "
+"объекты могут указывать на утечку памяти)[/i]"
 
 msgid "Generating Snapshot"
 msgstr "Создание снимка"
@@ -19267,6 +19395,9 @@ msgstr "Удалить профиль взаимодействия"
 
 msgid "OpenXR Action Map"
 msgstr "Карта действий OpenXR"
+
+msgid "Toggle OpenXR Action Map Dock"
+msgstr "Переключить панель задач на OpenXR Action Map"
 
 msgid "Add Action Set"
 msgstr "Добавить набор действий"
@@ -19429,6 +19560,21 @@ msgstr "Маска видимости OpenXR должна иметь родит�
 msgid "Building Android Project (gradle)"
 msgstr "Сборка проекта Android (gradle)"
 
+msgid "> Connecting to Gradle Build Environment..."
+msgstr "> Подключение к среде сборки Gradle..."
+
+msgid "Unable to connect to Gradle Build Environment service"
+msgstr "Не удалось подключиться к службе среды сборки Gradle"
+
+msgid "> Starting Gradle build..."
+msgstr "> Запуск сборки Gradle..."
+
+msgid "Failed to execute Gradle command"
+msgstr "Не удалось выполнить команду Gradle"
+
+msgid "> Copying Gradle artifacts..."
+msgstr "> Копирование артефактов Gradle..."
+
 msgid "Package name is missing."
 msgstr "Отсутствует имя пакета."
 
@@ -19465,6 +19611,11 @@ msgid "\"Use Gradle Build\" must be enabled to use the plugins."
 msgstr ""
 "Для использования модулей необходимо включить опцию «Использовать сборку "
 "Gradle» (Use Gradle Build)."
+
+msgid "Support for \"Use Gradle Build\" on Android is currently experimental."
+msgstr ""
+"Поддержка функции \"Использовать сборку Gradle\" на Android в настоящее время "
+"находится в экспериментальной стадии."
 
 msgid ""
 "\"Compress Native Libraries\" is only valid when \"Use Gradle Build\" is "
@@ -19528,6 +19679,17 @@ msgstr ""
 "Для отключения функции \"Показать в библиотеке приложений\" необходимо "
 "включить опцию «Использовать сборку Gradle» (Use Gradle Build)."
 
+msgid "Mirror Android devices"
+msgstr "Зеркало устройств Android"
+
+msgid ""
+"If enabled, \"scrcpy\" is used to start the project and automatically stream "
+"device display (or virtual display) content."
+msgstr ""
+"Если эта функция включена, для запуска проекта и автоматической потоковой "
+"передачи содержимого с экрана устройства (или виртуального дисплея) "
+"используется команда \"scrcpy\"."
+
 msgid "Exporting APK..."
 msgstr "Экспорт APK…"
 
@@ -19542,6 +19704,13 @@ msgstr "Не удалось установить на устройство: %s"
 
 msgid "Running on device..."
 msgstr "Запуск на устройстве…"
+
+msgid ""
+"Could not start scrcpy executable. Configure scrcpy path in the Editor "
+"Settings (Export > Android > scrcpy > Path)."
+msgstr ""
+"Не удалось запустить исполняемый файл scrcpy. Настройте путь к scrcpy в "
+"параметрах редактора (Экспорт > Android > scrcpy > Путь)."
 
 msgid "Could not execute on device."
 msgstr "Не удалось выполнить на устройстве."

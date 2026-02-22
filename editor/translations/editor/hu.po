@@ -51,7 +51,7 @@ msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-29 23:26+0000\n"
+"PO-Revision-Date: 2026-02-13 12:54+0000\n"
 "Last-Translator: Tallyrald <tally.github@gmail.com>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/godot-engine/"
 "godot/hu/>\n"
@@ -12150,8 +12150,102 @@ msgstr ""
 "Előző Sík (%s)\n"
 "Következő Sík (%s)"
 
+msgid "Give a MeshLibrary resource to this GridMap to use its meshes."
+msgstr "A GridMap mesh-ek használatához adjon hozzá egy MeshLibrary erőforrást."
+
+msgid "Fade-In"
+msgstr "Előtűnés"
+
+msgid "Fade-Out"
+msgstr "Elhalványítás"
+
+msgid "Cross-Fade"
+msgstr "Kettős-Áttűnés"
+
+msgid "Automatic"
+msgstr "Automatikus"
+
+msgid "Using any clip → %s."
+msgstr "Bármely klip → %s."
+
+msgid "Using %s → Any clip."
+msgstr "%s → Bármely klip."
+
+msgid "Using all clips → Any clip."
+msgstr "Minden klip → Bármely klip."
+
+msgid "Clip End"
+msgstr "Klip Vége"
+
+msgctxt "Transition Time Position"
+msgid "Same"
+msgstr "Azonos"
+
+msgid "AudioStreamInteractive Transition Editor"
+msgstr "AudioStreamInteractive Áttűnés Szerkesztő"
+
+msgid "Fade Beats:"
+msgstr "Ütem Áttűnés:"
+
+msgid "Filler Clip:"
+msgstr "Kitöltő Klip:"
+
+msgid "Determining optimal atlas size"
+msgstr "Optimális atlaszméret megállapítása"
+
+msgid "Blitting albedo and emission"
+msgstr "Albedó és kibocsátás Blitting"
+
+msgid "Plotting mesh into acceleration structure %d/%d"
+msgstr "Mesh ábrázolása gyorsítási struktúrába %d/%d"
+
+msgid "Optimizing acceleration structure"
+msgstr "Gyorsítási struktúra optimalizálása"
+
+msgid "Begin Bake"
+msgstr "Égetés Kezdése"
+
+msgid "Class name can't be a reserved keyword"
+msgstr "Az osztály neve nem lehet lefoglalt kulcsszó"
+
 msgid "Not enough bytes for decoding bytes, or invalid format."
 msgstr "Nincs elég bájt a bájtok dekódolására, vagy hibás formátum."
+
+msgid ""
+"Unable to load .NET runtime, no compatible version was found.\n"
+"Attempting to create/edit a project will lead to a crash.\n"
+"\n"
+"Please install the .NET SDK 8.0 or later from https://get.dot.net and restart "
+"Godot."
+msgstr ""
+".NET futtatási környezet betöltése sikertelen, nincs kompatibilis verzió.\n"
+"Projekt létrehozása/módosítása összeomláshoz fog vezetni.\n"
+"\n"
+"Telepítse a .NET SDK 8.0 vagy újabb verzióját a https://get.dot.net címről és "
+"indítsa újra a Godot szoftvert."
+
+msgid ""
+"Unable to find the .NET assemblies directory.\n"
+"Make sure the '%s' directory exists and contains the .NET assemblies."
+msgstr ""
+"A .NET állományok mappája nem található.\n"
+"Ellenőrizze, hogy a \"%s\" mappa létezik és tartalmazza a .NET állományokat."
+
+msgid ""
+"Unable to load .NET runtime, specifically hostfxr.\n"
+"Attempting to create/edit a project will lead to a crash.\n"
+"\n"
+"Please install the .NET SDK 8.0 or later from https://get.dot.net and restart "
+"Godot."
+msgstr ""
+".NET futtatási környezet betöltése sikertelen, hostfxr nem található.\n"
+"Projekt létrehozása/módosítása összeomláshoz fog vezetni.\n"
+"\n"
+"Telepítse a .NET SDK 8.0 vagy újabb verzióját a https://get.dot.net címről és "
+"indítsa újra a Godot szoftvert."
+
+msgid "%d (%s)"
+msgstr "%d (%s)"
 
 msgid "%s/s"
 msgstr "%s/s"
@@ -12168,22 +12262,856 @@ msgstr "Kimenő RPC"
 msgid "Config"
 msgstr "Konfiguráció"
 
+msgid "Select a replicator node in order to pick a property to add to it."
+msgstr "Tulajdonság hozzáadásához válasszon ki egy replikátor node-ot."
+
+msgid "Property is already being synchronized."
+msgstr "A tulajdonság már szinkronizálódik."
+
+msgid "Add property to synchronizer"
+msgstr "Tulajdonság hozzáadása a szinkronizáláshoz"
+
+msgid "Pick a node to synchronize:"
+msgstr "Válasszon egy node-ot szinkronizáláshoz:"
+
+msgid "Add property to sync..."
+msgstr "Tulajdonság hozzáadása szinkronizáláshoz..."
+
+msgid "Add from path"
+msgstr "Hozzáadás útvonalról"
+
+msgid "Spawn"
+msgstr "Spawn"
+
+msgid ""
+"Add properties using the options above, or\n"
+"drag them from the inspector and drop them here."
+msgstr ""
+"Adjon hozzá tulajdonságokat a fentiek használatával, vagy\n"
+"húzza őket ide az elemzőből."
+
+msgctxt "Replication Mode"
+msgid "Never"
+msgstr "Soha"
+
+msgctxt "Replication Mode"
+msgid "Always"
+msgstr "Mindig"
+
+msgid "The MultiplayerSynchronizer needs a root path."
+msgstr "A MultiplayerSynchronizer gyökér útvonalat igényel."
+
+msgid ""
+"Each MultiplayerSynchronizer can have no more than 64 watched properties."
+msgstr ""
+"Minden MultiplayerSynchronizer maximum 64 megfigyelt tulajdonsággal "
+"rendelkezhet."
+
+msgid "Property of this type not supported."
+msgstr "Ilyen típusú tulajdonság nem támogatott."
+
+msgid ""
+"A valid NodePath must be set in the \"Spawn Path\" property in order for "
+"MultiplayerSpawner to be able to spawn Nodes."
+msgstr ""
+"A MultiplayerSpawner csak akkor tud Node-okat létrehozni, ha érvényes "
+"NodePath van a \"Spawn Útvonal\" tulajdonságban."
+
+msgid ""
+"A valid NodePath must be set in the \"Root Path\" property in order for "
+"MultiplayerSynchronizer to be able to synchronize properties."
+msgstr ""
+"A MultiplayerSynchronizer csak akkor tud tulajdonságokat szinkronizálni, ha "
+"érvényes NodePath van a \"Gyökér Útvonal\" tulajdonságban."
+
 msgid "Create Navigation Polygon"
 msgstr "Navigációs Sokszög Létrehozása"
+
+msgid ""
+"Bakes the NavigationPolygon by first parsing the scene for source geometry "
+"and then creating the navigation polygon vertices and polygons."
+msgstr ""
+"Beégeti a NavigationPolygon-t oly módon, hogy először átnézi a jelenetet "
+"forrás geometriákat keresve, majd létrehozza a navigációs poligon csúcsait és "
+"poligonjait."
+
+msgid "Clears the internal NavigationPolygon outlines, vertices and polygons."
+msgstr "Törli a belső NavigationPolygon körvonalait, csúcsait és poligonjait."
+
+msgid ""
+"A NavigationPolygon resource must be set or created for this node to work."
+msgstr ""
+"A node működéséhez beállított NavigationPolygon erőforrásara van szükség."
+
+msgid "Set Obstacle Vertices"
+msgstr "Akadály Csúcsok Beállítása"
+
+msgid "Edit Obstacle (Flip Winding)"
+msgstr "Akadály Módosítás (Kanyar Tükrözés)"
+
+msgid "Edit Obstacle (Add Vertex)"
+msgstr "Akadály Módosítás (Csúcs Hozzáadás)"
+
+msgid "Edit Obstacle (Move Vertex)"
+msgstr "Akadály Módosítás (Vertex Mozgatás)"
+
+msgid "Flip"
+msgstr "Tükrözés"
 
 msgid "A NavigationMesh resource must be set or created for this node to work."
 msgstr ""
 "A Node működéséhez hozzá kell rendelni vagy létre kell hozni egy "
 "NavigationMesh erőforrást."
 
+msgid ""
+"Cannot generate navigation mesh because it belongs to a resource which was "
+"imported."
+msgstr ""
+"Navigációs mesh generálása sikertelen, mert importált erőforráshoz tartozik."
+
+msgid ""
+"Cannot generate navigation mesh because the resource was imported from "
+"another type."
+msgstr ""
+"Navigációs mesh generálása sikertelen, mert az erőforrás más típusból volt "
+"importálva."
+
+msgid "Bake"
+msgstr "Égetés"
+
+msgid ""
+"Bakes the NavigationMesh by first parsing the scene for source geometry and "
+"then creating the navigation mesh vertices and polygons."
+msgstr ""
+"Beégeti a NavigationMesh-t oly módon, hogy először átnézi a jelenetet forrás "
+"geometriákat keresve, majd létrehozza a navigációs mesh csúcsait és "
+"poligonjait."
+
+msgid "Clears the internal NavigationMesh vertices and polygons."
+msgstr "Törli a belső NavigationMesh csúcsait és poligonjait."
+
+msgid "Toggles whether the noise preview is computed in 3D space."
+msgstr "A zaj előnézetének 3D térben való kiszámítását kapcsolja."
+
+msgid "Delta"
+msgstr "Delta"
+
+msgid "Combine Diff"
+msgstr "Kombinált Különbség"
+
+msgid "Snapshot A"
+msgstr "Pillanatkép A"
+
+msgid "Snapshot B"
+msgstr "Pillanatkép B"
+
+msgid "Inbound References"
+msgstr "Bejövő Hivatkozások"
+
+msgid "Outbound References"
+msgstr "Kimenő Hivatkozások"
+
+msgid "A"
+msgstr "A"
+
+msgid "Other object referencing this object"
+msgstr "Ezt az objektumot hivatkozó objektum"
+
+msgid "Property of other object referencing this object"
+msgstr "Ezt az objektumot hivatkozó objektum tulajdonsága"
+
+msgid "Property of this object referencing other object"
+msgstr "Ezen objektum más objektumra hivatkozó tulajdonsága"
+
+msgid "Other object being referenced"
+msgstr "A hivatkozott objektum"
+
+msgid "Native Refs"
+msgstr "Natív Hivatkozások"
+
+msgid "ObjectDB Refs"
+msgstr "ObjectDB Hivatkozások"
+
+msgid "Total Refs"
+msgstr "Összes Hivatkozás"
+
+msgid "ObjectDB Cycles"
+msgstr "ObjectDB Ciklusok"
+
+msgid "References not owned by the ObjectDB"
+msgstr "Az ObjectDB által nem birtokolt hivatkozások"
+
+msgid "References owned by the ObjectDB"
+msgstr "Az ObjectDB által birtokolt hivatkozások"
+
+msgid "ObjectDB References + Native References"
+msgstr "ObjectDB Hivatkozások + Natív Hivatkozások"
+
+msgid "Cycles detected in the ObjectDB"
+msgstr "ObjectDB-ben érzékelt ciklusok"
+
+msgid "[center]ObjectDB References[center]"
+msgstr "[center]ObjectDB Hivatkozások[center]"
+
+msgid ""
+"Was the same reference returned by multiple getters on the source object?"
+msgstr "Több getter is ugyanazon hivatkozást adta vissza a forrás objektumon?"
+
+msgid "Sort By %s (Ascending)"
+msgstr "Rendezés: %s (Növekvő)"
+
+msgid "Sort By %s (Descending)"
+msgstr "Rendezés: %s (Csökkenő)"
+
+msgid "Summary"
+msgstr "Összefoglaló"
+
+msgid "ObjectDB Snapshot Summary"
+msgstr "ObjectDB Pillanatkép Összefoglaló"
+
+msgid "Press 'Take ObjectDB Snapshot' to snapshot the ObjectDB."
+msgstr ""
+"Kattintson az \"ObjectDB Pillanatkép Készítés\"-re az ObjectDB "
+"pillanatképéhez."
+
+msgid ""
+"Memory in Godot is either owned natively by the engine or owned by the "
+"ObjectDB."
+msgstr ""
+"A Godot szoftver memórája közvetlenül a motor vagy az ObjectDB tulajdona."
+
+msgid "ObjectDB Snapshots capture only memory owned by the ObjectDB."
+msgstr ""
+"Az ObjectDB Pillanatképek csak az ObjectDB által birtokolt memóriát "
+"tartalmazzák."
+
+msgid ""
+"Multiple root nodes [i](possible call to 'remove_child' without 'queue_free')"
+"[/i]"
+msgstr ""
+"Több gyökér node [i](a \"remove_child\" meghívható \"queue_free\" nélkül)[/i]"
+
+msgid ""
+"RefCounted objects only referenced in cycles [i](cycles often indicate a "
+"memory leaks)[/i]"
+msgstr ""
+"RefCounted objektumok csak ciklusokban vannak hivatkozva [i](a ciklusok "
+"gyakran memóriaszivárgásra utalnak)[/i]"
+
+msgid ""
+"Scripted objects not referenced by any other objects [i](unreferenced objects "
+"may indicate a memory leak)[/i]"
+msgstr ""
+"Szkript objektumok, melyekre nem hivatkozik más objektum [i](hivatkozás "
+"nélküli objektumok memóriaszivárgásra utalhatnak)[/i]"
+
+msgid "Receiving Snapshot (0/%s MiB)"
+msgstr "Pillanatkép Fogadása (0/%s MiB)"
+
+msgid "Receiving Snapshot (%s/%s MiB)"
+msgstr "Pillanatkép Fogadása (%s/%s MiB)"
+
+msgid "Visualizing Snapshot"
+msgstr "Pillanatkép Vizualizálása"
+
+msgid "Take ObjectDB Snapshot"
+msgstr "ObjectDB Pillanatkép Készítése"
+
+msgid "Diff Against:"
+msgstr "Különbség:"
+
+msgid "Rename Actions Localized name"
+msgstr "Művelet Lokalizált Nevének Átnevezése"
+
+msgid ""
+"Internal name of the action. Some XR runtimes don't allow spaces or special "
+"characters."
+msgstr ""
+"A művelet belső neve. Egyes XR környezetek nem engedélyeznek szóközöket vagy "
+"speciális karaktereket."
+
+msgid "Human-readable name of the action. This can be displayed to end users."
+msgstr ""
+"A művelet ember által olvasható neve. Megjeleníthető a végfelhasználóknak."
+
+msgid "Action Localized Name"
+msgstr "Művelet Lokalizált Neve"
+
+msgid "Add interaction profile"
+msgstr "Interakciós profil hozzáadása"
+
+msgid "Save this OpenXR action map."
+msgstr "OpenXR művelettérkép mentése."
+
+msgid "Reset to default OpenXR action map."
+msgstr "Visszaállítás az alapértelmezett OpenXR művelettérképre."
+
+msgid "Rename Action Sets Localized name"
+msgstr "Műveletcsoportok Lokalizált Nevének Átnevezése"
+
+msgid ""
+"Human-readable name of the action set. This can be displayed to end users."
+msgstr ""
+"A műveletcsoport ember által olvasható neve. Megjeleníthető a "
+"végfelhasználóknak."
+
+msgid "Action Set Localized Name"
+msgstr "Műveletcsoport Lokalizált Neve"
+
+msgid ""
+"Priority of the action set. If multiple action sets bind to the same input, "
+"the action set with the highest priority will be updated."
+msgstr ""
+"A műveletcsoport prioritása. Ha több műveletcsoport is ugyanazon bemenetre "
+"van kötve, akkor a legmagasabb prioritású frissül."
+
+msgid "Note: modifiers will only be applied if supported on the host system."
+msgstr ""
+"Megjegyzés: a módosítók csak akkor érvényesülnek, ha a gazdarendszer "
+"támogatja őket."
+
+msgid "Binding modifiers for:"
+msgstr "Társítás módosítók ehhez:"
+
+msgid "Remove action from interaction profile"
+msgstr "Művelet eltávolítása az interakciós profilból"
+
+msgid "Edit binding modifiers"
+msgstr "Társítási módosítók módosítása"
+
+msgid "Note: This interaction profile requires extension %s support."
+msgstr "Megjegyzés: Az interakciós profil %s kiterjesztés támogatást igényel."
+
+msgid "Note: This binding path requires extension %s support."
+msgstr "Megjegyzés: A társítási útvonal %s kiterjesztés támogatást igényel."
+
 msgid "Pose"
 msgstr "Póz"
+
+msgid "Haptic"
+msgstr "Haptikus"
+
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+msgid "All interaction profiles have been added to the action map."
+msgstr "Minden interakciós profil hozzáadva a művelettérképhez."
+
+msgid ""
+"Cannot use the same SubViewport with multiple OpenXR composition layers. "
+"Clear it from its current layer first."
+msgstr ""
+"Ugyanazon SubViewport nem használható egyszerre több OpenXR kompozíció "
+"rétegen. Először törölje a jelenlegi rétegről."
+
+msgid ""
+"Cannot set SubViewport on an OpenXR composition layer when using an Android "
+"surface."
+msgstr ""
+"Android felület esetén SubViewport nem állítható be OpenXR kompozíció rétegre."
+
+msgid "OpenXR composition layers must have an XROrigin3D node as their parent."
+msgstr ""
+"Az OpenXR kompozíció rétegek XROrigin3D szülő node-dal kell rendelkezzenek."
+
+msgid ""
+"OpenXR composition layers must have orthonormalized transforms (ie. no scale "
+"or shearing)."
+msgstr ""
+"Az OpenXR kompozíció rétegeknek ortonormált transzformációval kell "
+"rendelkezniük (vagyis nem méretezhető (scale) vagy vágható (shear))."
+
+msgid ""
+"Hole punching won't work as expected unless the sort order is less than zero."
+msgstr ""
+"A lyukasztás csak akkor fog megfelelően működni, ha a rendezési sorrend "
+"nullánál kisebb."
+
+msgid "OpenXR visibility mask must have an XRCamera3D node as their parent."
+msgstr ""
+"Az OpenXR láthatósági maszknak XRCamera3D szülő node-dal kell rendelkeznie."
+
+msgid "Building Android Project (gradle)"
+msgstr "Android Projekt Építése (gradle)"
+
+msgid "Unable to connect to Gradle Build Environment service"
+msgstr "Sikertelen kapcsolódás a Gradle Építési Környezet szolgáltatáshoz"
+
+msgid "Package name is missing."
+msgstr "Hiányzó csomagnév."
+
+msgid "Package segments must be of non-zero length."
+msgstr "A csomagszegmensek hossza nullától eltérő kell legyen."
+
+msgid "The character '%s' is not allowed in Android application package names."
+msgstr ""
+"A \"%s\" karakter nem engedélyezett az Android alkalmazások csomagnevében."
+
+msgid "A digit cannot be the first character in a package segment."
+msgstr "A csomagszegmensek első karaktere nem lehet szám."
+
+msgid "The character '%s' cannot be the first character in a package segment."
+msgstr "A csomagszegmensek első karaktere nem lehet \"%s\"."
+
+msgid "The package must have at least one '.' separator."
+msgstr "A csomagnak rendelkeznie kell legalább egy \".\" elválasztóval."
 
 msgid "Error creating keystores directory:"
 msgstr "Hiba a kulcstárolók könyvtárának létrehozásakor"
 
+msgid "Invalid public key for APK expansion."
+msgstr "Érvénytelen nyilvános kulcs az APK bővítéshez."
+
 msgid "Invalid package name:"
 msgstr "Érvénytelen csomagnév:"
+
+msgid "\"Use Gradle Build\" is required to enable \"Swipe to dismiss\"."
+msgstr ""
+"Az \"Elvetés elhúzással\" engedélyezéséhez \"Gradle Használata\" szükséges."
+
+msgid "\"Use Gradle Build\" must be enabled to use the plugins."
+msgstr "A bővítmények használatához \"Gradle Használata\" szükséges."
+
+msgid "Support for \"Use Gradle Build\" on Android is currently experimental."
+msgstr "A \"Gradle Használata\" Androidon jelenleg kísérleti jellegű."
+
+msgid ""
+"\"Compress Native Libraries\" is only valid when \"Use Gradle Build\" is "
+"enabled."
+msgstr ""
+"A \"Natív Könyvtárak Tömörítése\" csak \"Gradle Használata\" mellett érvényes."
+
+msgid "\"Export AAB\" is only valid when \"Use Gradle Build\" is enabled."
+msgstr "Az \"Export AAB\" csak \"Gradle Használata\" mellett érvényes."
+
+msgid "\"Min SDK\" can only be overridden when \"Use Gradle Build\" is enabled."
+msgstr "\"Gradle Használata\" esetén a \"Min SDK\" felülírható."
+
+msgid "\"Min SDK\" should be a valid integer, but got \"%s\" which is invalid."
+msgstr ""
+"A \"Min SDK\" egész szám kell legyen, de \"%s\" szerepel benne, ami "
+"érvénytelen."
+
+msgid ""
+"\"Min SDK\" cannot be lower than %d, which is the version needed by the Godot "
+"library."
+msgstr ""
+"\"Min SDK\" nem lehet kisebb, mint a Godot könyvtár által igényelt verzió: %d."
+
+msgid ""
+"\"Target SDK\" can only be overridden when \"Use Gradle Build\" is enabled."
+msgstr "A \"Cél SDK\" felülírható \"Gradle Használata\" mellett."
+
+msgid ""
+"\"Target SDK\" should be a valid integer, but got \"%s\" which is invalid."
+msgstr ""
+"A \"Cél SDK\" egész szám kell legyen, de \"%s\" szerepel benne, ami "
+"érvénytelen."
+
+msgid "\"Target SDK\" version must be greater or equal to \"Min SDK\" version."
+msgstr ""
+"A \"Cél\" SDK verzió nagyobb vagy egyenlő kell legyen a \"Min SDK\" verzióval."
+
+msgid "\"Use Gradle Build\" is required to add custom theme attributes."
+msgstr "Egyedi téma attribútumok hozzáadásához \"Gradle Használata\" szükséges."
+
+msgid "\"Use Gradle Build\" must be enabled to enable \"Show In Android Tv\"."
+msgstr ""
+"\"Mutatás Android TV-n\" engedélyezéséhez \"Gradle Használata\" szükséges."
+
+msgid "\"Use Gradle Build\" must be enabled to enable \"Show As Launcher App\"."
+msgstr ""
+"A \"Megjelenítés Indító Alkalmazásként\" engedélyezéséhez \"Gradle "
+"Használata\" szükséges."
+
+msgid "\"Use Gradle Build\" must be enabled to disable \"Show In App Library\"."
+msgstr ""
+"A \"Mutatás App Könyvtárban\" kikapcsolásához \"Gradle Használata\" szükséges."
+
+msgid "Mirror Android devices"
+msgstr "Android eszközök tükrözése"
+
+msgid ""
+"If enabled, \"scrcpy\" is used to start the project and automatically stream "
+"device display (or virtual display) content."
+msgstr ""
+"Ha be van kapcsolva, akkor \"scrcpy\" használatával indul el a projekt és "
+"automatikusan átjátssza az eszköz képernyőjének (vagy virtuális "
+"képernyőjének) tartalmát."
+
+msgid ""
+"Could not start scrcpy executable. Configure scrcpy path in the Editor "
+"Settings (Export > Android > scrcpy > Path)."
+msgstr ""
+"A scrcpy nem indítható el. Állítsa be a scrcpy útvonalat a Szerkesztő "
+"Beállításokban (Export > Android > scrcpy > Útvonal)."
+
+msgid "Error: There was a problem validating the keystore username and password"
+msgstr ""
+"Hiba: A kulcstár felhasználónevének és jelszavának érvényesítése problémába "
+"ütközött"
+
+msgid ""
+"Unable to determine the C# project's TFM, it may be incompatible. The export "
+"template only supports '%s'. Make sure the project targets '%s' or consider "
+"using gradle builds instead."
+msgstr ""
+"A C# projekt cél keretrendszere nem meghatározható, lehet, hogy nem "
+"kompatibilis. Az export sablon csak \"%s\"-t támogat. Ellenőrizze, hogy a "
+"projekt a(z) \"%s\"-t célozza vagy használjon gradle építést."
+
+msgid ""
+"C# project targets '%s' but the export template only supports '%s'. Consider "
+"using gradle builds instead."
+msgstr ""
+"A C# projekt célja \"%s\", de az export sablon csak \"%s\"-t támogat. "
+"Használjon helyette gradle építést."
+
+msgid "Exporting to Android when using C#/.NET is experimental."
+msgstr "C#/.NET exportálása Androidra csak kísérleti jellegű."
+
+msgid ""
+"Android build template not installed in the project. Install it from the "
+"Project menu."
+msgstr ""
+"Az Android építési sablon nincs a projektben telepítve. Telepítse a Projekt "
+"menüből."
+
+msgid ""
+"Either Debug Keystore, Debug User AND Debug Password settings must be "
+"configured OR none of them."
+msgstr ""
+"A Kulcstár Hibakeresés, Felhasználó Hibakeresés és Jelszó Hibakeresés "
+"mindegyike egyszerre kötelező (vagy mind üres kell legyen)."
+
+msgid "Debug keystore not configured in the Editor Settings nor in the preset."
+msgstr ""
+"A kulcstár hibakeresés sem a Szerkesztő Beállításokban, sem az "
+"előbeállításban (preset) nincs konfigurálva."
+
+msgid ""
+"Either Release Keystore, Release User AND Release Password settings must be "
+"configured OR none of them."
+msgstr ""
+"A Kulcstár Release, Felhasználó Release és Jelszó Release mindegyike "
+"egyszerre kötelező (vagy mind üres kell legyen)."
+
+msgid "Release keystore incorrectly configured in the export preset."
+msgstr ""
+"A kulcstár release sem a Szerkesztő Beállításokban, sem az export "
+"előbeállításban (preset) nincs konfigurálva."
+
+msgid "A valid Java SDK path is required in Editor Settings."
+msgstr "Érvényes Java SDK útvonal szükséges a Szerkesztő Beállításokban."
+
+msgid "Invalid Java SDK path in Editor Settings."
+msgstr "Érvénytelen Java SDK útvonal a Szerkesztő Beállításokban."
+
+msgid "Unable to find 'java' command using the Java SDK path."
+msgstr "A \"java\" parancs nem található a Java SDK útvonalán."
+
+msgid "Please check the Java SDK directory specified in Editor Settings."
+msgstr "Ellenőrizze a Szerkesztő Beállításokban megadott Java SDK mappát."
+
+msgid "A valid Android SDK path is required in Editor Settings."
+msgstr "Érvényes Android SDK útvonal szükséges a Szerkesztő Beállításokban."
+
+msgid "Invalid Android SDK path in Editor Settings."
+msgstr "Érvénytelen Android SDK útvonal a Szerkesztő Beállításokban."
+
+msgid "Missing 'platform-tools' directory!"
+msgstr "Hiányzó \"platform-tools\" mappa!"
+
+msgid "Unable to find Android SDK platform-tools' adb command."
+msgstr "Nem található az Android SDK platformeszköz adb parancsa."
+
+msgid "Please check in the Android SDK directory specified in Editor Settings."
+msgstr "Ellenőrizze a Szerkesztő Beállításokban megadott Android SDK mappát."
+
+msgid "Missing 'build-tools' directory!"
+msgstr "Hiányzó \"build-tools\" mappa!"
+
+msgid "Unable to find Android SDK build-tools' apksigner command."
+msgstr "Nem található az Android SDK építési eszközök apksigner parancsa."
+
+msgid "\"Use Gradle Build\" is required for transparent background on Android"
+msgstr "Android kötelező a \"Gradle Használata\" az átlátszó hátterekhez"
+
+msgid ""
+"\"Target SDK\" %d is higher than the default version %d. This may work, but "
+"wasn't tested and may be unstable."
+msgstr ""
+"A \"Cél SDK\" %d újabb, mint az alapértelmezett %d verzió. Működhet, de nincs "
+"tesztelve és instabil lehet."
+
+msgid ""
+"The \"%s\" renderer is designed for Desktop devices, and is not suitable for "
+"Android devices."
+msgstr ""
+"A(z) \"%s\" rendermotor Asztali eszközökre van tervezve és nem alkalmas "
+"Android eszközökre."
+
+msgid ""
+"The project name does not meet the requirement for the package name format "
+"and will be updated to \"%s\". Please explicitly specify the package name if "
+"needed."
+msgstr ""
+"A projekt neve nem felel meg a csomagnév feltételeinek és frissülni fog erre: "
+"\"%s\". Ha szükséges, adjon meg egy másik csomagnevet."
+
+msgid "AAB signing is not supported"
+msgstr "AAB aláírás nem támogatott"
+
+msgid ""
+"All 'apksigner' tools located in Android SDK 'build-tools' directory failed "
+"to execute. Please check that you have the correct version installed for your "
+"target sdk version. The resulting APK is unsigned."
+msgstr ""
+"Az Android SDK \"build-tools\" mappájában lévő összes \"apksigner\" eszköz "
+"hibába ütközött. Ellenőrizze, hogy az sdk verzióhoz megfelelő verzió van "
+"telepítve. A létrejött APK nincs aláírva."
+
+msgid ""
+"'apksigner' could not be found. Please check that the command is available in "
+"the Android SDK build-tools directory. The resulting APK is unsigned."
+msgstr ""
+"\"apksigner\" nem található. Ellenőrizze, hogy a parancs elérhető az Android "
+"SDK build-tools mappájában. A létrejött APK nincs aláírva."
+
+msgid "'apksigner' returned with error #%d"
+msgstr "Az \"apksigner\" #%d hibakóddal tért vissza"
+
+msgid "Unable to verify signed apk."
+msgstr "Az aláírt apk nem ellenőrizhető."
+
+msgid "'apksigner' verification of APK failed."
+msgstr "APK ellenőrzése sikertelen \"apksigner\"-rel."
+
+msgid "Invalid filename! Android App Bundle requires the *.aab extension."
+msgstr ""
+"Érvénytelen fájlnév! Az Android App Bundle az *.aab kiterjesztést igényli."
+
+msgid "APK Expansion not compatible with Android App Bundle."
+msgstr "Az APK Bővítés nem kompatibilis az Android App Bundle-lel."
+
+msgid "Invalid filename! Android APK requires the *.apk extension."
+msgstr "Érvénytelen fájlnév! Az Android APK az *.apk kiterjesztést igényli."
+
+msgid "Unsupported export format!"
+msgstr "Nem támogatott export formátum!"
+
+msgid ""
+"Trying to build from a gradle built template, but no version info for it "
+"exists. Please reinstall from the 'Project' menu."
+msgstr ""
+"Építés gradle által készített sablonból, de nincs hozzátartozó "
+"verzióinformáció. Telepítse újra a \"Projekt\" menüből."
+
+msgid ""
+"Java SDK path must be configured in Editor Settings at 'export/android/"
+"java_sdk_path'."
+msgstr ""
+"A Java SDK útvonal beállítása szükséges a Szerkesztő Bállításokban: \"export/"
+"android/java_sdk_path\"."
+
+msgid ""
+"Android SDK path must be configured in Editor Settings at 'export/android/"
+"android_sdk_path'."
+msgstr ""
+"Az Android SDK útvonal beállítása szükséges a Szerkesztő Bállításokban: "
+"\"export/android/android_sdk_path\"."
+
+msgid "Unable to overwrite res/*.xml files with project name."
+msgstr "A projekt nevével nem írhatóak res/*.xml fájlok."
+
+msgid "Could not generate sparse pck metadata!"
+msgstr "Nem sikerült a ritka pck fájl metaadatainak írása!"
+
+msgid "Could not write expansion package file!"
+msgstr "A bővítőcsomag fájl nem írható!"
+
+msgid "Building of Android project failed, check output for the error:"
+msgstr "Az Android projekt építése sikertelen, ellenőrizze a kimeneti hibákat:"
+
+msgid "Moving output"
+msgstr "Kimenet áthelyezése"
+
+msgid ""
+"Missing libraries in the export template for the selected architectures: %s. "
+"Please build a template with all required libraries, or uncheck the missing "
+"architectures in the export preset."
+msgstr ""
+"Hiányzó könyvtárak a kiválasztott architektúra export sablonjában: %s. "
+"Építsen olyan sablonból, amelyben minden könyvtár elérhető vagy ne használja "
+"a hiányzó architektúrákat az export sablonban."
+
+msgid "Aligning APK..."
+msgstr "APK rendezése..."
+
+msgid "Could not unzip temporary unaligned APK."
+msgstr "Az ideiglenes rendezetlen APK kicsomagolása sikertelen."
+
+msgid "Metal renderer require iOS 14+."
+msgstr "iOS 14+ szükséges a Metal rendermotorhoz."
+
+msgid ""
+"Mismatching custom export template executable architecture: found \"%s\", "
+"expected \"%s\"."
+msgstr ""
+"Eltérő egyedi export sablon futtatási architektúra: \"%s\" érzékelve, elvárt: "
+"\"%s\"."
+
+msgid "Debug Console Export"
+msgstr "Hibakereső Konzol Export"
+
+msgid ""
+"Mismatching custom debug export template executable architecture: found "
+"\"%s\", expected \"%s\"."
+msgstr ""
+"Eltérő egyedi hibakereső export sablon futtatási architektúra: \"%s\" "
+"érzékelve, elvárt: \"%s\"."
+
+msgid ""
+"Mismatching custom release export template executable architecture: found "
+"\"%s\", expected \"%s\"."
+msgstr ""
+"Eltérő egyedi release export sablon futtatási architektúra: \"%s\" érzékelve, "
+"elvárt: \"%s\"."
+
+msgid "Executable file header corrupted."
+msgstr "Sérült futtatható fájl fejléc."
+
+msgid "32-bit executables cannot have embedded data >= 4 GiB."
+msgstr ""
+"A 32 bites futtatható állományok nem tartalmazhatnak 4 GiB-nál több adatot."
+
+msgid "Executable \"pck\" section not found."
+msgstr "Nem található futtatható \"pck\" szakasz."
+
+msgid "Stop and uninstall"
+msgstr "Leállítás és eltávolítás"
+
+msgid "Run on remote Linux/BSD system"
+msgstr "Futtatás távoli Linux/BSD rendszeren"
+
+msgid "Stop and uninstall running project from the remote system"
+msgstr "A futó projekt távoli rendszeren történő leállítása és eltávolítása"
+
+msgid "Run exported project on remote Linux/BSD system"
+msgstr "Exportált projekt futtatása távoli Linux/BSD rendszeren"
+
+msgid "App Store distribution with ad-hoc code signing is not supported."
+msgstr "Ad-hoc kód aláírással kiadás az App Store-ban nem támogatott."
+
+msgid "Notarization with an ad-hoc signature is not supported."
+msgstr "Hitelesítés ad-hoc aláírással nem támogatott."
+
+msgid "Apple Team ID is required for App Store distribution."
+msgstr "Az App Store-ban kiadáshoz Apple Team ID szükséges."
+
+msgid "Apple Team ID is required for notarization."
+msgstr "Hitelesítéshez Apple Team ID szükséges."
+
+msgid "Provisioning profile is required for App Store distribution."
+msgstr "Az App Store-ban kiadáshoz kiadási profil szükséges."
+
+msgid "Installer signing identity is required for App Store distribution."
+msgstr "Az App Store-ban kiadáshoz telepítő aláíró identitás szükséges."
+
+msgid "App sandbox is required for App Store distribution."
+msgstr "Az App Store-ban kiadáshoz App sandbox szükséges."
+
+msgid ""
+"'rcodesign' doesn't support signing applications with embedded dynamic "
+"libraries (GDExtension or .NET)."
+msgstr ""
+"Az \"rcodesign\" nem támogatja a beépített dinamikus könyvtárakat tartalmazó "
+"applikációk aláírását (GDExtension vagy .NET)."
+
+msgid "Code signing is required for App Store distribution."
+msgstr "Az App Store-ban kiadáshoz kód aláírás szükséges."
+
+msgid "Code signing is required for notarization."
+msgstr "Hitelesítéshez kód aláírás szükséges."
+
+msgid ""
+"Neither Apple ID name nor App Store Connect issuer ID name not specified."
+msgstr "Sem az Apple ID, sem az App Store Connect kiadó ID neve nincs megadva."
+
+msgid ""
+"Both Apple ID name and App Store Connect issuer ID name are specified, only "
+"one should be set at the same time."
+msgstr ""
+"Az Apple ID név és az App Store Connect kiadó ID név is meg van adva, de "
+"egyszerre csak az egyik adható meg."
+
+msgid "Apple ID password not specified."
+msgstr "Nincs megadva az Apple ID jelszó."
+
+msgid "App Store Connect API key ID not specified."
+msgstr "Nincs megadva az App Store Connect API kulcs."
+
+msgid "App Store Connect issuer ID name not specified."
+msgstr "Nincs megadva az App Store Connect kiadó ID neve."
+
+msgid "Microphone access is enabled, but usage description is not specified."
+msgstr "Engedélyezve van a mikrofon hozzáférés, de a használati leírás üres."
+
+msgid "Camera access is enabled, but usage description is not specified."
+msgstr "Engedélyezve van a kamera hozzáférés, de a használati leírás üres."
+
+msgid ""
+"Location information access is enabled, but usage description is not "
+"specified."
+msgstr "Engedélyezve van a helyzetmeghatározás, de a használati leírás üres."
+
+msgid "Address book access is enabled, but usage description is not specified."
+msgstr "Engedélyezve van a címjegyzék hozzáférés, de a használati leírás üres."
+
+msgid "Calendar access is enabled, but usage description is not specified."
+msgstr "Engedélyezve van a naptár hozzáférés, de a használati leírás üres."
+
+msgid "Photo library access is enabled, but usage description is not specified."
+msgstr ""
+"Engedélyezve van a fotó galéria hozzáférés, de a használati leírás üres."
+
+msgid "Liquid Glass Icons"
+msgstr "Liquid Glass ikonok"
+
+msgid "At least version 26.0 of 'actool' is required (version %f found)."
+msgstr "Az \"actool\" legalább 26.0-s verziója szükséges (%f érzékelve)."
+
+msgid ""
+"rcodesign path is not set. Configure rcodesign path in the Editor Settings "
+"(Export > macOS > rcodesign)."
+msgstr ""
+"rcodesign útvonal nincs beállítva. Adja meg az rcodesign útvonalát a "
+"Szerkesztő Beállításokban (Export > macOS > rcodesign)."
+
+msgid "Notarization failed, see editor log for details."
+msgstr "Hitelesítés sikertelen, részletek a szerkesztő naplójában."
+
+msgid "Notarization request UUID: \"%s\""
+msgstr "Hitelesítés kérés UUID: \"%s\""
+
+msgid "The notarization process generally takes less than an hour."
+msgstr "A hitelesítési folyamat jellemzően egy óránál kevesebbet vesz igénybe."
+
+msgid ""
+"You can check the progress manually by opening a Terminal and running the "
+"following command:"
+msgstr ""
+"A folyamatot manuálisan ellenőrizheti az alábbi paranccsal egy Terminálban:"
+
+msgid ""
+"Run the following command to staple the notarization ticket to the exported "
+"application (optional):"
+msgstr ""
+"Futtassa a következő parancsot a hitelesítési jegy exportált applikációhoz "
+"csatolásához (opcionális):"
+
+msgid "Xcode command line tools are not installed."
+msgstr "A parancssori Xcode eszközök nincsenek telepítve."
 
 msgid ""
 "See instructions on finding your team ID: https://developer.apple.com/help/"
@@ -12192,11 +13120,345 @@ msgstr ""
 "Lásd az instrukciókat csapat azonosító kód megkereséséhez: https://"
 "developer.apple.com/help/glossary/team-id"
 
+msgid "Built-in CodeSign failed with error \"%s\"."
+msgstr "A beépített CodeSign hibára futott: \"%s\"."
+
+msgid ""
+"Xrcodesign path is not set. Configure rcodesign path in the Editor Settings "
+"(Export > macOS > rcodesign)."
+msgstr ""
+"Az Xrcodesign útvonal nincs beállítva. Adja meg az rcodesign útvonalát a "
+"Szerkesztő Beállításokban (Export > macOS > rcodesign)."
+
+msgid ""
+"Could not start codesign executable, make sure Xcode command line tools are "
+"installed."
+msgstr ""
+"A codesign futtatható állomány nem indítható el, ellenőrizze, hogy az Xcode "
+"parancssori eszközök telepítve vannak-e."
+
+msgid "Relative symlinks are not supported, exported \"%s\" might be broken!"
+msgstr ""
+"A relatív szimbolikus linkek nem támogatottak, az exportált \"%s\" nem "
+"biztos, hogy működik!"
+
+msgid "\"%s\": Info.plist missing or invalid, new Info.plist generated."
+msgstr ""
+"\"%s\": Info.plist hiányzik vagy érvénytelen, új Info.plist generálódott."
+
+msgid "`productbuild` failed."
+msgstr "`productbuild` sikertelen."
+
+msgid "`hdiutil create` failed - file exists."
+msgstr "`hdiutil create` sikertelen - a fájl már létezik."
+
+msgid "`hdiutil create` failed."
+msgstr "`hdiutil create` sikertelen."
+
+msgid ""
+"Relative symlinks are not supported on this OS, the exported project might be "
+"broken!"
+msgstr ""
+"A relatív szimbolikus linkek nem támogatottak ezen az operációs rendszeren, "
+"az exportált projekt nem biztos, hogy működik!"
+
+msgid ""
+"Unable to set Unix permissions for executable \"%s\". Use \"chmod +x\" to set "
+"it after transferring the exported .app to macOS or Linux."
+msgstr ""
+"Unix engedélyek beállítása sikertelen a(z) \"%s\" futtatható állományon. "
+"Használja a \"chmod +x\" parancsot az exportált .app macOS-re vagy Linux-ra "
+"mozgatása után."
+
+msgid ""
+"Requested template binary \"%s\" not found. It might be missing from your "
+"template archive."
+msgstr ""
+"A kért bináris sablon \"%s\" nem található. Lehet, hogy hiányzik a sablon "
+"archívumból."
+
+msgid "Making PKG"
+msgstr "PKG készítés"
+
+msgid ""
+"Ad-hoc signed applications require the 'Disable Library Validation' "
+"entitlement to load dynamic libraries."
+msgstr ""
+"Ad-hoc módon aláírt applikációk esetén dinamikus könyvtárak betöltéséhez a "
+"\"Könyvtár Validáció Letiltás\" jogosultság szükséges."
+
+msgid ""
+"'rcodesign' doesn't support signing applications with embedded dynamic "
+"libraries."
+msgstr ""
+"Az \"rcodesign\" nem támogatja a beépített dinamikus könyvtárakat tartalmazó "
+"applikációk aláírását."
+
+msgid "Code signing bundle"
+msgstr "Kód aláíró csomag"
+
+msgid "Making DMG"
+msgstr "DMG készítés"
+
+msgid "Code signing DMG"
+msgstr "DMG kód aláírás"
+
+msgid "Making PKG installer"
+msgstr "PKG telepítő készítés"
+
+msgid "Making ZIP"
+msgstr "ZIP készítés"
+
+msgid ""
+"Notarization requires the app to be archived first, select the DMG or ZIP "
+"export format instead."
+msgstr ""
+"A hitelesítéshez először archiválni kell az app-ot, válassza helyette a DMG "
+"vagy ZIP export formátumot."
+
+msgid "Sending archive for notarization"
+msgstr "Archívum küldése hitelesítésre"
+
+msgid ""
+"Cannot export for universal or x86_64 if S3TC BPTC texture format is "
+"disabled. Enable it in the Project Settings (Rendering > Textures > VRAM "
+"Compression > Import S3TC BPTC)."
+msgstr ""
+"Univerzálisan vagy x86_64-re exportálás nem lehetséges, ha az S3TC BPTC "
+"textúra formátum le van tiltva. Engedélyezze a Projekt Beállításokban "
+"(Renderelés > Textúrák > VRAM tömörítés > Import S3TC BPTC)."
+
+msgid ""
+"Cannot export for universal or arm64 if ETC2 ASTC texture format is disabled. "
+"Enable it in the Project Settings (Rendering > Textures > VRAM Compression > "
+"Import ETC2 ASTC)."
+msgstr ""
+"Univerzálisan vagy arm64-re exportálás nem lehetséges, ha az ETC2 ASTC "
+"textúra formátum le van tiltva. Engedélyezze a Projekt Beállításokban "
+"(Renderelés > Textúrák > VRAM tömörítés > Import ETC2 ASTC)."
+
+msgid "Notarization: Xcode command line tools are not installed."
+msgstr "Hitelesítés: a parancssori Xcode eszközök nincsenek telepítve."
+
+msgid ""
+"Notarization: rcodesign path is not set. Configure rcodesign path in the "
+"Editor Settings (Export > macOS > rcodesign)."
+msgstr ""
+"Hitelesítés: rcodesign útvonal nincs beállítva. Adja meg az rcodesign "
+"útvonalát a Szerkesztő Beállításokban (Export > macOS > rcodesign)."
+
+msgid ""
+"Warning: Notarization is disabled. The exported project will be blocked by "
+"Gatekeeper if it's downloaded from an unknown source."
+msgstr ""
+"Figyelmeztetés: Hitelesítés letiltva. Az exportált projektet blokkolni fogja "
+"a Gatekeeper, amennyiben ismeretlen forrásból töltik le."
+
+msgid ""
+"Code signing is disabled. The exported project will not run on Macs with "
+"enabled Gatekeeper and Apple Silicon powered Macs."
+msgstr ""
+"Kód alírás letiltva. Az exportált projekt nem fog futni azon Mac gépeken, "
+"amiken a Gatekeeper engedélyezve van, továbbá az Apple Silicon alapú Mac "
+"gépeken."
+
+msgid ""
+"Code signing: Using ad-hoc signature. The exported project will be blocked by "
+"Gatekeeper"
+msgstr ""
+"Kód aláírás: Ad-hoc aláírás van használatban. Az exportált projektet "
+"blokkolni fogja a Gatekeeper"
+
+msgid "Code signing: Xcode command line tools are not installed."
+msgstr "Kód aláírás: A parancssori Xcode eszközök nincsenek telepítve."
+
+msgid ""
+"Code signing: rcodesign path is not set. Configure rcodesign path in the "
+"Editor Settings (Export > macOS > rcodesign)."
+msgstr ""
+"Kód aláírás: rcodesign útvonal nincs beállítva. Adja meg az rcodesign "
+"útvonalát a Szerkesztő Beállításokban (Export > macOS > rcodesign)."
+
+msgid "Run on remote macOS system"
+msgstr "Futtatás távoli macOS rendszeren"
+
+msgid "Run exported project on remote macOS system"
+msgstr "Exportált projekt futtatása távoli macOS rendszeren"
+
+msgid "PWA"
+msgstr "PWA"
+
+msgid ""
+"Exporting to Web is currently not supported in Godot 4 when using C#/.NET. "
+"Use Godot 3 to target Web with C#/Mono instead."
+msgstr ""
+"Exportálás Web platformra jelenleg nem támogatott a Godot 4-ben C#/.NET "
+"használata mellett. Használja a Godot 3-mat a Web platformhoz C#/Mono "
+"segítségével."
+
+msgid ""
+"If this project does not use C#, use a non-C# editor build to export the "
+"project."
+msgstr ""
+"Ha ez a projekt nem használja a C# nyelvet, használja a C# nélküli "
+"szerkesztőt a projekt exportálásához."
+
 msgid "Run in Browser"
 msgstr "Böngészőben futtatás"
 
+msgid "Stop HTTP Server"
+msgstr "HTTP Szerver Leállítás"
+
 msgid "Run exported HTML in the system's default browser."
 msgstr "Az exportált HTML futtatása az alapértelmezett böngészőben."
+
+msgid "Export project again to account for updates."
+msgstr "A frissítések figyelembevételéhez exportálja a projektet újra."
+
+msgid "Icon size \"%d\" is missing."
+msgstr "Ikon méret \"%d\" hiányzik."
+
+msgid "Could not find signtool executable at \"%s\"."
+msgstr "A signtool futtatható állomány nem található itt: \"%s\"."
+
+msgid "Could not find osslsigncode executable at \"%s\"."
+msgstr "Az osslsigncode futtatható állomány nem található itt: \"%s\"."
+
+msgid ""
+"Could not start signtool executable. Configure signtool path in the Editor "
+"Settings (Export > Windows > signtool), or disable \"Codesign\" in the export "
+"preset."
+msgstr ""
+"A signtool futtatható állomány nem indítható el. Adja meg a signtool "
+"útvonalát a Szerkesztő Beállításokban (Export > Windows > signtool), vagy "
+"tiltsa le a \"Codesign\"-t az export előbeállításban (preset)."
+
+msgid ""
+"Could not start osslsigncode executable. Configure signtool path in the "
+"Editor Settings (Export > Windows > osslsigncode), or disable \"Codesign\" in "
+"the export preset."
+msgstr ""
+"Az osslsigncode futtatható állomány nem indítható el. Adja meg a signtool "
+"útvonalát a Szerkesztő Beállításokban (Export > Windows > osslsigncode), vagy "
+"tiltsa le a \"Codesign\"-t az export előbeállításban (preset)."
+
+msgid "Windows executables cannot be >= 4 GiB."
+msgstr "Windows-on a futtatható állományok nem lehetnek 4 GiB-nál nagyobbak."
+
+msgid "Run on remote Windows system"
+msgstr "Futtatás távoli Windows rendszeren"
+
+msgid "Run exported project on remote Windows system"
+msgstr "Exportált projekt futtatása távoli Windows rendszeren"
+
+msgid ""
+"A SpriteFrames resource must be created or set in the \"Sprite Frames\" "
+"property in order for AnimatedSprite2D to display frames."
+msgstr ""
+"Az AnimatedSprite2D \"Sprite Képkockák\" tulajdonságában be kell állítani a "
+"\"SpriteFrames\" erőforrást a képkockák megjelenítéséhez."
+
+msgid ""
+"Ancestor \"%s\" clips its children, so this CanvasGroup will not function "
+"properly."
+msgstr ""
+"A(z) \"%s\" ős és gyermekei összeérnek, ezért a CanvasGroup nem fog jól "
+"működni."
+
+msgid ""
+"Ancestor \"%s\" is a CanvasGroup, so this CanvasGroup will not function "
+"properly."
+msgstr ""
+"A(z) \"%s\" ős egy CanvasGroup, ezért ez a CanvasGroup nem fog jól működni."
+
+msgid ""
+"Only one visible CanvasModulate is allowed per canvas.\n"
+"When there are more than one, only one of them will be active. Which one is "
+"undefined."
+msgstr ""
+"Vásznanként csak egy látható CanvasModulate engedélyezett.\n"
+"Ha egynél több van, akkor is csak egy lesz aktív, de nem ismert, hogy melyik."
+
+msgid ""
+"CPUParticles2D animation requires the usage of a CanvasItemMaterial with "
+"\"Particles Animation\" enabled."
+msgstr ""
+"A CPUParticles2D animációhoz CanvasItemMaterial használata szükséges "
+"engedélyezett \"Részecske Animáció\" opcióval."
+
+msgid ""
+"A material to process the particles is not assigned, so no behavior is "
+"imprinted."
+msgstr ""
+"Nincs anyag beállítva a részecskék feldogozásához, ezért nincs viselkedés "
+"lenyomat."
+
+msgid ""
+"Particles2D animation requires the usage of a CanvasItemMaterial with "
+"\"Particles Animation\" enabled."
+msgstr ""
+"A Particles2D animációhoz CanvasItemMaterial használata szükséges "
+"engedélyezett \"Részecske Animáció\" opcióval."
+
+msgid ""
+"Particle trails are only available when using the Forward+ or Mobile renderer."
+msgstr ""
+"A részecske nyomvonalak csak Forward+ vagy Mobile rendermotorok esetén "
+"elérhetőek."
+
+msgid ""
+"Particle sub-emitters are not available when using the Compatibility renderer."
+msgstr ""
+"A részecske al-kibocsátás nem elérhető Compatibility rendermotor esetén."
+
+msgid ""
+"A texture with the shape of the light must be supplied to the \"Texture\" "
+"property."
+msgstr ""
+"A fényforrás alakjával egyező textúra megadása szükséges a \"Textúra\" "
+"tulajdonságban."
+
+msgid ""
+"An occluder polygon must be set (or drawn) for this occluder to take effect."
+msgstr ""
+"Egy occluder sokszög beállítása (vagy rajzolása) szükséges az okklúzió "
+"működéséhez."
+
+msgid "The occluder polygon for this occluder is empty. Please draw a polygon."
+msgstr "Az okklúzióhoz tartozó occluder sokszög üres. Rajzoljon egy sokszöget."
+
+msgid ""
+"The NavigationAgent2D can be used only under a Node2D inheriting parent node."
+msgstr "A NavigationAgent2D csak Node2D-t öröklő szülő node alatt használható."
+
+msgid ""
+"NavigationLink2D start position should be different than the end position to "
+"be useful."
+msgstr ""
+"A NavigationLink2D kezdő pozíciója el kell térjen a végpozíciótól, hogy "
+"hasznos lehessen."
+
+msgid "NavigationObstacle2D does not support negative or zero scaling."
+msgstr "A NavigationObstacle2D nem támogatja a nulla vagy negatív méretezést."
+
+msgid ""
+"The agent radius can only be scaled uniformly. The largest value along the "
+"two axes of the global scale will be used to scale the radius. This value may "
+"change in unexpected ways when the node is rotated."
+msgstr ""
+"Az ügynök sugara csak egyenletesen méretezhető. A globális skála két "
+"tengelyén lévő legnagyobb érték határozza meg a méretezés sugarát. Ez az "
+"érték váratlan módon változhat, ha a node elfordul."
+
+msgid "Skew has no effect on the agent radius."
+msgstr "A ferdeség (skew) nincs hatással az ügynök sugarára."
+
+msgid ""
+"A NavigationPolygon resource must be set or created for this node to work. "
+"Please set a property or draw a polygon."
+msgstr ""
+"A node működéséhez beállított NavigationPolygon erőforrás szükséges. Állítsa "
+"be a tulajdonságot, vagy rajzoljon egy sokszöget."
 
 msgid ""
 "ParallaxLayer node only works when set as child of a ParallaxBackground node."
@@ -12208,8 +13470,53 @@ msgid "PathFollow2D only works when set as a child of a Path2D node."
 msgstr ""
 "A PathFollow2D Node csak akkor működik, ha gyermeke egy Path2D Node-nak."
 
+msgid ""
+"This node has no shape, so it can't collide or interact with other objects.\n"
+"Consider adding a CollisionShape2D or CollisionPolygon2D as a child to define "
+"its shape."
+msgstr ""
+"Ennek a node-nak nincs alakja, ezért nem ütközhet és nem léphet interakcióba "
+"más objektumokkal.\n"
+"Az alak definiálásához adjon hozzá gyermekként egy CollisionShape2D-t vagy "
+"CollisionPolygon2D-t."
+
+msgid ""
+"CollisionPolygon2D only serves to provide a collision shape to a "
+"CollisionObject2D derived node. Please only use it as a child of Area2D, "
+"StaticBody2D, RigidBody2D, CharacterBody2D, etc. to give them a shape."
+msgstr ""
+"A CollisionPolygon2D csak CollisionObject2D-t öröklő node ütközési alakzatát "
+"tudja megadni. Csak Area2D, StaticBody2D, RigidBody2D, CharacterBody2D, stb. "
+"gyermekeként használja alakdefiniálásra."
+
 msgid "An empty CollisionPolygon2D has no effect on collision."
 msgstr "Üres CollisionPolygon2D nincs hatással az ütközésekre."
+
+msgid "Invalid polygon. At least 3 points are needed in 'Solids' build mode."
+msgstr ""
+"Érvénytelen sokszög. \"Szilárd\" építési módban legalább 3 pont szükséges ."
+
+msgid "Invalid polygon. At least 2 points are needed in 'Segments' build mode."
+msgstr ""
+"Érvénytelen sokszög. \"Szegmens\" építési módban legalább 2 pont szükséges."
+
+msgid ""
+"The One Way Collision property will be ignored when the collision object is "
+"an Area2D."
+msgstr ""
+"Az Egyirányú Ütközés tulajdonság figyelmen kívül marad, ha az ütköző objektum "
+"egy Area2D."
+
+msgid ""
+"CollisionShape2D only serves to provide a collision shape to a "
+"CollisionObject2D derived node.\n"
+"Please only use it as a child of Area2D, StaticBody2D, RigidBody2D, "
+"CharacterBody2D, etc. to give them a shape."
+msgstr ""
+"A CollisionShape2D csak CollisionObject2D-t öröklő node ütközési alakzatát "
+"tudja megadni.\n"
+"Csak Area2D, StaticBody2D, RigidBody2D, CharacterBody2D, stb. gyermekeként "
+"használja alakdefiniálásra."
 
 msgid ""
 "A shape must be provided for CollisionShape2D to function. Please create a "
@@ -12218,11 +13525,444 @@ msgstr ""
 "A CollisionShape2D működéséhez alakot kell hozzárendelni. Hozzon létre hozzá "
 "egy alak erőforrást!"
 
+msgid ""
+"The CollisionShape2D node has limited editing options for polygon-based "
+"shapes. Consider using a CollisionPolygon2D node instead."
+msgstr ""
+"A CollisionShape2D node korlátozott szerkesztési lehetőségekkel rendelkezik "
+"sokszög-alapú formák esetén. Használjon helyette CollisionPolygon2D node-ot."
+
+msgid "Node A and Node B must be PhysicsBody2Ds"
+msgstr "Node A és Node B is PhysicsBody2D kell legyen"
+
+msgid "Node A must be a PhysicsBody2D"
+msgstr "Node A PhysicsBody2D kell legyen"
+
+msgid "Node B must be a PhysicsBody2D"
+msgstr "Node B PhysicsBody2D kell legyen"
+
+msgid "Joint is not connected to two PhysicsBody2Ds"
+msgstr "A csukló nincs hozzákapcsolva két PhysicsBody2D-hez"
+
+msgid "Node A and Node B must be different PhysicsBody2Ds"
+msgstr "Node A és Node B két különböző PhysicsBody2D kell legyen"
+
+msgid ""
+"A PhysicalBone2D only works with a Skeleton2D or another PhysicalBone2D as a "
+"parent node!"
+msgstr ""
+"A PhysicalBone2D működéséhez szülőként Skeleton2D vagy egy másik "
+"PhysicalBone2D szükséges!"
+
+msgid ""
+"A PhysicalBone2D needs to be assigned to a Bone2D node in order to function! "
+"Please set a Bone2D node in the inspector."
+msgstr ""
+"A PhysicalBone2D működéséhez egy hozzárendelt Bone2D node-ra van szükség! "
+"Állítson be egy Bone2D node-ot az elemzőben."
+
+msgid ""
+"A PhysicalBone2D node should have a Joint2D-based child node to keep bones "
+"connected! Please add a Joint2D-based node as a child to this node!"
+msgstr ""
+"A PhysicalBone2D node-nak Joint2D-alapú gyermek node-ra van szüksége a "
+"csontkapcsolatok megtartásához! Adjon hozzá egy gyermek Joint2D node-ot!"
+
+msgid ""
+"PhysicsBody2D will not work correctly on a non-interpolated branch of the "
+"SceneTree.\n"
+"Check the node's inherited physics_interpolation_mode."
+msgstr ""
+"A PhysicsBody2D nem fog jól működni nem-interpolált SceneTree ágon.\n"
+"Ellenőrizze a node örökölt physics_interpolation_mode tulajdonságát."
+
+msgid ""
+"Size changes to RigidBody2D will be overridden by the physics engine when "
+"running.\n"
+"Change the size in children collision shapes instead."
+msgstr ""
+"A RigidBody2D méretváltoztatásait futáskor felül fogja írni a fizika motor.\n"
+"Változtasson helyette a gyermek ütközési alakzatok méretein."
+
+msgid ""
+"This node cannot interact with other objects unless a Shape2D is assigned."
+msgstr ""
+"Ez a node hozzárendelt Shape2D nélkül nem tud kölcsönhatásba lépni más "
+"objektumokkal."
+
 msgid "Path property must point to a valid Node2D node to work."
 msgstr "Az Útvonal tulajdonság egy érvényes Node2D Node-ra kell mutasson."
 
+msgid "This Bone2D chain should end at a Skeleton2D node."
+msgstr "Ennek a Bone2D láncnak egy Skeleton2D node-ban kellene végződnie."
+
+msgid "A Bone2D only works with a Skeleton2D or another Bone2D as parent node."
+msgstr ""
+"A Bone2D működéséhez szülőként Skeleton2D vagy egy másik Bone2D szükséges."
+
+msgid ""
+"This bone lacks a proper REST pose. Go to the Skeleton2D node and set one."
+msgstr ""
+"Ennek a csontnak nincs REST póza. Állítson be egyet a Skeleton2D node-on."
+
+msgid ""
+"The TileMap node is deprecated as it is superseded by the use of multiple "
+"TileMapLayer nodes.\n"
+"To convert a TileMap to a set of TileMapLayer nodes, open the TileMap bottom "
+"panel with this node selected, click the toolbox icon in the top-right corner "
+"and choose \"Extract TileMap layers as individual TileMapLayer nodes\"."
+msgstr ""
+"A TileMap node elavult és több TileMapLayer node használata váltja fel.\n"
+"A TileMap több TileMapLayer-re konvertálásához jelölje ki a node-ot és nyissa "
+"meg az alsó TileMap panelt, kattintson az eszköztár ikonra a jobb-felső "
+"sarokban és válassza a \"TileMap rétegek TileMapLayer node-okba kiemelése\" "
+"opciót."
+
+msgid ""
+"A Y-sorted layer has the same Z-index value as a not Y-sorted layer.\n"
+"This may lead to unwanted behaviors, as a layer that is not Y-sorted will be "
+"Y-sorted as a whole with tiles from Y-sorted layers."
+msgstr ""
+"Egy Y-rendezett réteghez ugyanazon Z-index van beállítva, mint egy nem Y-"
+"rendezett rétegnél.\n"
+"Ez nem kívánt működéshez vezethet, mivel a nem Y-rendezett réteg rendezett "
+"rétegekből származó csempékkel kerül rendezésre."
+
+msgid ""
+"A TileMap layer is set as Y-sorted, but Y-sort is not enabled on the TileMap "
+"node itself."
+msgstr ""
+"A TileMap réteg Y-rendezettre van állítva, de az Y-rendezés nincs "
+"engedélyezve a TileMap node-on."
+
+msgid ""
+"The TileMap node is set as Y-sorted, but Y-sort is not enabled on any of the "
+"TileMap's layers.\n"
+"This may lead to unwanted behaviors, as a layer that is not Y-sorted will be "
+"Y-sorted as a whole."
+msgstr ""
+"A TileMap node Y-rendezettre van állítva, de egyetlen rétegén sincs "
+"bekapcsolva az Y-rendezés.\n"
+"Ez nem kívánt működéshez vezethet, mert a nem Y-rendezett réteg egészben "
+"kerül rendezésre."
+
+msgid ""
+"Isometric TileSet will likely not look as intended without Y-sort enabled for "
+"the TileMap and all of its layers."
+msgstr ""
+"Az izometrikus TileSet valószínűleg nem a kívánt módon jelenik meg Y-rendezés "
+"engedélyezése nélkül a TileMap-en és annak rétegein."
+
+msgid ""
+"Forward axis and primary rotation axis must not be parallel in setting %s."
+msgstr ""
+"A(z) %s beállításban az előre mutató és az elsődleges forgatási tengely "
+"párhuzamos kell legyen."
+
+msgid ""
+"External Skeleton3D node not set! Please set a path to an external Skeleton3D "
+"node."
+msgstr ""
+"A külső Skeleton3D node nincs beállítva! Adjon meg egy útvonalat a külső "
+"Skeleton3D node-hoz."
+
+msgid ""
+"Parent node is not a Skeleton3D node! Please use an external Skeleton3D if "
+"you intend to use the BoneAttachment3D without it being a child of a "
+"Skeleton3D node."
+msgstr ""
+"A szülő node nem Skeleton3D node! Ha Skeleton3D szülő node nélkül szeretne "
+"BoneAttachment3D-t használni, akkor állítson be egy külső Skeleton3D-t."
+
+msgid ""
+"BoneAttachment3D node is not bound to any bones! Please select a bone to "
+"attach this node."
+msgstr ""
+"A BoneAttachment3D node nem tartozik egyetlen csonthoz sem! Csatoljon egy "
+"csontot a node-hoz."
+
+msgid "Nothing is visible because no mesh has been assigned."
+msgstr "Semmi sem látható, mert nincs hozzárendelt mesh."
+
+msgid ""
+"CPUParticles3D animation requires the usage of a StandardMaterial3D whose "
+"Billboard Mode is set to \"Particle Billboard\"."
+msgstr ""
+"A CPUParticles3D animáció olyan StandardMaterial3D használatát igényli, amely "
+"Billboard módja \"Részecske Billboard\"-ra van állítva."
+
+msgid "Decals are only available when using the Forward+ or Mobile renderer."
+msgstr "A Decal-ok csak Forward+ vagy Mobile rendermotor esetén elérhetőek."
+
+msgid ""
+"The decal has no textures loaded into any of its texture properties, and will "
+"therefore not be visible."
+msgstr ""
+"A decal egyetlen textúra tulajdonságában sincs textúra, ezért nem lesz "
+"látható."
+
+msgid ""
+"The decal has a Normal and/or ORM texture, but no Albedo texture is set.\n"
+"An Albedo texture with an alpha channel is required to blend the normal/ORM "
+"maps onto the underlying surface.\n"
+"If you don't want the Albedo texture to be visible, set Albedo Mix to 0."
+msgstr ""
+"A decal normál és/vagy ORM textúrája be van állítva, de az Albedó textúra "
+"nincs.\n"
+"Alfa csatornával rendelkező Albedó textúra szükséges a normál/ORM textúra "
+"mögöttes felületre keveréséhez.\n"
+"Ha nem szeretné az Albedó textúrát láthatóvá tenni, állítsa az Albedó Mix-et "
+"nullára."
+
+msgid ""
+"The decal's Cull Mask has no bits enabled, which means the decal will not "
+"paint objects on any layer.\n"
+"To resolve this, enable at least one bit in the Cull Mask property."
+msgstr ""
+"A decal Cull Mask bitjei üresek, ami azt jelenti, hogy a decal nem jelenít "
+"meg objektumokat egyetlen rétegen sem.\n"
+"Ezt megoldhatja, ha legalább egy bitet beállít a Cull Mask tulajdonságban."
+
+msgid "Fog Volumes are only visible when using the Forward+ renderer."
+msgstr "A Ködtérfogatok csak Forward+ rendermotor használatával láthatóak."
+
+msgid ""
+"Fog Volumes need volumetric fog to be enabled in the scene's Environment in "
+"order to be visible."
+msgstr ""
+"A Ködtérfogatok láthatósága a volumetrikus köd bekapcsolását igényli a "
+"jelenet Környezetében."
+
+msgid "Nothing is visible because meshes have not been assigned to draw passes."
+msgstr ""
+"Semmi sem látható, mert a mesh-ek nincsenek rajzolási lépésekhez rendelve."
+
+msgid ""
+"Particles animation requires the usage of a BaseMaterial3D whose Billboard "
+"Mode is set to \"Particle Billboard\"."
+msgstr ""
+"A részecske animáció olyan StandardMaterial3D használatát igényli, amely "
+"Billboard módja \"Részecske Billboard\"-ra van állítva."
+
+msgid ""
+"Using Trail meshes with a skin causes Skin to override Trail poses. Suggest "
+"removing the Skin."
+msgstr ""
+"Trail mesh esetén a kinézet használata felülírja a követő pózt. A kinézet "
+"eltávolítása javasolt."
+
+msgid "Trails active, but neither Trail meshes or a Skin were found."
+msgstr "A követés aktív, de sem Trail mesh, sem kinézet nem található."
+
+msgid ""
+"Only one Trail mesh is supported. If you want to use more than a single mesh, "
+"a Skin is needed (see documentation)."
+msgstr ""
+"Csak a Trail mesh támogatott. Ha egy mesh-nél többet szeretne használni, "
+"akkor kinézet szükséges (lásd a dokumentációt)."
+
+msgid ""
+"Trails enabled, but one or more mesh materials are either missing or not set "
+"for trails rendering."
+msgstr ""
+"A követés engedélyezett, de egy vagy több anyag hiányzik vagy nem követő "
+"renderelésre van állítva."
+
+msgid ""
+"Particle sub-emitters are only available when using the Forward+ or Mobile "
+"renderer."
+msgstr ""
+"A részecske al-kibocsátás csak Forward+ és Mobile rendermotor esetén érhető "
+"el."
+
+msgid ""
+"The Bake Mask has no bits enabled, which means baking will not produce any "
+"collision for this GPUParticlesCollisionSDF3D.\n"
+"To resolve this, enable at least one bit in the Bake Mask property."
+msgstr ""
+"Az Égetőmaszkban nincsenek engedélyezett bitek, ami azt jelenti, hogy az "
+"égetés nem eredményez GPUParticlesCollisionSDF3D ütközéseket.\n"
+"Ezt az Égetőmaszk legalább egy bitjének engedélyezésével oldhatja meg."
+
+msgid ""
+"Detecting settings with no target set! IterateIK3D must have a target to work."
+msgstr ""
+"Beállítások érzékelése cél nélkül! Az IterateIK3D-nek célra van szüksége a "
+"működéshez."
+
+msgid "A light's scale does not affect the visual size of the light."
+msgstr "A fényforrás méretezése (scale) nincs hatással a fény látható méretére."
+
+msgid "Projector texture only works with shadows active."
+msgstr "A projekciós textúra csak bekapcsolt árnyékokkal működik."
+
+msgid ""
+"Projector textures are not supported when using the Compatibility renderer "
+"yet. Support will be added in a future release."
+msgstr ""
+"A projekciós textúrák Compatibility rendermotor esetén még nem támogatottak. "
+"Későbbi kiadások fogják majd támogatni."
+
+msgid "A SpotLight3D with an angle wider than 90 degrees cannot cast shadows."
+msgstr "90 foknál szélesebb szögű SpotLight3D nem hozhat létre árnyékokat."
+
+msgid "Finding meshes, lights and probes"
+msgstr "Mesh-ek, fények és szondák keresése"
+
 msgid "Creating probes"
 msgstr "Vizsgálók létrehozása"
+
+msgid "Creating probes from mesh %d/%d"
+msgstr "Szondák létrehozása mesh-ből %d/%d"
+
+msgid "Generating Probe Acceleration Structures"
+msgstr "Szonda Gyorsító Struktúrák Generálása"
+
+msgid ""
+"Lightmaps can only be baked from a GPU that supports the RenderingDevice "
+"backends.\n"
+"Your GPU (%s) does not support RenderingDevice, as it does not support "
+"Vulkan, Direct3D 12, or Metal.\n"
+"Lightmap baking will not be available on this device, although rendering "
+"existing baked lightmaps will work."
+msgstr ""
+"Lightmap csak RenderingDevice háttérfolyamatot támogató GPU segítségével "
+"égethető.\n"
+"Az Ön GPU-ja (%s) nem támogatja a RenderingDevice-t, mert a Vulkan, Direct3D "
+"12 vagy Metal egyike sem támogatott rajta.\n"
+"A lightmap égetés nem lesz elérhető ezen az eszközön, de a létező már "
+"beégetett lightmap-ek működni fognak."
+
+msgid ""
+"The lightmap has no baked shadowmask textures. Please rebake with the "
+"Shadowmask Mode set to anything other than None."
+msgstr ""
+"A lightmap-nek nincs beégetett árnyékmaszk textúrája. Égesse újra az "
+"Árnyékmaszk Mód bármely opciójával (kivéve \"Egyik sem\")."
+
+msgid ""
+"Lightmaps cannot be baked on %s. Rendering existing baked lightmaps will "
+"still work."
+msgstr ""
+"Lightmap nem égethető ezen: %s. A létező beégetett lightmap-ek működni fognak."
+
+msgid ""
+"Lightmaps cannot be baked, as the `lightmapper_rd` module was disabled at "
+"compile-time. Rendering existing baked lightmaps will still work."
+msgstr ""
+"Lightmap nem égethető, mert a `lightmapper_rd` modul le volt tiltva a program "
+"fordulásakor. A létező beégetett lightmap-ek működni fognak."
+
+msgid "Forward axis and primary rotation axis must not be parallel."
+msgstr ""
+"Az előre mutató és az elsődleges forgatási tengely nem lehet párhuzamos."
+
+msgid ""
+"The NavigationAgent3D can be used only under a Node3D inheriting parent node."
+msgstr ""
+"A NavigationAgent3D csak Node3D-ből leszármazott szülő node esetén "
+"használható."
+
+msgid ""
+"NavigationLink3D start position should be different than the end position to "
+"be useful."
+msgstr ""
+"A NavigationLink3D kezdő pozíciója el kell térjen a végpozíciótól, hogy "
+"hasznos lehessen."
+
+msgid ""
+"NavigationObstacle3D only takes global rotation around the y-axis into "
+"account. Rotations around the x-axis or z-axis might lead to unexpected "
+"results."
+msgstr ""
+"A NavigationObstacle3D csak a globális y-tengely körüli forgást veszi "
+"figyelembe. Az x- vagy z-tengely körüli forgatás nem várt eredményhez "
+"vezethet."
+
+msgid "NavigationObstacle3D does not support negative or zero scaling."
+msgstr "A NavigationObstacle3D nem támogatja a negatív vagy zéró méretezést."
+
+msgid ""
+"The agent radius can only be scaled uniformly. The largest scale value along "
+"the three axes will be used."
+msgstr ""
+"Az ügynök sugara csak egyenletesen méretezhető. A három tengely legnagyobb "
+"értékét fogja használni."
+
+msgid ""
+"Occlusion culling is disabled in the Project Settings, which means occlusion "
+"culling won't be performed in the root viewport.\n"
+"To resolve this, open the Project Settings and enable Rendering > Occlusion "
+"Culling > Use Occlusion Culling."
+msgstr ""
+"Az Occlusion culling ki van kapcsolva a Projekt Beállításokban, ezért a "
+"gyökér betekintő occlusion culling nélkül fog működni.\n"
+"Ezt a Projekt Beállításokban a Renderelés > Occlusion Culling > Occlusion "
+"Culling Használata bekapcsolásával oldhatja meg."
+
+msgid ""
+"The Bake Mask has no bits enabled, which means baking will not produce any "
+"occluder meshes for this OccluderInstance3D.\n"
+"To resolve this, enable at least one bit in the Bake Mask property."
+msgstr ""
+"Az Égetőmaszkban nincsenek engedélyezett bitek, ami azt jelenti, hogy az "
+"égetés nem eredményez OccluderInstance3D occluder mesh-eket.\n"
+"Ezt az Égetőmaszk legalább egy bitjének engedélyezésével oldhatja meg."
+
+msgid ""
+"No occluder mesh is defined in the Occluder property, so no occlusion culling "
+"will be performed using this OccluderInstance3D.\n"
+"To resolve this, set the Occluder property to one of the primitive occluder "
+"types or bake the scene meshes by selecting the OccluderInstance3D and "
+"pressing the Bake Occluders button at the top of the 3D editor viewport."
+msgstr ""
+"Nincs definiált occluder mesh az Occluder tulajdonságban, ezért az "
+"OccluderInstance3D nem hajt végre occlusion culling műveleteket.\n"
+"Ezt az Occluder tulajdonság primitív típusra állításával vagy a jelenet mesh-"
+"ek beégetésével oldhatja meg az OccluderInstance3D kijelölésével és az "
+"Occluder Égetés gombra kattintással a 3D szerkesztő betekintőjének tetején."
+
+msgid ""
+"The occluder mesh has less than 3 vertices, so no occlusion culling will be "
+"performed using this OccluderInstance3D.\n"
+"To generate a proper occluder mesh, select the OccluderInstance3D then use "
+"the Bake Occluders button at the top of the 3D editor viewport."
+msgstr ""
+"Az occluder mesh 3-nál kevesebb csúccsal rendelkezik, ezért az "
+"OccluderInstance3D nem hajt végre occlusion culling műveleteket.\n"
+"Occluder mesh generálásához jelölje ki az OccluderInstance3D-t és használja "
+"az Occluder Égetés gombot a 3D szerkesztő betekintőjének tetején."
+
+msgid ""
+"The polygon occluder has less than 3 vertices, so no occlusion culling will "
+"be performed using this OccluderInstance3D.\n"
+"Vertices can be added in the inspector or using the polygon editing tools at "
+"the top of the 3D editor viewport."
+msgstr ""
+"A sokszög occluder 3-nál kevesebb csúccsal rendelkezik, ezért az "
+"OccluderInstance3D nem hajt végre occlusion culling műveleteket.\n"
+"Csúcsokat az elemzőben adhat hozzá vagy a sokszög szerkesztő eszközökkel a 3D "
+"szerkesztő betekintőjének tetején."
+
+msgid "PathFollow3D only works when set as a child of a Path3D node."
+msgstr "A PathFollow3D csak Path3D gyermekeként működik."
+
+msgid ""
+"PathFollow3D's ROTATION_ORIENTED requires \"Up Vector\" to be enabled in its "
+"parent Path3D's Curve resource."
+msgstr ""
+"A PathFollow3D ROTATION_ORIENTED beállítása a \"Fel Vektor\" engedélyezését "
+"igényli a szülő Path3D Görbe erőforrásában."
+
+msgid ""
+"This node has no shape, so it can't collide or interact with other objects.\n"
+"Consider adding a CollisionShape3D or CollisionPolygon3D as a child to define "
+"its shape."
+msgstr ""
+"Ennek a node-nak nincs alakja, ezért nem tud ütközni vagy kölcsönhatásba "
+"lépni más objektumokkal.\n"
+"Adjon hozzá egy CollisionShape3D vagy CollisionPolygon3D gyermeket az alak "
+"meghatározásához."
 
 msgid "Animation not found: '%s'"
 msgstr "Az animáció nem található: '%s'"
