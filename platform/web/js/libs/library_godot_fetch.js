@@ -238,16 +238,19 @@ const GodotFetch = {
             return 0;
         }
         let to_read = p_buf_size;
+        let write_offset = 0;
         const chunks = obj.chunks;
         while (to_read && chunks.length) {
             const chunk = chunks[0];
             if (chunk.length > to_read) {
-                GodotRuntime.heapCopy(HEAP8, chunk.slice(0, to_read), p_buf);
+                GodotRuntime.heapCopy(HEAP8, chunk.slice(0, to_read), p_buf + write_offset);
                 chunks[0] = chunk.slice(to_read);
+                write_offset += to_read;
                 to_read = 0;
             } else {
-                GodotRuntime.heapCopy(HEAP8, chunk, p_buf);
+                GodotRuntime.heapCopy(HEAP8, chunk, p_buf + write_offset);
                 to_read -= chunk.length;
+                write_offset += chunk.length;
                 chunks.shift();
             }
         }
