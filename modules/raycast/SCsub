@@ -91,7 +91,7 @@ if env["builtin_embree"]:
     if env["arch"] == "x86_64" and env.msvc:
         env_thirdparty.Append(CPPDEFINES=["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"])
 
-    if env["platform"] == "web":
+    if env["platform"] == "web" and env["wasm_simd"]:
         env_thirdparty.Append(CXXFLAGS=["-msimd128"])
 
     if not env.msvc:
