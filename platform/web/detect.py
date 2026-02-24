@@ -59,7 +59,11 @@ def get_opts():
             "Use Emscripten PROXY_TO_PTHREAD option to run the main application code to a separate thread",
             False,
         ),
-        BoolVariable("wasm_simd", "Use WebAssembly SIMD to improve CPU performance", True),
+        BoolVariable(
+            "wasm_simd",
+            "Use WebAssembly SIMD to improve CPU performance (may break older iOS WebKit in WeChat Mini Game)",
+            False,
+        ),
     ]
 
 
