@@ -82,6 +82,7 @@ function wxGLXPatchCreateContext() {
 	GL.createContext = function (canvas, webGLContextAttributes) {
 		let createdContext = null;
 		let originalGetContext = null;
+		let contextInitializedInGetContext = false;
 
 		if (canvas && typeof canvas.getContext === 'function') {
 			originalGetContext = canvas.getContext;
@@ -99,15 +100,21 @@ function wxGLXPatchCreateContext() {
 				if (!createdContext && requestedType !== contextType) {
 					createdContext = originalGetContext.call(this, contextType, contextAttributes);
 				}
+				if (createdContext) {
+					wxGLXInitContext(createdContext);
+					contextInitializedInGetContext = true;
+				}
 				return createdContext;
 			};
 		}
 
 		try {
 			const handle = originalCreateContext.apply(this, arguments);
-			const contextRecord = GL.contexts && GL.contexts[handle];
-			const glContext = contextRecord && contextRecord.GLctx ? contextRecord.GLctx : createdContext;
-			wxGLXInitContext(glContext);
+			if (!contextInitializedInGetContext) {
+				const contextRecord = GL.contexts && GL.contexts[handle];
+				const glContext = contextRecord && contextRecord.GLctx ? contextRecord.GLctx : createdContext;
+				wxGLXInitContext(glContext);
+			}
 			return handle;
 		} finally {
 			if (canvas && originalGetContext) {

@@ -49,7 +49,9 @@ Utilities::Utilities() {
 	frame = 0;
 	for (int i = 0; i < FRAME_COUNT; i++) {
 		frames[i].index = 0;
+#ifndef WECHAT_GLX_EXPERIMENTAL
 		glGenQueries(max_timestamp_query_elements, frames[i].queries);
+#endif
 
 		frames[i].timestamp_names.resize(max_timestamp_query_elements);
 		frames[i].timestamp_cpu_values.resize(max_timestamp_query_elements);
@@ -64,9 +66,11 @@ Utilities::Utilities() {
 
 Utilities::~Utilities() {
 	singleton = nullptr;
+#ifndef WECHAT_GLX_EXPERIMENTAL
 	for (int i = 0; i < FRAME_COUNT; i++) {
 		glDeleteQueries(max_timestamp_query_elements, frames[i].queries);
 	}
+#endif
 
 	if (texture_mem_cache) {
 		uint32_t leaked_data_size = 0;
@@ -324,11 +328,13 @@ void Utilities::capture_timestamps_begin() {
 void Utilities::capture_timestamp(const String &p_name) {
 	ERR_FAIL_COND(frames[frame].timestamp_count >= max_timestamp_query_elements);
 
+#ifndef WECHAT_GLX_EXPERIMENTAL
 #ifdef GL_API_ENABLED
 	if (RasterizerGLES3::is_gles_over_gl()) {
 		glQueryCounter(frames[frame].queries[frames[frame].timestamp_count], GL_TIMESTAMP);
 	}
 #endif // GL_API_ENABLED
+#endif
 
 	frames[frame].timestamp_names[frames[frame].timestamp_count] = p_name;
 	frames[frame].timestamp_cpu_values[frames[frame].timestamp_count] = OS::get_singleton()->get_ticks_usec();
@@ -338,6 +344,7 @@ void Utilities::capture_timestamp(const String &p_name) {
 void Utilities::_capture_timestamps_begin() {
 	// frame is incremented at the end of the frame so this gives us the queries for frame - 2. By then they should be ready.
 	if (frames[frame].timestamp_count) {
+#ifndef WECHAT_GLX_EXPERIMENTAL
 #ifdef GL_API_ENABLED
 		if (RasterizerGLES3::is_gles_over_gl()) {
 			for (uint32_t i = 0; i < frames[frame].timestamp_count; i++) {
@@ -347,6 +354,7 @@ void Utilities::_capture_timestamps_begin() {
 			}
 		}
 #endif // GL_API_ENABLED
+#endif
 		SWAP(frames[frame].timestamp_names, frames[frame].timestamp_result_names);
 		SWAP(frames[frame].timestamp_cpu_values, frames[frame].timestamp_cpu_result_values);
 	}

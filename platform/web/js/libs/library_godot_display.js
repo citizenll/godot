@@ -301,7 +301,7 @@ const GodotDisplayScreen = {
 		_updateGL: function () {
 			const gl_context_handle = _emscripten_webgl_get_current_context();
 			const gl = GL.getContext(gl_context_handle);
-			if (gl) {
+			if (gl && typeof GL.resizeOffscreenFramebuffer === 'function') {
 				GL.resizeOffscreenFramebuffer(gl);
 			}
 		},
