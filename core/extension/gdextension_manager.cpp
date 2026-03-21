@@ -321,6 +321,13 @@ void GDExtensionManager::load_extensions() {
 		return;
 	}
 
+	// WeChat Mini Game does not support loading external GDExtension dynamic
+	// libraries at runtime, so ignore project-side extension_list.cfg entries.
+	if (!Engine::get_singleton()->is_editor_hint() && OS::get_singleton()->has_feature("web") && OS::get_singleton()->has_feature("wechat")) {
+		OS::get_singleton()->load_platform_gdextensions();
+		return;
+	}
+
 	Ref<FileAccess> f = FileAccess::open(GDExtension::get_extension_list_config_file(), FileAccess::READ);
 	while (f.is_valid() && !f->eof_reached()) {
 		String s = f->get_line().strip_edges();
