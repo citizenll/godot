@@ -86,7 +86,8 @@ bool OS_Web::main_loop_iterate() {
 
 	DisplayServer::get_singleton()->process_events();
 
-	return Main::iteration();
+	bool keep_running = Main::iteration();
+	return keep_running;
 }
 
 void OS_Web::delete_main_loop() {

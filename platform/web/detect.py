@@ -216,6 +216,10 @@ def configure(env: "SConsEnvironment"):
         # must keep exception runtime support enabled.
         env.Append(CXXFLAGS=["-fexceptions"])
         env.Append(LINKFLAGS=["-fexceptions"])
+        env.Append(CPPDEFINES=["WECHAT_GLX_EXPERIMENTAL"])
+        # EmscriptenGLX appears to touch address zero in WeChat runtime paths,
+        # which trips Emscripten's null-write guard even when the frame keeps running.
+        env.Append(LINKFLAGS=["-sCHECK_NULL_WRITES=0"])
         env["EXPORTED_RUNTIME_METHODS"] += ["ccall", "cwrap", "stringToUTF8", "lengthBytesUTF8"]
         env.Append(LINKFLAGS=["-sERROR_ON_UNDEFINED_SYMBOLS=0", wx_glx_lib])
 
@@ -324,7 +328,8 @@ def configure(env: "SConsEnvironment"):
         # This setting just makes WebGL 2 APIs available, it does NOT disable WebGL 1.
         env.Append(LINKFLAGS=["-sMAX_WEBGL_VERSION=2"])
         # Allow use to take control of swapping WebGL buffers.
-        env.Append(LINKFLAGS=["-sOFFSCREEN_FRAMEBUFFER=1"])
+        if not env["use_wx_glx"]:
+            env.Append(LINKFLAGS=["-sOFFSCREEN_FRAMEBUFFER=1"])
         # Disables the use of *glGetProcAddress() which is inefficient.
         # See https://emscripten.org/docs/tools_reference/settings_reference.html#gl-enable-get-proc-address
         env.Append(LINKFLAGS=["-sGL_ENABLE_GET_PROC_ADDRESS=0"])

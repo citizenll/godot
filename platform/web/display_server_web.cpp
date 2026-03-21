@@ -1139,13 +1139,18 @@ DisplayServerWeb::DisplayServerWeb(const String &p_rendering_driver, DisplayServ
 		attributes.alpha = OS::get_singleton()->is_layered_allowed();
 		attributes.antialias = false;
 		attributes.majorVersion = 2;
+#ifdef WECHAT_GLX_EXPERIMENTAL
+		attributes.explicitSwapControl = false;
+#else
 		attributes.explicitSwapControl = true;
+#endif
 
 		webgl_ctx = emscripten_webgl_create_context(canvas_id, &attributes);
 		webgl2_inited = webgl_ctx && emscripten_webgl_make_context_current(webgl_ctx) == EMSCRIPTEN_RESULT_SUCCESS;
 	}
 	if (webgl2_inited) {
-		if (!emscripten_webgl_enable_extension(webgl_ctx, "OVR_multiview2")) {
+		bool multiview_ok = emscripten_webgl_enable_extension(webgl_ctx, "OVR_multiview2");
+		if (!multiview_ok) {
 			print_verbose("Failed to enable WebXR extension.");
 		}
 		RasterizerGLES3::make_current(false);
@@ -1192,7 +1197,9 @@ DisplayServerWeb::~DisplayServerWeb() {
 	}
 #ifdef GLES3_ENABLED
 	if (webgl_ctx) {
+#ifndef WECHAT_GLX_EXPERIMENTAL
 		emscripten_webgl_commit_frame();
+#endif
 		emscripten_webgl_destroy_context(webgl_ctx);
 	}
 #endif
@@ -1510,7 +1517,9 @@ bool DisplayServerWeb::get_swap_cancel_ok() {
 void DisplayServerWeb::swap_buffers() {
 #ifdef GLES3_ENABLED
 	if (webgl_ctx) {
+#ifndef WECHAT_GLX_EXPERIMENTAL
 		emscripten_webgl_commit_frame();
+#endif
 	}
 #endif
 }
