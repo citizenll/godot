@@ -46,12 +46,29 @@ const WASM_INSTANCEOF_TEMPLATE = {
     match: `e instanceof WebAssembly.RuntimeError`,
     replace: `e`
 }
+const WASM_RUNTIME_ERROR_CTOR_TEMPLATE = {
+    match: `var e=new WebAssembly.RuntimeError(what);`,
+    replace: `var e=(typeof WebAssembly!=="undefined"&&typeof WebAssembly.RuntimeError==="function")?new WebAssembly.RuntimeError(what):new Error(what);`
+}
 const WRITE_STAT = {
     match: `HEAP64[buf+88>>3]=BigInt(stat.ino);`,
     replace:`if(stat.ino)HEAP64[buf+88>>3]=BigInt(stat.ino);`
 }
 
 let originGodotJsContent = fs.readFileSync("./bin/.web_zip/godot.js", "utf-8")
+
+const invokeMatches = Array.from(originGodotJsContent.matchAll(/function\s+(invoke_[A-Za-z0-9_]+)\s*\(/g))
+const invokeNames = Array.from(new Set(invokeMatches.map((match) => match[1]))).sort()
+const missingInvokeMappings = invokeNames
+    .filter((name) => !originGodotJsContent.includes(`${name}:${name}`))
+    .map((name) => `${name}:${name}`)
+
+if (missingInvokeMappings.length > 0) {
+    originGodotJsContent = originGodotJsContent.replace(
+        "var wasmImports={",
+        `var wasmImports={${missingInvokeMappings.join(",")},`
+    )
+}
 
 const DEFINE_TEMP_VAR = {
     match: `var noExitRuntime=Module["noExitRuntime"]||false;`,
@@ -60,6 +77,7 @@ const DEFINE_TEMP_VAR = {
 
 const newGodotJsContent = originGodotJsContent.
     replace(WASM_INSTANCEOF_TEMPLATE.match, WASM_INSTANCEOF_TEMPLATE.replace)
+    .replace(WASM_RUNTIME_ERROR_CTOR_TEMPLATE.match, WASM_RUNTIME_ERROR_CTOR_TEMPLATE.replace)
 //     .replace(FIND_CANVAS_TEMPLATE.match, FIND_CANVAS_TEMPLATE.replace)
 //     .replace(WEB_GL_INSTANCE_TEMPLATE.match, WEB_GL_INSTANCE_TEMPLATE.replace)
     .replace(WEB_TILE_DISABLE_TEMPLATE.match, WEB_TILE_DISABLE_TEMPLATE.replace)

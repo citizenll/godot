@@ -28,6 +28,124 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
+function wxGLXCanUseRuntimeHelpers() {
+	return typeof Module !== 'undefined' && typeof Module.ccall === 'function';
+}
+
+function wxGLXIsRuntimeSupported() {
+	return typeof wx !== 'undefined' && !!wx.env && !!wx.env.isSupportEmscriptenGLX;
+}
+
+function wxGLXSafeCCall(name, returnType, argTypes, args) {
+	if (!wxGLXCanUseRuntimeHelpers()) {
+		return null;
+	}
+	try {
+		return Module.ccall(name, returnType, argTypes, args);
+	} catch (e) {
+		console.warn('[WXGLX] ccall failed:', name, e);
+		return null;
+	}
+}
+
+function wxGLXInitContext(glContext) {
+	if (!glContext) {
+		return;
+	}
+
+	const glxContext = glContext.emscriptenGLX;
+	wxGLXSafeCCall('glxInit', null, ['boolean'], [!!glxContext]);
+
+	if (!glxContext) {
+		return;
+	}
+
+	if (typeof Module.wxContextGlobal === 'undefined') {
+		Module.wxContextGlobal = Object.assign({}, glxContext);
+		wxGLXSafeCCall(
+			'glxInitBufferDataAndGlState',
+			null,
+			['number', 'number'],
+			[glxContext.isWebGL2 ? 2 : 1, glxContext.platform]
+		);
+	}
+
+	wxGLXSafeCCall('glxUpdateContextId', 'number', ['number'], [glxContext.ctxid]);
+}
+
+function wxGLXPatchCreateContext() {
+	if (typeof GL === 'undefined' || typeof GL.createContext !== 'function') {
+		return;
+	}
+
+	const originalCreateContext = GL.createContext;
+	GL.createContext = function (canvas, webGLContextAttributes) {
+		let createdContext = null;
+		let originalGetContext = null;
+
+		if (canvas && typeof canvas.getContext === 'function') {
+			originalGetContext = canvas.getContext;
+			canvas.getContext = function (contextType, contextAttributes) {
+				let requestedType = contextType;
+				if (wxGLXIsRuntimeSupported()) {
+					if (contextType === 'webgl2') {
+						requestedType = 'wxwebgl2';
+					} else if (contextType === 'webgl') {
+						requestedType = 'wxwebgl';
+					}
+				}
+
+				createdContext = originalGetContext.call(this, requestedType, contextAttributes);
+				if (!createdContext && requestedType !== contextType) {
+					createdContext = originalGetContext.call(this, contextType, contextAttributes);
+				}
+				return createdContext;
+			};
+		}
+
+		try {
+			const handle = originalCreateContext.apply(this, arguments);
+			const contextRecord = GL.contexts && GL.contexts[handle];
+			const glContext = contextRecord && contextRecord.GLctx ? contextRecord.GLctx : createdContext;
+			wxGLXInitContext(glContext);
+			return handle;
+		} finally {
+			if (canvas && originalGetContext) {
+				canvas.getContext = originalGetContext;
+			}
+		}
+	};
+}
+
+function wxGLXPatchMakeContextCurrent() {
+	if (typeof GL === 'undefined' || typeof GL.makeContextCurrent !== 'function') {
+		return;
+	}
+
+	const originalMakeContextCurrent = GL.makeContextCurrent;
+	GL.makeContextCurrent = function (contextHandle) {
+		const result = originalMakeContextCurrent.apply(this, arguments);
+		const currentContext = GL.currentContext && GL.currentContext.GLctx ? GL.currentContext.GLctx : null;
+		if (currentContext && currentContext.emscriptenGLX) {
+			wxGLXSafeCCall('glxUpdateContextId', 'number', ['number'], [currentContext.emscriptenGLX.ctxid]);
+		}
+		return result;
+	};
+}
+
+function installWXGLXPatches() {
+	if (typeof GL === 'undefined' || GL.__godotWXGLXPatched) {
+		return;
+	}
+	GL.__godotWXGLXPatched = true;
+	wxGLXPatchCreateContext();
+	wxGLXPatchMakeContextCurrent();
+}
+
+// This file is appended as post-js, so adding a preRun hook here is too late and
+// leaves onPreRuns pending until Engine.callMain(). Patch GL immediately instead.
+installWXGLXPatches();
+
 addOnPostRun(function () {
 	GL.getSource = (shader, count, string, length) => {
 		let source = '';

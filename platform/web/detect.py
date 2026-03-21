@@ -59,6 +59,16 @@ def get_opts():
             "Use Emscripten PROXY_TO_PTHREAD option to run the main application code to a separate thread",
             False,
         ),
+        (
+            "wx_glx_lib",
+            "Path to the experimental WeChat EmscriptenGLX static library (.a); auto-detects under platform/web/libemscriptenglx when empty",
+            "",
+        ),
+        BoolVariable(
+            "use_wx_glx",
+            "Enable experimental WeChat EmscriptenGLX integration",
+            False,
+        ),
         BoolVariable(
             "wasm_simd",
             "Use WebAssembly SIMD to improve CPU performance (may break older iOS WebKit in WeChat Mini Game)",
@@ -153,6 +163,56 @@ def configure(env: "SConsEnvironment"):
 
     if env["use_assertions"]:
         env.Append(LINKFLAGS=["-sASSERTIONS=1"])
+
+    if env["use_wx_glx"]:
+        wx_glx_supported_versions = {(3, 1, 17), (3, 1, 74), (4, 0, 10)}
+        if cc_semver not in wx_glx_supported_versions:
+            print_warning(
+                'Experimental "use_wx_glx=yes" is only documented for Emscripten 3.1.17, 3.1.74, and 4.0.10 '
+                "(detected %s.%s.%s)." % cc_semver
+            )
+
+        wx_glx_lib = str(env["wx_glx_lib"]).strip()
+        if not wx_glx_lib:
+            wx_glx_dir = os.path.abspath(os.path.join("platform", "web", "libemscriptenglx"))
+            wx_glx_candidate = os.path.join(
+                wx_glx_dir, "libemscriptenglx_%s.%s.%s.a" % (cc_semver[0], cc_semver[1], cc_semver[2])
+            )
+            if os.path.isfile(wx_glx_candidate):
+                wx_glx_lib = wx_glx_candidate
+            else:
+                available_libs = []
+                if os.path.isdir(wx_glx_dir):
+                    available_libs = sorted([entry.name for entry in Path(wx_glx_dir).glob("libemscriptenglx_*.a")])
+                print_error(
+                    'No matching EmscriptenGLX library found for Emscripten %s.%s.%s under "%s". '
+                    'Set "wx_glx_lib=<path/to/libemscriptenglx*.a>" explicitly if you want to override.'
+                    % (cc_semver[0], cc_semver[1], cc_semver[2], wx_glx_dir)
+                )
+                if available_libs:
+                    print_info("Available EmscriptenGLX libraries: %s" % ", ".join(available_libs))
+                sys.exit(255)
+        wx_glx_lib = os.path.abspath(wx_glx_lib)
+        if not os.path.isfile(wx_glx_lib):
+            print_error('wx_glx_lib does not exist: "%s"' % wx_glx_lib)
+            sys.exit(255)
+
+        print_info('Enabling experimental WeChat EmscriptenGLX: %s' % wx_glx_lib)
+        if env["threads"]:
+            print_warning('Experimental "use_wx_glx=yes" is currently only validated with "threads=no".')
+
+        if env["disable_exceptions"]:
+            print_warning(
+                'Experimental "use_wx_glx=yes" requires C++ exception support; forcing "disable_exceptions=no".'
+            )
+            env["disable_exceptions"] = False
+
+        # The vendor GLX library throws C++ exceptions internally, so the link step
+        # must keep exception runtime support enabled.
+        env.Append(CXXFLAGS=["-fexceptions"])
+        env.Append(LINKFLAGS=["-fexceptions"])
+        env["EXPORTED_RUNTIME_METHODS"] += ["ccall", "cwrap", "stringToUTF8", "lengthBytesUTF8"]
+        env.Append(LINKFLAGS=["-sERROR_ON_UNDEFINED_SYMBOLS=0", wx_glx_lib])
 
     if env.editor_build and env["initial_memory"] < 64:
         print_info("Forcing `initial_memory=64` as it is required for the web editor.")
@@ -320,9 +380,11 @@ def configure(env: "SConsEnvironment"):
     # Wrap the JavaScript support code around a closure named Godot.
     env.Append(LINKFLAGS=["-sMODULARIZE=1", "-sEXPORT_NAME='Godot'"])
 
-    # Force long jump mode to 'wasm'
-    env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='wasm'"])
-    env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='wasm'"])
+    # The experimental WeChat GLX library requires exceptions, which are incompatible
+    # with SUPPORT_LONGJMP=wasm in current Emscripten.
+    longjmp_mode = "emscripten" if env["use_wx_glx"] else "wasm"
+    env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='%s'" % longjmp_mode])
+    env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='%s'" % longjmp_mode])
 
     # Allow increasing memory buffer size during runtime. This is efficient
     # when using WebAssembly (in comparison to asm.js) and works well for
