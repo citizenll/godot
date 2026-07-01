@@ -131,14 +131,48 @@ const GodotJSWrapper = {
 		isBuffer: function (obj) {
 			return obj instanceof ArrayBuffer || ArrayBuffer.isView(obj);
 		},
+
+		// In WeChat Mini Game, `window` may be a bridged proxy instead of the
+		// real local global object. Prefer local globals first to avoid stalling
+		// bridge lookups when JavaScriptBridge requests interfaces by name.
+		resolveNamedObject: function (name) {
+			const roots = [];
+			if (typeof globalThis !== 'undefined') {
+				roots.push(globalThis);
+			}
+			if (typeof GameGlobal !== 'undefined') {
+				roots.push(GameGlobal);
+			}
+			if (typeof window !== 'undefined') {
+				roots.push(window);
+			}
+
+			for (let i = 0; i < roots.length; i++) {
+				const root = roots[i];
+				if (!root) {
+					continue;
+				}
+				try {
+					if (typeof root[name] !== 'undefined') {
+						return root[name];
+					}
+				} catch (e) {
+					// Some bridged globals can throw on property access. Ignore and
+					// continue searching the remaining local roots.
+				}
+			}
+
+			return undefined;
+		},
 	},
 
 	godot_js_wrapper_interface_get__proxy: 'sync',
 	godot_js_wrapper_interface_get__sig: 'ii',
 	godot_js_wrapper_interface_get: function (p_name) {
 		const name = GodotRuntime.parseString(p_name);
-		if (typeof (window[name]) !== 'undefined') {
-			return GodotJSWrapper.get_proxied(window[name]);
+		const target = GodotJSWrapper.resolveNamedObject(name);
+		if (typeof target !== 'undefined') {
+			return GodotJSWrapper.get_proxied(target);
 		}
 		return 0;
 	},
@@ -285,7 +319,8 @@ const GodotJSWrapper = {
 	godot_js_wrapper_create_object__sig: 'iiiiiiii',
 	godot_js_wrapper_create_object: function (p_object, p_args, p_argc, p_convert_callback, p_exchange, p_lock, p_free_lock_callback) {
 		const name = GodotRuntime.parseString(p_object);
-		if (typeof (window[name]) === 'undefined') {
+		const constructorTarget = GodotJSWrapper.resolveNamedObject(name);
+		if (typeof constructorTarget === 'undefined') {
 			return -1;
 		}
 		const convert = GodotRuntime.get_func(p_convert_callback);
@@ -300,7 +335,7 @@ const GodotJSWrapper = {
 			}
 		}
 		try {
-			const res = new window[name](...args);
+			const res = new constructorTarget(...args);
 			return GodotJSWrapper.js2variant(res, p_exchange);
 		} catch (e) {
 			GodotRuntime.error(`Error calling constructor ${name} with args:`, args, 'error:', e);
