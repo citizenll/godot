@@ -1,0 +1,86 @@
+EmscriptenGLX 原生引擎接入
+简介
+游戏内所有 GL 指令调用需要经过三层转换：WASM(业务逻辑) -> WebGL JS胶水层(GL -> WebGL) -> 平台渲染，WASM 模块 与 JavaScript 之间的高频通信无疑带来了繁重的性能开销。
+
+通过 EmscriptenGLX 渲染模式，可以实现在 WASM 内部完成 GL -> WebGL 指令的处理，将原本 WebGL JS胶水层 的代码下沉至业务逻辑(WASM)中，消除WASM 与 JS 之间高频调用链路。详细文档请查阅EmscriptenGLX方案介绍
+
+特别说明
+EmscriptenGLX 目前仅支持在 iOS高性能+模式 以及 Android平台 下运行，其他运行时将会自动降级为原有的运行方案。
+基础库版本必须 >= 3.8.12，低版本基础库会使用原有的运行模式运行游戏。
+建议游戏 充分验证后 再进行发布。
+接入指南
+以下的所有流程的前提是游戏已基于WebAssembly技术将游戏转换至微信小游戏平台
+
+1. 获取 libemscriptenglx.a 静态库
+开发者可以通过如下两种方式下载 libemscriptenglx.a 的静态库文件
+
+// 方式一：指定EmscriptnGLX版本下载（如 0.1.11）
+https://game.weixin.qq.com/cgi-bin/gamewxagwasmsplitwap/getunityplugininfo?download=1&biz_id=1&version=${version}
+
+// 方式二：获取最新版本
+https://game.weixin.qq.com/cgi-bin/gamewxagwasmsplitwap/getunityplugininfo?download=1&biz_id=1&version=latest
+不论通过上面哪种方式，开发者通过 GET 获取到的构建产物为 libs_emscriptenglx.zip 的压缩包文件，压缩包内包含如下的文件
+
+// 文件列表
+- version.txt   // 记录当前版本的版本号 及 构建时间
+- libemscriptenglx_x.x.x.a  // 微信小游戏官网维护的emsdk版本对应的构建产物，目前支持 3.1.17, 3.1.74, 4.0.10 版本
+💡 若有特定 emsdk 版本需要额外支持的，欢迎通过文末助手链接与我们联系
+
+2. 新增 emcc 编译参数
+-L<libPath>        \ 指定库的路径
+-lemscriptenglx    \ 链接名为 emscriptenglx.a的静态库
+-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,stringToUTF8,lengthBytesUTF8 \ 新增运行时的函数
+-s ERROR_ON_UNDEFINED_SYMBOLS=0    \ 忽略undefined的声明，保证编译
+
+// for CMake
+# 指定静态库路径
+link_directories(/libPath)
+# 添加可执行文件并链接库
+add_executable(myapp, main.cpp)
+target_link_libraries(myapp emscriptenglx)
+3. 胶水层代码修改
+由于EmscriptenGLX方案需要额外为 context 挂载相关的函数实现，故而在EmscriptenGLX方案下，需要在JS Glue中进行下面的代码修改。 建议可以在导出的胶水层代码中，新增 ReplaceRules 规则，进行字符串替换。
+
+createContext
+// 若使用 webgl/webgl2，请将contextType修改为 wxwebgl/wxwebgl2
+// [GL]对象 GL.createContext
+createContext: function(canvas, webGLContextAttributes) {
+  // code...
+
+  // eg: webgl示例，可以通过 wx.env.isSupportEmscriptenGLX 判断当前运行时是否支持 EmscriptenGLX特性
+  const ctx = canvas.getContext(wx.env.isSupportEmscriptenGLX ? 'wxwebgl' : 'webgl');
+  // ① 调用EmscriptenGLX的初始化函数
+  Module.ccall(
+    'glxInit',
+    null,
+    ['bool'],
+    [ctx.emscriptenGLX ? true : false]
+  );
+  // ② 初始化全局变量
+  if (typeof Module['wxContextGlobal'] === 'undefined' && ctx.emscriptenGLX) {
+      Module.wxContextGlobal = { ...ctx.emscriptenGLX };
+      Module.ccall(
+        'glxInitBufferDataAndGlState',
+        null,
+        ['number', 'number'],
+        [ctx.emscriptenGLX.isWebGL2 ? 2 : 1, ctx.emscriptenGLX.platform]
+      );
+  }
+  // code...
+}
+makeCurrentContext
+在渲染上下文切换时，调用 glxUpdateContextId 更新当前的 contextid 信息
+
+// makeCurrentContext 为示例函数名，具体根据游戏引擎名称而定
+makeCurrentContext: function() {
+  // code
+  if (Module.ctx.emscriptenGLX) {
+    // ③ 每次切换上下文时，都需要传入当前的contextId信息
+    Module.ccall(
+        'glxUpdateContextId',
+        'number',
+        ['number'],
+        [Module.ctx.emscriptenGLX.ctxid]
+    );
+  }
+}

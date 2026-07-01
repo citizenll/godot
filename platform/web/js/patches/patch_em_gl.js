@@ -28,22 +28,40 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-function wxGLXCanUseRuntimeHelpers() {
-	return typeof Module !== 'undefined' && typeof Module.ccall === 'function';
+function wxGLXGetNativeExport(name) {
+	if (typeof Module === 'undefined' || !Module) {
+		return null;
+	}
+
+	const exportName = '_' + name;
+	try {
+		const nativeFunction = Module[exportName];
+		return typeof nativeFunction === 'function' ? nativeFunction : null;
+	} catch (e) {
+		return null;
+	}
+}
+
+function wxGLXHasNativeBindings() {
+	return !!wxGLXGetNativeExport('glxInit') &&
+		!!wxGLXGetNativeExport('glxInitBufferDataAndGlState') &&
+		!!wxGLXGetNativeExport('glxUpdateContextId');
 }
 
 function wxGLXIsRuntimeSupported() {
-	return typeof wx !== 'undefined' && !!wx.env && !!wx.env.isSupportEmscriptenGLX;
+	return typeof wx !== 'undefined' && !!wx.env && !!wx.env.isSupportEmscriptenGLX && wxGLXHasNativeBindings();
 }
 
-function wxGLXSafeCCall(name, returnType, argTypes, args) {
-	if (!wxGLXCanUseRuntimeHelpers()) {
+function wxGLXCallNative(name, args) {
+	const nativeFunction = wxGLXGetNativeExport(name);
+	if (!nativeFunction) {
 		return null;
 	}
+
 	try {
-		return Module.ccall(name, returnType, argTypes, args);
+		return nativeFunction.apply(Module, args || []);
 	} catch (e) {
-		console.warn('[WXGLX] ccall failed:', name, e);
+		console.warn('[WXGLX] native call failed:', name, e);
 		return null;
 	}
 }
@@ -54,7 +72,7 @@ function wxGLXInitContext(glContext) {
 	}
 
 	const glxContext = glContext.emscriptenGLX;
-	wxGLXSafeCCall('glxInit', null, ['boolean'], [!!glxContext]);
+	wxGLXCallNative('glxInit', [!!glxContext]);
 
 	if (!glxContext) {
 		return;
@@ -62,15 +80,10 @@ function wxGLXInitContext(glContext) {
 
 	if (typeof Module.wxContextGlobal === 'undefined') {
 		Module.wxContextGlobal = Object.assign({}, glxContext);
-		wxGLXSafeCCall(
-			'glxInitBufferDataAndGlState',
-			null,
-			['number', 'number'],
-			[glxContext.isWebGL2 ? 2 : 1, glxContext.platform]
-		);
+		wxGLXCallNative('glxInitBufferDataAndGlState', [glxContext.isWebGL2 ? 2 : 1, glxContext.platform]);
 	}
 
-	wxGLXSafeCCall('glxUpdateContextId', 'number', ['number'], [glxContext.ctxid]);
+	wxGLXCallNative('glxUpdateContextId', [glxContext.ctxid]);
 }
 
 function wxGLXPatchCreateContext() {
@@ -134,7 +147,7 @@ function wxGLXPatchMakeContextCurrent() {
 		const result = originalMakeContextCurrent.apply(this, arguments);
 		const currentContext = GL.currentContext && GL.currentContext.GLctx ? GL.currentContext.GLctx : null;
 		if (currentContext && currentContext.emscriptenGLX) {
-			wxGLXSafeCCall('glxUpdateContextId', 'number', ['number'], [currentContext.emscriptenGLX.ctxid]);
+			wxGLXCallNative('glxUpdateContextId', [currentContext.emscriptenGLX.ctxid]);
 		}
 		return result;
 	};
