@@ -2,10 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Commit,
 
-    [ValidateSet("4.5.1-minigame", "4.6")]
-    [string]$FromBranch = "4.6",
+    [string]$FromBranch = "4.7",
 
-    [ValidateSet("4.5.1-minigame", "4.6")]
     [string[]]$ToBranches = @("4.5.1-minigame"),
 
     [string]$ConfigPath = (Join-Path $PSScriptRoot "targets.local.psd1")

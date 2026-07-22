@@ -1,5 +1,4 @@
 param(
-    [ValidateSet("4.5.1-minigame", "4.6", "all")]
     [string]$Branch = "all",
 
     [string]$ConfigPath = (Join-Path $PSScriptRoot "targets.local.psd1"),
@@ -37,7 +36,7 @@ if (!$config.Builds) {
 }
 
 $branches = if ($Branch -eq "all") {
-    @("4.5.1-minigame", "4.6")
+    @($config.Builds.Keys | Sort-Object)
 } else {
     @($Branch)
 }
@@ -50,6 +49,18 @@ foreach ($branchName in $branches) {
     $build = $config.Builds[$branchName]
     $repo = $build.Repo
     $targets = @($build.TargetEngines)
+    $sconsPath = if ($build.ContainsKey("SconsPath")) {
+        $build.SconsPath
+    } elseif ($config.ContainsKey("SconsPath")) {
+        $config.SconsPath
+    } else {
+        "scons"
+    }
+    $buildArgs = if ($build.ContainsKey("BuildArgs")) {
+        @($build.BuildArgs)
+    } else {
+        @("platform=web", "target=template_release", "threads=no")
+    }
 
     if (!(Test-Path $repo)) {
         throw "Repo path missing for ${branchName}: $repo"
@@ -71,9 +82,9 @@ foreach ($branchName in $branches) {
     Push-Location $repo
     try {
         if (!$SkipBuild) {
-            Write-Host "Building (threads=no) ..."
+            Write-Host "Building: $sconsPath $($buildArgs -join ' ')"
             Invoke-Checked -Script {
-                scons platform=web target=template_release threads=no
+                & $sconsPath @buildArgs
             } -ErrorMessage "Build failed: $branchName"
         }
 

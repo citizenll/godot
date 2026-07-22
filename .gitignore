@@ -397,3 +397,4 @@ $RECYCLE.BIN/
 *.lnk
 *.generated.props
 patchs
+.claude/settings.local.json
