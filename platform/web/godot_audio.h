@@ -47,6 +47,10 @@ extern void godot_audio_input_stop();
 
 // Samples
 extern int godot_audio_sample_stream_is_registered(const char *p_stream_object_id);
+extern int godot_audio_wechat_is_available();
+extern double godot_audio_wechat_get_native_audio_min_duration();
+extern int godot_audio_wechat_can_cache_pcm(int p_frames_total);
+extern void godot_audio_sample_register_native_stream(const char *p_stream_object_id, const char *p_source_path, const char *p_source_uid, const char *p_content_hash, const void *p_data, int p_data_size, const char *p_codec, const char *p_loop_mode, int p_frames_total, int p_sample_rate);
 extern void godot_audio_sample_register_stream(const char *p_stream_object_id, float *p_frames_buf, int p_frames_total, const char *p_loop_mode, int p_loop_begin, int p_loop_end);
 extern void godot_audio_sample_unregister_stream(const char *p_stream_object_id);
 extern void godot_audio_sample_start(const char *p_playback_object_id, const char *p_stream_object_id, int p_bus_index, float p_offset, float p_pitch_scale, float *p_volume_ptr);

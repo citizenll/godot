@@ -34,12 +34,38 @@
 
 #include "core/config/engine.h"
 #include "core/math/math_funcs_binary.h"
+#include "core/config/project_settings.h"
+#include "core/crypto/crypto_core.h"
 #include "core/object/object.h"
 #include "servers/audio/audio_stream.h"
 
 #include <emscripten.h>
 
 AudioDriverWeb::AudioContext AudioDriverWeb::audio_context;
+
+namespace {
+
+String sha256_hex(const uint8_t *p_data, size_t p_size, int p_sample_rate = 0) {
+	CryptoCore::SHA256Context context;
+	ERR_FAIL_COND_V(context.start() != OK, String());
+	ERR_FAIL_COND_V(context.update(p_data, p_size) != OK, String());
+	if (p_sample_rate > 0) {
+		const uint32_t sample_rate = uint32_t(p_sample_rate);
+		ERR_FAIL_COND_V(context.update(reinterpret_cast<const uint8_t *>(&sample_rate), sizeof(sample_rate)) != OK, String());
+	}
+	uint8_t digest[32];
+	ERR_FAIL_COND_V(context.finish(digest) != OK, String());
+	static constexpr char HEX[] = "0123456789abcdef";
+	char encoded[65];
+	for (int i = 0; i < 32; i++) {
+		encoded[i * 2] = HEX[digest[i] >> 4];
+		encoded[i * 2 + 1] = HEX[digest[i] & 0x0f];
+	}
+	encoded[64] = '\0';
+	return String(encoded);
+}
+
+} // namespace
 
 bool AudioDriverWeb::is_available() {
 	return godot_audio_is_available() != 0;
@@ -235,10 +261,73 @@ void AudioDriverWeb::register_sample(const Ref<AudioSample> &p_sample) {
 		} break;
 	}
 
-	double length = p_sample->stream->get_length();
+	const StringName native_audio_meta_key = SNAME("_godot_minigame_native_audio");
+	const Variant native_metadata_value = p_sample->stream->has_meta(native_audio_meta_key)
+			? p_sample->stream->get_meta(native_audio_meta_key)
+			: Variant();
+	const bool packaged_native_audio = native_metadata_value.get_type() == Variant::DICTIONARY;
+	const Dictionary native_metadata = packaged_native_audio ? Dictionary(native_metadata_value) : Dictionary();
+	const double length = MAX(0.0, packaged_native_audio
+			? double(native_metadata.get("length", p_sample->stream->get_length()))
+			: p_sample->stream->get_length());
+	const int frames_total = MIN(int64_t(INT32_MAX), int64_t(mix_rate * length));
+	const bool wechat_available = godot_audio_wechat_is_available() != 0;
+	const double native_min_duration = MAX(0.0, godot_audio_wechat_get_native_audio_min_duration());
+	const bool use_native_audio = wechat_available && (packaged_native_audio || length >= native_min_duration);
+
+	if (use_native_audio) {
+		String source_path = p_sample->stream->get_path();
+		String source_uid;
+		String content_hash;
+		String codec;
+		PackedByteArray encoded_data;
+
+		if (packaged_native_audio) {
+			source_path = native_metadata.get("source_path", source_path);
+			source_uid = native_metadata.get("source_uid", "");
+			content_hash = native_metadata.get("content_hash", "");
+			codec = native_metadata.get("codec", "");
+		} else if (p_sample->stream->is_class("AudioStreamMP3")) {
+			const Variant data = p_sample->stream->call("get_data");
+			if (data.get_type() == Variant::PACKED_BYTE_ARRAY) {
+				encoded_data = data;
+				codec = "mp3";
+				content_hash = sha256_hex(encoded_data.ptr(), encoded_data.size());
+			}
+		}
+
+		if (packaged_native_audio || !encoded_data.is_empty()) {
+			godot_audio_sample_register_native_stream(
+					itos(p_sample->stream->get_instance_id()).utf8().get_data(),
+					source_path.utf8().get_data(),
+					source_uid.utf8().get_data(),
+					content_hash.utf8().get_data(),
+					encoded_data.is_empty() ? nullptr : encoded_data.ptr(),
+					encoded_data.size(),
+					codec.utf8().get_data(),
+					loop_mode.utf8().get_data(),
+					frames_total,
+					mix_rate);
+			return;
+		}
+
+		if (godot_audio_wechat_can_cache_pcm(frames_total) == 0) {
+			godot_audio_sample_register_native_stream(
+					itos(p_sample->stream->get_instance_id()).utf8().get_data(),
+					source_path.utf8().get_data(),
+					"",
+					"",
+					nullptr,
+					0,
+					"pcm_f32_planar",
+					loop_mode.utf8().get_data(),
+					frames_total,
+					mix_rate);
+			return;
+		}
+	}
 
 	Vector<AudioFrame> frames;
-	int frames_total = mix_rate * length;
 	{
 		Ref<AudioStreamPlayback> stream_playback = p_sample->stream->instantiate_playback();
 		frames.resize(frames_total);
@@ -253,6 +342,22 @@ void AudioDriverWeb::register_sample(const Ref<AudioSample> &p_sample) {
 	for (int i = 0; i < frames_total; i++) {
 		data_ptrw[i] = frames[i].left;
 		data_ptrw[i + frames_total] = frames[i].right;
+	}
+
+	if (use_native_audio) {
+		const String content_hash = sha256_hex(reinterpret_cast<const uint8_t *>(data_ptrw), data.size() * sizeof(float), mix_rate);
+		godot_audio_sample_register_native_stream(
+				itos(p_sample->stream->get_instance_id()).utf8().get_data(),
+				p_sample->stream->get_path().utf8().get_data(),
+				"",
+				content_hash.utf8().get_data(),
+				data_ptrw,
+				data.size() * sizeof(float),
+				"pcm_f32_planar",
+				loop_mode.utf8().get_data(),
+				frames_total,
+				mix_rate);
+		return;
 	}
 
 	godot_audio_sample_register_stream(
