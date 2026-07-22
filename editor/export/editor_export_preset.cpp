@@ -108,7 +108,6 @@ void EditorExportPreset::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_preset_name"), &EditorExportPreset::get_name);
 	ClassDB::bind_method(D_METHOD("is_runnable"), &EditorExportPreset::is_runnable);
-	ClassDB::bind_method(D_METHOD("set_advanced_options_enabled", "enabled"), &EditorExportPreset::set_advanced_options_enabled);
 	ClassDB::bind_method(D_METHOD("are_advanced_options_enabled"), &EditorExportPreset::are_advanced_options_enabled);
 	ClassDB::bind_method(D_METHOD("is_dedicated_server"), &EditorExportPreset::is_dedicated_server);
 	ClassDB::bind_method(D_METHOD("set_export_filter", "filter"), &EditorExportPreset::set_export_filter);
