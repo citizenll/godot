@@ -808,12 +808,19 @@ class Bus {
 	 */
 	static move(fromIndex, toIndex) {
 		const movedBus = GodotAudio.Bus.getBusOrNull(fromIndex);
-		if (movedBus == null) {
+		if (movedBus == null || fromIndex === toIndex) {
 			return;
 		}
 		const buses = GodotAudio.buses.filter((_, i) => i !== fromIndex);
-		// Inserts at index.
-		buses.splice(toIndex - 1, 0, movedBus);
+		let insertionIndex;
+		if (toIndex === -1) {
+			insertionIndex = buses.length;
+		} else if (toIndex < fromIndex) {
+			insertionIndex = toIndex;
+		} else {
+			insertionIndex = toIndex - 1;
+		}
+		buses.splice(insertionIndex, 0, movedBus);
 		GodotAudio.buses = buses;
 	}
 
@@ -824,7 +831,7 @@ class Bus {
 	 */
 	static addAt(index) {
 		const newBus = GodotAudio.Bus.create();
-		if (index !== newBus.getId()) {
+		if (index !== -1 && index !== newBus.getId()) {
 			GodotAudio.Bus.move(newBus.getId(), index);
 		}
 	}
