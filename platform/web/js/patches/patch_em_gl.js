@@ -48,8 +48,51 @@ function wxGLXHasNativeBindings() {
 		!!wxGLXGetNativeExport('glxUpdateContextId');
 }
 
+function wxGLXGetRoot() {
+	if (typeof GameGlobal !== 'undefined') {
+		return GameGlobal;
+	}
+	if (typeof globalThis !== 'undefined') {
+		return globalThis;
+	}
+	return {};
+}
+
+function wxGLXGetPinnedMode() {
+	const mode = wxGLXGetRoot().__godotMinigameWXGLXEnabled;
+	return typeof mode === 'boolean' ? mode : null;
+}
+
 function wxGLXIsRuntimeSupported() {
-	return typeof wx !== 'undefined' && !!wx.env && !!wx.env.isSupportEmscriptenGLX && wxGLXHasNativeBindings();
+	const pinnedMode = wxGLXGetPinnedMode();
+	if (pinnedMode !== null) {
+		if (pinnedMode && !wxGLXHasNativeBindings()) {
+			throw new Error('[WXGLX] The loader selected WXGLX, but the native bindings are missing.');
+		}
+		return pinnedMode;
+	}
+
+	return wxGLXGetRoot().__GODOT_DISABLE_WXGLX !== true &&
+		typeof wx !== 'undefined' &&
+		!!wx.env &&
+		!!wx.env.isSupportEmscriptenGLX &&
+		wxGLXHasNativeBindings();
+}
+
+function wxGLXValidateAndPinContext(glContext) {
+	if (!glContext) {
+		return;
+	}
+
+	const root = wxGLXGetRoot();
+	const actualMode = !!glContext.emscriptenGLX;
+	const pinnedMode = wxGLXGetPinnedMode();
+	if (pinnedMode !== null && pinnedMode !== actualMode) {
+		throw new Error(
+			`[WXGLX] Canvas context mode mismatch: loader=${pinnedMode ? 'wxwebgl' : 'webgl'}, engine=${actualMode ? 'wxwebgl' : 'webgl'}.`
+		);
+	}
+	root.__godotMinigameWXGLXEnabled = actualMode;
 }
 
 function wxGLXCallNative(name, args) {
@@ -72,6 +115,7 @@ function wxGLXInitContext(glContext) {
 	}
 
 	const glxContext = glContext.emscriptenGLX;
+	wxGLXValidateAndPinContext(glContext);
 	wxGLXCallNative('glxInit', [!!glxContext]);
 
 	if (!glxContext) {
