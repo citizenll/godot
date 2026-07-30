@@ -155,7 +155,7 @@ function wxGLXPatchCreateContext() {
 
 				createdContext = originalGetContext.call(this, requestedType, contextAttributes);
 				if (!createdContext && requestedType !== contextType) {
-					createdContext = originalGetContext.call(this, contextType, contextAttributes);
+					throw new Error(`[WXGLX] Failed to create pinned ${requestedType} context.`);
 				}
 				if (createdContext) {
 					wxGLXInitContext(createdContext);

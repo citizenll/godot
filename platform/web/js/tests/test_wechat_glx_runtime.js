@@ -2,7 +2,7 @@ const assert = require("assert");
 const fs = require("fs");
 const vm = require("vm");
 
-function createCanvas(initialContextType = null) {
+function createCanvas(initialContextType = null, allowModeMismatch = false) {
 	let contextType = initialContextType;
 	let glContext = initialContextType ? createGLContext(initialContextType) : null;
 	const requests = [];
@@ -11,7 +11,7 @@ function createCanvas(initialContextType = null) {
 		requests,
 		getContext(requestedType) {
 			requests.push(requestedType);
-			if (contextType && contextType !== requestedType) {
+			if (contextType && contextType !== requestedType && !allowModeMismatch) {
 				return null;
 			}
 			if (!contextType) {
@@ -38,7 +38,7 @@ function createGLContext(contextType) {
 	};
 }
 
-function createHarness({ pinnedMode, disabled = false, initialContextType = null } = {}) {
+function createHarness({ pinnedMode, disabled = false, initialContextType = null, allowModeMismatch = false } = {}) {
 	const nativeCalls = [];
 	const gameGlobal = {};
 	if (typeof pinnedMode === "boolean") {
@@ -88,7 +88,7 @@ function createHarness({ pinnedMode, disabled = false, initialContextType = null
 	vm.createContext(context);
 	vm.runInContext(fs.readFileSync("platform/web/js/patches/patch_em_gl.js", "utf8"), context);
 	return {
-		canvas: createCanvas(initialContextType),
+		canvas: createCanvas(initialContextType, allowModeMismatch),
 		context,
 		gameGlobal,
 		nativeCalls,
@@ -137,8 +137,22 @@ function createWebGL2(harness) {
 	const harness = createHarness({ pinnedMode: true, initialContextType: "webgl2" });
 	assert.throws(
 		() => createWebGL2(harness),
+		/Failed to create pinned wxwebgl2 context/,
+		"a pinned GLX mode must not fall back to a standard context"
+	);
+	assert.deepStrictEqual(harness.canvas.requests, ["wxwebgl2"]);
+}
+
+{
+	const harness = createHarness({
+		pinnedMode: true,
+		initialContextType: "webgl2",
+		allowModeMismatch: true,
+	});
+	assert.throws(
+		() => createWebGL2(harness),
 		/Canvas context mode mismatch/,
-		"mixed loader and engine context modes must fail before rendering starts"
+		"a context returned in the wrong mode must fail before rendering starts"
 	);
 }
 
