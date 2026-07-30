@@ -2168,8 +2168,9 @@ const _GodotAudio = {
 					playback.hashRef = false;
 				}
 				if (playback.ctx) {
-					playback.ctx.stop();
-					GodotAudio.WX.releaseContext(playback.ctx);
+					// WeChat may deliver onStop asynchronously. A context with a pending
+					// stop event must never be reused for a different playback.
+					GodotAudio.WX.destroyContext(playback.ctx);
 				}
 				return true;
 			},
