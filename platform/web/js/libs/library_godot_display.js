@@ -552,6 +552,13 @@ const GodotDisplay = {
 		return false;
 	},
 
+	godot_js_display_is_wx_glx_enabled__proxy: 'sync',
+	godot_js_display_is_wx_glx_enabled__sig: 'i',
+	godot_js_display_is_wx_glx_enabled: function () {
+		const root = typeof GameGlobal !== 'undefined' ? GameGlobal : globalThis;
+		return root.__godotMinigameWXGLXEnabled === true ? 1 : 0;
+	},
+
 	/*
 	 * Canvas
 	 */

@@ -62,6 +62,7 @@ private:
 
 #ifdef GLES3_ENABLED
 	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE webgl_ctx = 0;
+	bool wx_glx_enabled = false;
 #endif
 
 	HashMap<int64_t, CharString> utterance_ids;

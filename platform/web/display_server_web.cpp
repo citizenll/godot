@@ -1140,10 +1140,9 @@ DisplayServerWeb::DisplayServerWeb(const String &p_rendering_driver, DisplayServ
 		attributes.antialias = false;
 		attributes.majorVersion = 2;
 #ifdef WECHAT_GLX_EXPERIMENTAL
-		attributes.explicitSwapControl = false;
-#else
-		attributes.explicitSwapControl = true;
+		wx_glx_enabled = godot_js_display_is_wx_glx_enabled() == 1;
 #endif
+		attributes.explicitSwapControl = !wx_glx_enabled;
 
 		webgl_ctx = emscripten_webgl_create_context(canvas_id, &attributes);
 		webgl2_inited = webgl_ctx && emscripten_webgl_make_context_current(webgl_ctx) == EMSCRIPTEN_RESULT_SUCCESS;
@@ -1197,9 +1196,9 @@ DisplayServerWeb::~DisplayServerWeb() {
 	}
 #ifdef GLES3_ENABLED
 	if (webgl_ctx) {
-#ifndef WECHAT_GLX_EXPERIMENTAL
-		emscripten_webgl_commit_frame();
-#endif
+		if (!wx_glx_enabled) {
+			emscripten_webgl_commit_frame();
+		}
 		emscripten_webgl_destroy_context(webgl_ctx);
 	}
 #endif
@@ -1516,10 +1515,8 @@ bool DisplayServerWeb::get_swap_cancel_ok() {
 
 void DisplayServerWeb::swap_buffers() {
 #ifdef GLES3_ENABLED
-	if (webgl_ctx) {
-#ifndef WECHAT_GLX_EXPERIMENTAL
+	if (webgl_ctx && !wx_glx_enabled) {
 		emscripten_webgl_commit_frame();
-#endif
 	}
 #endif
 }
