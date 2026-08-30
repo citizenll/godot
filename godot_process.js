@@ -91,23 +91,32 @@ function ensureInvokeImportMappings(content) {
     );
 }
 
-function ensureCommitFrameShim(content) {
-    const mapping = "emscripten_webgl_commit_frame:_emscripten_webgl_commit_frame";
-    if (content.includes(mapping)) {
+function ensureCommitFrameWrapper(content) {
+    const wrapperMarker = "var __godotMinigameOriginalCommitFrame=_emscripten_webgl_commit_frame;";
+    if (content.includes(wrapperMarker)) {
         return content;
     }
 
-    console.log("apply commit-frame-shim");
+    const importsIndex = content.indexOf(WASM_IMPORTS_MARKER);
+    const declarationMatch = content.match(
+        /(?:var|let|const)\s+_emscripten_webgl_commit_frame\s*=|function\s+_emscripten_webgl_commit_frame\s*\(/
+    );
+    if (!declarationMatch || declarationMatch.index >= importsIndex) {
+        return content;
+    }
+
+    const wrapper = `${wrapperMarker}_emscripten_webgl_commit_frame=function(){var result=__godotMinigameOriginalCommitFrame();var context=typeof GL!=="undefined"&&GL.currentContext&&GL.currentContext.GLctx;if(context){if(typeof context.flush==="function"){context.flush()}if(typeof context.commit==="function"){context.commit()}}return result;};`;
+    console.log("apply commit-frame-wrapper");
     return content.replace(
         WASM_IMPORTS_MARKER,
-        `var _emscripten_webgl_commit_frame=function(){};${WASM_IMPORTS_MARKER}${mapping},`
+        `${wrapper}${WASM_IMPORTS_MARKER}`
     );
 }
 
 let content = fs.readFileSync(GODOT_JS_PATH, "utf-8");
 
 content = ensureInvokeImportMappings(content);
-content = ensureCommitFrameShim(content);
+content = ensureCommitFrameWrapper(content);
 
 for (const rule of REPLACE_RULES) {
     content = replaceOnce(content, rule);
