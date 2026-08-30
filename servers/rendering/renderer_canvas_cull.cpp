@@ -39,6 +39,10 @@
 #include "servers/rendering/rendering_server_globals.h"
 #include "servers/rendering/storage/texture_storage.h"
 
+#ifdef WECHAT_GLX_EXPERIMENTAL
+#include "platform/web/godot_js.h"
+#endif
+
 // Use the same antialiasing feather size as StyleBoxFlat's default
 // (but doubled, as it's specified for both sides here).
 // This value is empirically determined to provide good antialiasing quality
@@ -1719,6 +1723,11 @@ struct NinePatchAxisSegment {
 	bool is_middle = false;
 };
 
+bool _is_wx_glx_runtime_enabled() {
+	static const bool enabled = godot_js_display_is_wx_glx_enabled() == 1;
+	return enabled;
+}
+
 void _build_nine_patch_axis_segments(float p_draw_size, float p_margin_begin, float p_margin_end, float p_source_size, RSE::NinePatchAxisMode p_mode, NinePatchAxisSegment *r_segments, int &r_count) {
 	r_count = 0;
 
@@ -1776,54 +1785,56 @@ void RendererCanvasCull::canvas_item_add_nine_patch(RID p_item, const Rect2 &p_r
 	ERR_FAIL_NULL(canvas_item);
 
 #ifdef WECHAT_GLX_EXPERIMENTAL
-	const Size2 draw_size = p_rect.size.abs();
-	if (draw_size.x <= CMP_EPSILON || draw_size.y <= CMP_EPSILON) {
-		return;
-	}
-
-	Size2 source_size;
-	Point2 source_offset;
-	if (p_texture.is_null()) {
-		source_size = Size2(1, 1);
-	} else if (p_source == Rect2()) {
-		source_size = RSG::texture_storage->texture_size_with_proxy(p_texture);
-	} else {
-		source_size = p_source.size;
-		source_offset = p_source.position;
-	}
-
-	const bool valid_source = source_size.x > CMP_EPSILON && source_size.y > CMP_EPSILON;
-	const bool valid_margins = p_topleft.x >= 0.0f && p_topleft.y >= 0.0f && p_bottomright.x >= 0.0f && p_bottomright.y >= 0.0f;
-	const bool valid_modes = p_x_axis_mode >= RSE::NINE_PATCH_STRETCH && p_x_axis_mode <= RSE::NINE_PATCH_TILE_FIT &&
-			p_y_axis_mode >= RSE::NINE_PATCH_STRETCH && p_y_axis_mode <= RSE::NINE_PATCH_TILE_FIT;
-
-	if (valid_source && valid_margins && valid_modes) {
-		// Some WXGLX replay drivers silently drop the GLES3 USE_NINEPATCH shader variant.
-		// Emit equivalent regular texture rectangles to keep GLX builds on the stable canvas path.
-		NinePatchAxisSegment x_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
-		NinePatchAxisSegment y_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
-		int x_count = 0;
-		int y_count = 0;
-		_build_nine_patch_axis_segments(draw_size.x, p_topleft.x, p_bottomright.x, source_size.x, p_x_axis_mode, x_segments, x_count);
-		_build_nine_patch_axis_segments(draw_size.y, p_topleft.y, p_bottomright.y, source_size.y, p_y_axis_mode, y_segments, y_count);
-
-		for (int y = 0; y < y_count; y++) {
-			const NinePatchAxisSegment &ys = y_segments[y];
-			for (int x = 0; x < x_count; x++) {
-				const NinePatchAxisSegment &xs = x_segments[x];
-				if (!p_draw_center && xs.is_middle && ys.is_middle) {
-					continue;
-				}
-
-				const Rect2 dst_rect(p_rect.position + Point2(xs.dst_begin, ys.dst_begin), Size2(xs.dst_end - xs.dst_begin, ys.dst_end - ys.dst_begin));
-				const Point2 src_position(
-						source_offset.x + MIN(xs.src_begin, xs.src_end),
-						source_offset.y + MIN(ys.src_begin, ys.src_end));
-				const Rect2 src_rect(src_position, Size2(xs.src_end - xs.src_begin, ys.src_end - ys.src_begin));
-				canvas_item_add_texture_rect_region(p_item, dst_rect, p_texture, src_rect, p_modulate, false, false);
-			}
+	if (_is_wx_glx_runtime_enabled()) {
+		const Size2 draw_size = p_rect.size.abs();
+		if (draw_size.x <= CMP_EPSILON || draw_size.y <= CMP_EPSILON) {
+			return;
 		}
-		return;
+
+		Size2 source_size;
+		Point2 source_offset;
+		if (p_texture.is_null()) {
+			source_size = Size2(1, 1);
+		} else if (p_source == Rect2()) {
+			source_size = RSG::texture_storage->texture_size_with_proxy(p_texture);
+		} else {
+			source_size = p_source.size;
+			source_offset = p_source.position;
+		}
+
+		const bool valid_source = source_size.x > CMP_EPSILON && source_size.y > CMP_EPSILON;
+		const bool valid_margins = p_topleft.x >= 0.0f && p_topleft.y >= 0.0f && p_bottomright.x >= 0.0f && p_bottomright.y >= 0.0f;
+		const bool valid_modes = p_x_axis_mode >= RSE::NINE_PATCH_STRETCH && p_x_axis_mode <= RSE::NINE_PATCH_TILE_FIT &&
+				p_y_axis_mode >= RSE::NINE_PATCH_STRETCH && p_y_axis_mode <= RSE::NINE_PATCH_TILE_FIT;
+
+		if (valid_source && valid_margins && valid_modes) {
+			// Some WXGLX replay drivers silently drop the GLES3 USE_NINEPATCH shader variant.
+			// Emit equivalent regular texture rectangles to keep GLX builds on the stable canvas path.
+			NinePatchAxisSegment x_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
+			NinePatchAxisSegment y_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
+			int x_count = 0;
+			int y_count = 0;
+			_build_nine_patch_axis_segments(draw_size.x, p_topleft.x, p_bottomright.x, source_size.x, p_x_axis_mode, x_segments, x_count);
+			_build_nine_patch_axis_segments(draw_size.y, p_topleft.y, p_bottomright.y, source_size.y, p_y_axis_mode, y_segments, y_count);
+
+			for (int y = 0; y < y_count; y++) {
+				const NinePatchAxisSegment &ys = y_segments[y];
+				for (int x = 0; x < x_count; x++) {
+					const NinePatchAxisSegment &xs = x_segments[x];
+					if (!p_draw_center && xs.is_middle && ys.is_middle) {
+						continue;
+					}
+
+					const Rect2 dst_rect(p_rect.position + Point2(xs.dst_begin, ys.dst_begin), Size2(xs.dst_end - xs.dst_begin, ys.dst_end - ys.dst_begin));
+					const Point2 src_position(
+							source_offset.x + MIN(xs.src_begin, xs.src_end),
+							source_offset.y + MIN(ys.src_begin, ys.src_end));
+					const Rect2 src_rect(src_position, Size2(xs.src_end - xs.src_begin, ys.src_end - ys.src_begin));
+					canvas_item_add_texture_rect_region(p_item, dst_rect, p_texture, src_rect, p_modulate, false, false);
+				}
+			}
+			return;
+		}
 	}
 #endif
 
