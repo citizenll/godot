@@ -1662,9 +1662,127 @@ void RendererCanvasCull::canvas_item_add_texture_rect_region(RID p_item, const R
 	}
 }
 
+#ifdef WECHAT_GLX_EXPERIMENTAL
+namespace {
+
+constexpr int MAX_NINE_PATCH_TILES_PER_AXIS = 64;
+constexpr int MAX_NINE_PATCH_SEGMENTS_PER_AXIS = MAX_NINE_PATCH_TILES_PER_AXIS + 2;
+
+struct NinePatchAxisSegment {
+	float dst_begin = 0.0f;
+	float dst_end = 0.0f;
+	float src_begin = 0.0f;
+	float src_end = 0.0f;
+	bool is_middle = false;
+};
+
+void _build_nine_patch_axis_segments(float p_draw_size, float p_margin_begin, float p_margin_end, float p_source_size, RS::NinePatchAxisMode p_mode, NinePatchAxisSegment *r_segments, int &r_count) {
+	r_count = 0;
+
+	const float start_end = MIN(p_margin_begin, p_draw_size);
+	if (start_end > CMP_EPSILON) {
+		r_segments[r_count++] = { 0.0f, start_end, 0.0f, start_end, false };
+	}
+
+	const float middle_begin = p_margin_begin;
+	const float middle_end = p_draw_size - p_margin_end;
+	if (middle_begin < middle_end) {
+		const float middle_dst_size = middle_end - middle_begin;
+		const float middle_src_size = p_source_size - p_margin_begin - p_margin_end;
+		bool tiled = false;
+
+		if (middle_src_size > CMP_EPSILON && (p_mode == RS::NINE_PATCH_TILE || p_mode == RS::NINE_PATCH_TILE_FIT)) {
+			const float tile_ratio = middle_dst_size / middle_src_size;
+			if (tile_ratio <= MAX_NINE_PATCH_TILES_PER_AXIS) {
+				if (p_mode == RS::NINE_PATCH_TILE) {
+					const int tile_count = MAX(1, (int)Math::ceil(tile_ratio));
+					float piece_begin = middle_begin;
+					for (int i = 0; i < tile_count; i++) {
+						const float piece_end = MIN(piece_begin + middle_src_size, middle_end);
+						r_segments[r_count++] = { piece_begin, piece_end, p_margin_begin, p_margin_begin + piece_end - piece_begin, true };
+						piece_begin = piece_end;
+					}
+				} else {
+					const int tile_count = MAX(1, (int)Math::floor(tile_ratio + 0.5f));
+					const float piece_size = middle_dst_size / tile_count;
+					for (int i = 0; i < tile_count; i++) {
+						const float piece_begin = middle_begin + i * piece_size;
+						r_segments[r_count++] = { piece_begin, piece_begin + piece_size, p_margin_begin, p_margin_begin + middle_src_size, true };
+					}
+				}
+				tiled = true;
+			}
+		}
+
+		if (!tiled) {
+			r_segments[r_count++] = { middle_begin, middle_end, p_margin_begin, p_source_size - p_margin_end, true };
+		}
+	}
+
+	const float end_begin = MAX(middle_end, start_end);
+	if (end_begin < p_draw_size - CMP_EPSILON) {
+		r_segments[r_count++] = { end_begin, p_draw_size, p_source_size - (p_draw_size - end_begin), p_source_size, false };
+	}
+}
+
+} // namespace
+#endif
+
 void RendererCanvasCull::canvas_item_add_nine_patch(RID p_item, const Rect2 &p_rect, const Rect2 &p_source, RID p_texture, const Vector2 &p_topleft, const Vector2 &p_bottomright, RS::NinePatchAxisMode p_x_axis_mode, RS::NinePatchAxisMode p_y_axis_mode, bool p_draw_center, const Color &p_modulate) {
 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
 	ERR_FAIL_NULL(canvas_item);
+
+#ifdef WECHAT_GLX_EXPERIMENTAL
+	const Size2 draw_size = p_rect.size.abs();
+	if (draw_size.x <= CMP_EPSILON || draw_size.y <= CMP_EPSILON) {
+		return;
+	}
+
+	Size2 source_size;
+	Point2 source_offset;
+	if (p_texture.is_null()) {
+		source_size = Size2(1, 1);
+	} else if (p_source == Rect2()) {
+		source_size = RSG::texture_storage->texture_size_with_proxy(p_texture);
+	} else {
+		source_size = p_source.size;
+		source_offset = p_source.position;
+	}
+
+	const bool valid_source = source_size.x > CMP_EPSILON && source_size.y > CMP_EPSILON;
+	const bool valid_margins = p_topleft.x >= 0.0f && p_topleft.y >= 0.0f && p_bottomright.x >= 0.0f && p_bottomright.y >= 0.0f;
+	const bool valid_modes = p_x_axis_mode >= RS::NINE_PATCH_STRETCH && p_x_axis_mode <= RS::NINE_PATCH_TILE_FIT &&
+			p_y_axis_mode >= RS::NINE_PATCH_STRETCH && p_y_axis_mode <= RS::NINE_PATCH_TILE_FIT;
+
+	if (valid_source && valid_margins && valid_modes) {
+		// Some WXGLX replay drivers silently drop the GLES3 USE_NINEPATCH shader variant.
+		// Emit equivalent regular texture rectangles to keep GLX builds on the stable canvas path.
+		NinePatchAxisSegment x_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
+		NinePatchAxisSegment y_segments[MAX_NINE_PATCH_SEGMENTS_PER_AXIS];
+		int x_count = 0;
+		int y_count = 0;
+		_build_nine_patch_axis_segments(draw_size.x, p_topleft.x, p_bottomright.x, source_size.x, p_x_axis_mode, x_segments, x_count);
+		_build_nine_patch_axis_segments(draw_size.y, p_topleft.y, p_bottomright.y, source_size.y, p_y_axis_mode, y_segments, y_count);
+
+		for (int y = 0; y < y_count; y++) {
+			const NinePatchAxisSegment &ys = y_segments[y];
+			for (int x = 0; x < x_count; x++) {
+				const NinePatchAxisSegment &xs = x_segments[x];
+				if (!p_draw_center && xs.is_middle && ys.is_middle) {
+					continue;
+				}
+
+				const Rect2 dst_rect(p_rect.position + Point2(xs.dst_begin, ys.dst_begin), Size2(xs.dst_end - xs.dst_begin, ys.dst_end - ys.dst_begin));
+				const Point2 src_position(
+						source_offset.x + MIN(xs.src_begin, xs.src_end),
+						source_offset.y + MIN(ys.src_begin, ys.src_end));
+				const Rect2 src_rect(src_position, Size2(xs.src_end - xs.src_begin, ys.src_end - ys.src_begin));
+				canvas_item_add_texture_rect_region(p_item, dst_rect, p_texture, src_rect, p_modulate, false, false);
+			}
+		}
+		return;
+	}
+#endif
 
 	Item::CommandNinePatch *style = canvas_item->alloc_command<Item::CommandNinePatch>();
 	ERR_FAIL_NULL(style);
