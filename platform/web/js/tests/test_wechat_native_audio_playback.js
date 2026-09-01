@@ -8,7 +8,8 @@ const createdContexts = [];
 class FakeInnerAudioContext {
 	constructor() {
 		this.listeners = new Map();
-		this.src = "";
+		this._src = "";
+		this.srcAssignments = 0;
 		this.autoplay = false;
 		this.loop = false;
 		this.volume = 1;
@@ -17,6 +18,15 @@ class FakeInnerAudioContext {
 		this.currentTime = 0;
 		this.destroyed = false;
 		createdContexts.push(this);
+	}
+
+	get src() {
+		return this._src;
+	}
+
+	set src(value) {
+		this._src = value;
+		this.srcAssignments += 1;
 	}
 
 	on(name, callback) {
@@ -164,13 +174,27 @@ async function main() {
 
 	audio.startSample("bgm", "stream-c", 2, 0, 1, 0);
 	await flushPromiseJobs();
+	const thirdContext = audio.activePlaybacks.get("bgm").ctx;
+	assert.notStrictEqual(
+		thirdContext,
+		secondContext,
+		"a pooled context must not be rebound to a different source"
+	);
+	assert.strictEqual(audio.contextPool.includes(secondContext), true);
+
+	thirdContext.emit("ended");
+	audio.startSample("bgm", "stream-c", 2, 0, 1, 0);
+	await flushPromiseJobs();
 	assert.strictEqual(
 		audio.activePlaybacks.get("bgm").ctx,
-		secondContext,
-		"a context is reusable after its terminal event has been delivered"
+		thirdContext,
+		"a pooled context should remain reusable for the same source"
 	);
+	assert.strictEqual(firstContext.srcAssignments, 1);
+	assert.strictEqual(secondContext.srcAssignments, 1);
+	assert.strictEqual(thirdContext.srcAssignments, 1);
 
-	assert.strictEqual(createdContexts.length, 2);
+	assert.strictEqual(createdContexts.length, 3);
 	console.log("WeChat native audio playback lifecycle tests passed");
 }
 
