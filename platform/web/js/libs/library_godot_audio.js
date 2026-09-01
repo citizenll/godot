@@ -1971,15 +1971,17 @@ const _GodotAudio = {
 			},
 
 			getContext: function (desiredSrc) {
-				const matchingIndex = GodotAudio.WX.contextPool.findIndex(
-					(ctx) => ctx.src === desiredSrc
-				);
-				if (matchingIndex !== -1) {
-					const ctx = GodotAudio.WX.contextPool[matchingIndex];
-					GodotAudio.WX.contextPool.splice(matchingIndex, 1);
-					return ctx;
+				if (desiredSrc) {
+					const matchingIndex = GodotAudio.WX.contextPool.findIndex(
+						(ctx) => ctx.src === desiredSrc
+					);
+					if (matchingIndex !== -1) {
+						const ctx = GodotAudio.WX.contextPool[matchingIndex];
+						GodotAudio.WX.contextPool.splice(matchingIndex, 1);
+						return ctx;
+					}
 				}
-				return GodotAudio.WX.contextPool.pop() || wx.createInnerAudioContext();
+				return wx.createInnerAudioContext();
 			},
 
 			resetContext: function (ctx) {
