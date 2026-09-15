@@ -1141,8 +1141,12 @@ DisplayServerWeb::DisplayServerWeb(const String &p_rendering_driver, DisplayServ
 		attributes.majorVersion = 2;
 #ifdef WECHAT_GLX_EXPERIMENTAL
 		wx_glx_enabled = godot_js_display_is_wx_glx_enabled() == 1;
+		// GLX builds omit OFFSCREEN_FRAMEBUFFER, so neither runtime mode can
+		// request Emscripten explicit swaps. The WebGL path presents via the JS wrapper.
+		attributes.explicitSwapControl = false;
+#else
+		attributes.explicitSwapControl = true;
 #endif
-		attributes.explicitSwapControl = !wx_glx_enabled;
 
 		webgl_ctx = emscripten_webgl_create_context(canvas_id, &attributes);
 		webgl2_inited = webgl_ctx && emscripten_webgl_make_context_current(webgl_ctx) == EMSCRIPTEN_RESULT_SUCCESS;
